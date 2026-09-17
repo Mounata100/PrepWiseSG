@@ -599,7 +599,7 @@ export default function HomeScreen({ navigation }) {
               const isSelf = player.name === currentUserName;
               const rank = index + 1;
               return (
-                <View key={player.id || index} style={[styles.leaderboardRowItem, isSelf && styles.highlightedSelfRow]}>
+                <View key={`${player.id || player.name}-${index}`} style={[styles.leaderboardRowItem, isSelf && styles.highlightedSelfRow]}>
                   <View style={styles.leaderboardLeftBlock}>
                     <Text style={[styles.rankText, rank === 1 && { color: '#FACC15' }]}>#{rank}</Text>
                     <View style={styles.identityMeta}>

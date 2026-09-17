@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { updateLeaderboardUser } from '../services/firestoreService';
 
 const STORAGE_KEY = '@prepwisesg_data';
 
@@ -172,12 +173,29 @@ const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
   const [state, dispatch] = useReducer(userReducer, initialState);
-  const updateUser = (updatedUser) => {
-    dispatch({
-      type: ACTIONS.LOGIN_SUCCESS,
-      payload: updatedUser
-    });
+  // const updateUser = (updatedUser) => {
+  //   dispatch({
+  //     type: ACTIONS.LOGIN_SUCCESS,
+  //     payload: updatedUser
+  //   });
 
+  // };
+  const updateUser = async (updatedUser) => {
+    try {
+      // Update local React state
+      dispatch({
+        type: ACTIONS.LOGIN_SUCCESS,
+        payload: updatedUser
+      });
+
+      // Update Firestore
+      if (updatedUser?.id) {
+        await updateLeaderboardUser(updatedUser);
+      }
+
+    } catch (error) {
+      console.error('Failed to update user:', error);
+    }
   };
 
   useEffect(() => {
