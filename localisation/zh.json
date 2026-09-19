@@ -1,0 +1,81 @@
+{
+  "auth": {
+    "appName": "PrepWiseSG",
+    "tagline": "新加坡灾害防备",
+
+    "signIn": "登录",
+    "signUp": "注册",
+
+    "welcomeBack": "欢迎回来！",
+    "createAccount": "创建您的账户",
+
+    "fullName": "姓名",
+    "enterFullName": "请输入您的姓名",
+    "nameHint": "至少 2 个字符",
+
+    "email": "电子邮件",
+    "enterEmail": "请输入您的电子邮件",
+    "emailHint": "我们会向此电子邮件发送确认信息",
+
+    "password": "密码",
+    "createPassword": "创建密码（至少 6 个字符）",
+    "enterPassword": "请输入您的密码",
+    "passwordHint": "至少 6 个字符",
+    "passwordStrongHint": "至少 6 个字符（添加数字/符号可增强密码安全性）",
+
+    "forgotPassword": "忘记密码？",
+
+    "createAccountButton": "创建账户",
+
+    "or": "或",
+
+    "continueAsGuest": "以访客身份继续",
+
+    "terms": "继续操作即表示您同意我们的服务条款和隐私政策",
+
+    "passwordStrength": {
+      "weak": "弱",
+      "fair": "一般",
+      "good": "良好",
+      "strong": "强"
+    },
+
+    "validation": {
+      "emailRequired": "请输入电子邮件",
+      "invalidEmail": "请输入有效的电子邮件（例如：john@example.com）",
+      "passwordRequired": "请输入密码",
+      "passwordTooShort": "密码太短。还需要 {{count}} 个字符。",
+      "nameRequired": "请输入姓名",
+      "nameTooShort": "姓名至少需要 2 个字符"
+    },
+
+    "alerts": {
+      "completeFieldsTitle": "请完成所有资料",
+      "completeFieldsMessage": "请正确填写所有必填资料后继续。",
+      "ok": "确定",
+
+      "signInFailed": "登录失败",
+      "accountCreationFailed": "创建账户失败",
+
+      "guestModeTitle": "访客模式",
+      "guestModeMessage": "您可以探索基本功能。创建账户即可保存您的进度！",
+      "cancel": "取消",
+      "continueGuest": "以访客身份继续",
+
+      "resetPasswordTitle": "重置密码",
+      "resetPasswordMessage": "请输入您的电子邮件地址，我们会发送重置密码的链接。",
+      "sendLink": "发送链接",
+
+      "resetLinkSentTitle": "重置链接已发送！",
+      "resetLinkSentMessage": "请检查您的电子邮件以获取密码重置链接。"
+    }
+  },
+
+  "language": {
+    "title": "选择您的语言",
+    "english": "English",
+    "malay": "Bahasa Melayu",
+    "chinese": "中文",
+    "tamil": "தமிழ்"
+  }
+}

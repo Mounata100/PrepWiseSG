@@ -1,0 +1,81 @@
+{
+  "auth": {
+    "appName": "PrepWiseSG",
+    "tagline": "Kesediaan Bencana Singapura",
+
+    "signIn": "Log Masuk",
+    "signUp": "Daftar",
+
+    "welcomeBack": "Selamat kembali!",
+    "createAccount": "Cipta akaun anda",
+
+    "fullName": "Nama Penuh",
+    "enterFullName": "Masukkan nama penuh anda",
+    "nameHint": "Sekurang-kurangnya 2 aksara",
+
+    "email": "E-mel",
+    "enterEmail": "Masukkan e-mel anda",
+    "emailHint": "Kami akan menghantar pengesahan ke e-mel ini",
+
+    "password": "Kata Laluan",
+    "createPassword": "Cipta kata laluan (min. 6 aksara)",
+    "enterPassword": "Masukkan kata laluan anda",
+    "passwordHint": "Minimum 6 aksara",
+    "passwordStrongHint": "Minimum 6 aksara (tambah nombor/simbol untuk kata laluan yang lebih kukuh)",
+
+    "forgotPassword": "Lupa Kata Laluan?",
+
+    "createAccountButton": "Cipta Akaun",
+
+    "or": "atau",
+
+    "continueAsGuest": "Teruskan sebagai Tetamu",
+
+    "terms": "Dengan meneruskan, anda bersetuju dengan Syarat Perkhidmatan dan Dasar Privasi kami",
+
+    "passwordStrength": {
+      "weak": "Lemah",
+      "fair": "Sederhana",
+      "good": "Baik",
+      "strong": "Kukuh"
+    },
+
+    "validation": {
+      "emailRequired": "E-mel diperlukan",
+      "invalidEmail": "Sila masukkan e-mel yang sah (contoh: john@example.com)",
+      "passwordRequired": "Kata laluan diperlukan",
+      "passwordTooShort": "Kata laluan terlalu pendek. {{count}} aksara lagi diperlukan.",
+      "nameRequired": "Nama diperlukan",
+      "nameTooShort": "Nama mestilah sekurang-kurangnya 2 aksara"
+    },
+
+    "alerts": {
+      "completeFieldsTitle": "Sila Lengkapkan Semua Ruangan",
+      "completeFieldsMessage": "Isi semua ruangan yang diperlukan dengan betul untuk meneruskan.",
+      "ok": "OK",
+
+      "signInFailed": "Log Masuk Gagal",
+      "accountCreationFailed": "Penciptaan Akaun Gagal",
+
+      "guestModeTitle": "Mod Tetamu",
+      "guestModeMessage": "Anda boleh meneroka ciri asas. Cipta akaun untuk menyimpan kemajuan anda!",
+      "cancel": "Batal",
+      "continueGuest": "Teruskan sebagai Tetamu",
+
+      "resetPasswordTitle": "Tetapkan Semula Kata Laluan",
+      "resetPasswordMessage": "Masukkan alamat e-mel anda dan kami akan menghantar pautan untuk menetapkan semula kata laluan anda.",
+      "sendLink": "Hantar Pautan",
+
+      "resetLinkSentTitle": "Pautan Tetapan Semula Dihantar!",
+      "resetLinkSentMessage": "Sila semak e-mel anda untuk pautan tetapan semula kata laluan."
+    }
+  },
+
+  "language": {
+    "title": "Pilih bahasa anda",
+    "english": "English",
+    "malay": "Bahasa Melayu",
+    "chinese": "中文",
+    "tamil": "தமிழ்"
+  }
+}

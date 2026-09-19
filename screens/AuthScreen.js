@@ -8,6 +8,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import logoImage from '../assets/logoImage.png';
+import '../localisation'; //i18n is initialized
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function AuthScreen() {

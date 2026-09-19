@@ -1,0 +1,81 @@
+{
+  "auth": {
+    "appName": "PrepWiseSG",
+    "tagline": "Singapore's Disaster Preparedness",
+
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+
+    "welcomeBack": "Welcome back!",
+    "createAccount": "Create your account",
+
+    "fullName": "Full Name",
+    "enterFullName": "Enter your full name",
+    "nameHint": "At least 2 characters",
+
+    "email": "Email",
+    "enterEmail": "Enter your email",
+    "emailHint": "We'll send a confirmation to this email",
+
+    "password": "Password",
+    "createPassword": "Create a password (min 6 characters)",
+    "enterPassword": "Enter your password",
+    "passwordHint": "Minimum 6 characters",
+    "passwordStrongHint": "Minimum 6 characters (add numbers/symbols for stronger password)",
+
+    "forgotPassword": "Forgot Password?",
+
+    "createAccountButton": "Create Account",
+
+    "or": "or",
+
+    "continueAsGuest": "Continue as Guest",
+
+    "terms": "By continuing, you agree to our Terms of Service and Privacy Policy",
+
+    "passwordStrength": {
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong"
+    },
+
+    "validation": {
+      "emailRequired": "Email is required",
+      "invalidEmail": "Please enter a valid email (e.g., john@example.com)",
+      "passwordRequired": "Password is required",
+      "passwordTooShort": "Password too short. {{count}} more characters needed.",
+      "nameRequired": "Name is required",
+      "nameTooShort": "Name must be at least 2 characters"
+    },
+
+    "alerts": {
+      "completeFieldsTitle": "Please Complete All Fields",
+      "completeFieldsMessage": "Fill in all required fields correctly to continue.",
+      "ok": "OK",
+
+      "signInFailed": "Sign In Failed",
+      "accountCreationFailed": "Account Creation Failed",
+
+      "guestModeTitle": "Guest Mode",
+      "guestModeMessage": "You can explore basic features. Create an account to save your progress!",
+      "cancel": "Cancel",
+      "continueGuest": "Continue as Guest",
+
+      "resetPasswordTitle": "Reset Password",
+      "resetPasswordMessage": "Enter your email address and we will send you a link to reset your password.",
+      "sendLink": "Send Link",
+
+      "resetLinkSentTitle": "Reset Link Sent!",
+      "resetLinkSentMessage": "Please check your email for the password reset link."
+    }
+  },
+
+  "language": {
+    "title": "Choose your language",
+    "english": "English",
+    "malay": "Bahasa Melayu",
+    "chinese": "中文",
+    "tamil": "தமிழ்"
+  }
+}
