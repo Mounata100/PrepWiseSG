@@ -1,13 +1,4 @@
-/* =========================================================
-   RESOURCES SCREEN
-   Modern Climate Emergency Resource Hub
-   Style: Minimalism + Neumorphism + Glassmorphism
-========================================================= */
-
-/* ---------------- IMPORT REACT ---------------- */
 import React, { useState } from 'react';
-
-/* ---------------- IMPORT REACT NATIVE COMPONENTS ---------------- */
 import {
   View,
   StyleSheet,
@@ -15,278 +6,994 @@ import {
   TouchableOpacity,
   Text,
   Linking,
-  Image,
 } from 'react-native';
-
-/* ---------------- IMPORT PAPER COMPONENTS ---------------- */
-import {
-  Card,
-  Title,
-  Chip,
-} from 'react-native-paper';
-
-/* ---------------- IMPORT ICONS ---------------- */
-import Icon from 'react-native-vector-icons/MaterialIcons';
-
-/* ---------------- IMPORT GRADIENT ---------------- */
+import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 
-/* =========================================================
-   MAIN COMPONENT
-========================================================= */
-const ResourcesScreen = () => {
+/*
+  Disaster Preparedness & Response Hub
 
-  /* ---------------- LANGUAGE STATE ---------------- */
-  const [language, setLanguage] = useState('en');
+  Main purpose:
+  BEFORE  -> Prepare
+  DURING  -> Respond
+  AFTER   -> Recover
 
-  /* ---------------- CATEGORY STATE ---------------- */
-  const [selectedCategory, setSelectedCategory] = useState('flood');
+  Quick access:
+  - Family Safe
+  - Health ID QR
+  - Emergency Contacts
+*/
 
-  /* =========================================================
-     RESOURCE DATA
-  ========================================================= */
-  const resources = {
-    en: {
-      /* ---------------- FLOOD ---------------- */
-      flood: {
-        title: 'Flash Flood Guide',
-        image: 'https://cdn-icons-png.flaticon.com/512/414/414974.png',
-        content:
-          'Move to higher ground immediately\n' +
-          'Avoid underpasses and low-lying areas\n' +
-          'Never cross floodwaters\n' +
-          'Stay informed via SCDF/NEA apps',
-        kit: [
-          'Waterproof bag',
-          'Emergency blanket',
-          'Whistle',
-          'First aid kit',
-          '72hr water supply',
-        ],
-      },
+const ResourcesScreen = ({ navigation }) => {
+  const [activePhase, setActivePhase] = useState('before');
 
-      /* ---------------- HAZE ---------------- */
-      haze: {
-        title: 'Haze Protection Guide',
-        image: 'https://cdn-icons-png.flaticon.com/512/4005/4005901.png',
-        content:
-          'Stay indoors with windows closed\n' +
-          'Use N95 masks outdoors\n' +
-          'Run air purifiers\n' +
-          'Monitor NEA PSI readings',
-        kit: [
-          'N95 masks',
-          'Eye drops',
-          'Humidifier',
-          'Reusable water bottle',
-        ],
-      },
-
-      /* ---------------- EMERGENCY ---------------- */
-      emergency: {
-        title: 'Singapore Emergency Contacts',
-        contacts: [
-          {
-            name: 'Police Emergency',
-            number: '999',
-            icon: 'local-police',
-            color: '#2563EB',
-          },
-          {
-            name: 'SCDF Ambulance & Fire',
-            number: '995',
-            icon: 'local-fire-department',
-            color: '#DC2626',
-          },
-          {
-            name: 'PUB Flood Hotline',
-            number: '1800-284-6600',
-            icon: 'invert-colors', // Fixed: MaterialIcons valid water-drop layout style
-            color: '#0284C7',
-          },
-          {
-            name: 'NEA Weather Hotline',
-            number: '1800-2255-632',
-            icon: 'cloud',
-            color: '#7C3AED',
-          },
-          {
-            name: 'SP PowerGrid Emergency',
-            number: '1800-778-8888',
-            icon: 'bolt',
-            color: '#F59E0B',
-          },
-        ],
-      },
+  const emergencyContacts = [
+    {
+      name: 'Police Emergency',
+      number: '999',
+      icon: 'shield',
+      color: '#2563EB',
     },
+    {
+      name: 'SCDF Ambulance & Fire',
+      number: '995',
+      icon: 'flame',
+      color: '#DC2626',
+    },
+    {
+      name: 'PUB Flood Hotline',
+      number: '1800-284-6600',
+      icon: 'water',
+      color: '#0284C7',
+    },
+    {
+      name: 'NEA Weather / Environment',
+      number: '1800-2255-632',
+      icon: 'cloud',
+      color: '#7C3AED',
+    },
+  ];
+
+  const preparednessTopics = [
+    {
+      icon: 'bag-handle',
+      color: '#10B981',
+      title: 'Emergency Go-Bag',
+      description:
+        'Keep water, medication, first aid supplies, power bank, torch, whistle and important documents ready.',
+    },
+    {
+      icon: 'people',
+      color: '#8B5CF6',
+      title: 'Family Emergency Plan',
+      description:
+        'Agree on meeting points, emergency contacts and what to do if family members become separated.',
+    },
+    {
+      icon: 'document-text',
+      color: '#F59E0B',
+      title: 'Important Documents',
+      description:
+        'Keep identification, medical information, insurance details and emergency contacts accessible.',
+    },
+    {
+      icon: 'battery-charging',
+      color: '#06B6D4',
+      title: 'Power & Communication',
+      description:
+        'Keep phones charged and have backup power available so you can receive emergency updates.',
+    },
+  ];
+
+  const disasterGuides = [
+    {
+      icon: 'water',
+      color: '#0284C7',
+      title: 'Flash Flood',
+      description:
+        'Move to higher ground. Avoid flooded roads, underpasses and underground areas. Never walk or drive through floodwater.',
+    },
+    {
+      icon: 'sunny',
+      color: '#F59E0B',
+      title: 'Extreme Heat',
+      description:
+        'Drink water regularly, reduce strenuous activity and seek a cool indoor location if you feel unwell.',
+    },
+    {
+      icon: 'cloud',
+      color: '#64748B',
+      title: 'Haze / Poor Air Quality',
+      description:
+        'Monitor air-quality conditions, reduce prolonged outdoor activity and use appropriate respiratory protection when necessary.',
+    },
+    {
+      icon: 'thunderstorm',
+      color: '#7C3AED',
+      title: 'Severe Weather',
+      description:
+        'Stay indoors when conditions become dangerous and keep away from exposed areas, windows and unsecured objects.',
+    },
+  ];
+
+  const recoverySteps = [
+    {
+      icon: 'medical',
+      color: '#F87171',
+      title: 'Check for Injuries',
+      description:
+        'Check yourself and people around you. Call emergency services for serious injuries.',
+    },
+    {
+      icon: 'people',
+      color: '#A78BFA',
+      title: 'Account for Family',
+      description:
+        'Use your agreed meeting point and contact plan to confirm that family members are safe.',
+    },
+    {
+      icon: 'home',
+      color: '#38BDF8',
+      title: 'Check Your Environment',
+      description:
+        'Do not enter unsafe buildings or areas with standing water, electrical hazards or structural damage.',
+    },
+    {
+      icon: 'camera',
+      color: '#F59E0B',
+      title: 'Document Damage',
+      description:
+        'When it is safe, record relevant damage and keep important information for follow-up and recovery.',
+    },
+  ];
+
+  const openEmergencyCall = (number) => {
+    Linking.openURL(`tel:${number}`);
   };
 
-  /* =========================================================
-     CURRENT RESOURCE
-  ========================================================= */
-  const currentResource = resources[language]?.[selectedCategory] || resources.en.flood;
+  const renderPhaseButton = (id, icon, title, subtitle) => {
+    const active = activePhase === id;
+
+    return (
+      <TouchableOpacity
+        style={[
+          styles.phaseButton,
+          active && styles.phaseButtonActive,
+        ]}
+        onPress={() => setActivePhase(id)}
+        activeOpacity={0.85}
+      >
+        <View
+          style={[
+            styles.phaseIcon,
+            active && styles.phaseIconActive,
+          ]}
+        >
+          <Ionicons
+            name={icon}
+            size={22}
+            color={active ? '#FFFFFF' : '#64748B'}
+          />
+        </View>
+
+        <Text
+          style={[
+            styles.phaseTitle,
+            active && styles.phaseTitleActive,
+          ]}
+        >
+          {title}
+        </Text>
+
+        <Text
+          style={[
+            styles.phaseSubtitle,
+            active && styles.phaseSubtitleActive,
+          ]}
+        >
+          {subtitle}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const renderInfoCard = (item, index) => (
+    <View key={index} style={styles.infoCard}>
+      <View
+        style={[
+          styles.infoIcon,
+          { backgroundColor: `${item.color}18` },
+        ]}
+      >
+        <Ionicons name={item.icon} size={24} color={item.color} />
+      </View>
+
+      <View style={styles.infoContent}>
+        <Text style={styles.infoTitle}>{item.title}</Text>
+        <Text style={styles.infoDescription}>
+          {item.description}
+        </Text>
+      </View>
+    </View>
+  );
+
+  const renderCurrentPhase = () => {
+    if (activePhase === 'before') {
+      return (
+        <>
+          <View style={styles.sectionHeader}>
+            <View>
+              <Text style={styles.sectionEyebrow}>BEFORE A DISASTER</Text>
+              <Text style={styles.sectionTitle}>Prepare Now</Text>
+            </View>
+
+            <View style={styles.sectionIconBlue}>
+              <Ionicons
+                name="shield-checkmark"
+                size={22}
+                color="#38BDF8"
+              />
+            </View>
+          </View>
+
+          <Text style={styles.sectionIntro}>
+            Small preparations made before an emergency can make it
+            easier to protect yourself and your family when conditions
+            change quickly.
+          </Text>
+
+          {preparednessTopics.map(renderInfoCard)}
+        </>
+      );
+    }
+
+    if (activePhase === 'during') {
+      return (
+        <>
+          <View style={styles.sectionHeader}>
+            <View>
+              <Text style={styles.sectionEyebrow}>DURING A DISASTER</Text>
+              <Text style={styles.sectionTitle}>Respond Safely</Text>
+            </View>
+
+            <View style={styles.sectionIconRed}>
+              <Ionicons
+                name="warning"
+                size={22}
+                color="#EF4444"
+              />
+            </View>
+          </View>
+
+          <Text style={styles.sectionIntro}>
+            Follow the safest action for the hazard. If there is an
+            immediate threat to life, contact emergency services.
+          </Text>
+
+          {disasterGuides.map(renderInfoCard)}
+        </>
+      );
+    }
+
+    return (
+      <>
+        <View style={styles.sectionHeader}>
+          <View>
+            <Text style={styles.sectionEyebrow}>AFTER A DISASTER</Text>
+            <Text style={styles.sectionTitle}>Recover Safely</Text>
+          </View>
+
+          <View style={styles.sectionIconGreen}>
+            <Ionicons
+              name="refresh"
+              size={22}
+              color="#10B981"
+            />
+          </View>
+        </View>
+
+        <Text style={styles.sectionIntro}>
+          Once the immediate danger has passed, focus on people first,
+          then move carefully towards recovery.
+        </Text>
+
+        {recoverySteps.map(renderInfoCard)}
+      </>
+    );
+  };
 
   return (
     <LinearGradient
-      colors={['#EEF2FF', '#F8FAFC']}
+      colors={['#020617', '#071426', '#0F172A']}
       style={styles.container}
     >
-      <ScrollView showsVerticalScrollIndicator={false}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
 
-        {/* HERO HEADER */}
-        <View style={styles.heroCard}>
-          <Icon
-            name="warning" // Fixed: "emergency" is not consistently safe across MaterialIcons releases
-            size={52}
-            color="#DC2626"
+        {/* HEADER */}
+        <View style={styles.hero}>
+          <View style={styles.heroIcon}>
+            <Ionicons
+              name="shield-checkmark"
+              size={34}
+              color="#38BDF8"
+            />
+          </View>
+
+          <Text style={styles.heroTitle}>
+            Disaster Preparedness and Response Hub
+          </Text>
+
+          <Text style={styles.heroSubtitle}>
+            Prepare before. Respond safely. Recover together.
+          </Text>
+
+          <View style={styles.locationBadge}>
+            <Ionicons
+              name="location"
+              size={13}
+              color="#94A3B8"
+            />
+            <Text style={styles.locationText}>
+              Singapore Climate & Emergency Safety
+            </Text>
+          </View>
+        </View>
+
+        {/* QUICK ACCESS */}
+        <Text style={styles.quickAccessLabel}>
+          QUICK ACCESS
+        </Text>
+
+        <View style={styles.quickGrid}>
+
+          {/* FAMILY SAFE */}
+          <TouchableOpacity
+            style={[
+              styles.quickCard,
+              styles.familyCard,
+            ]}
+            onPress={() => navigation.navigate('FamilySafety')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.quickIconFamily}>
+              <Ionicons
+                name="people"
+                size={26}
+                color="#A78BFA"
+              />
+            </View>
+
+            <Text style={styles.quickTitle}>
+              Family Safe
+            </Text>
+
+            <Text style={styles.quickDescription}>
+              Family emergency plan, contacts and safety status.
+            </Text>
+
+            <View style={styles.quickArrow}>
+              <Ionicons
+                name="arrow-forward"
+                size={16}
+                color="#A78BFA"
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* HEALTH QR */}
+          <TouchableOpacity
+            style={[
+              styles.quickCard,
+              styles.healthCard,
+            ]}
+            onPress={() => navigation.navigate('HealthQR')}
+            activeOpacity={0.85}
+          >
+            <View style={styles.quickIconHealth}>
+              <Ionicons
+                name="qr-code"
+                size={26}
+                color="#34D399"
+              />
+            </View>
+
+            <Text style={styles.quickTitle}>
+              Health ID QR
+            </Text>
+
+            <Text style={styles.quickDescription}>
+              Keep important health information accessible in an emergency.
+            </Text>
+
+            <View style={styles.quickArrow}>
+              <Ionicons
+                name="arrow-forward"
+                size={16}
+                color="#34D399"
+              />
+            </View>
+          </TouchableOpacity>
+
+        </View>
+
+        {/* EMERGENCY BUTTON */}
+        <TouchableOpacity
+          style={styles.emergencyMainButton}
+          onPress={() => openEmergencyCall('995')}
+          activeOpacity={0.9}
+        >
+          <View style={styles.emergencyIcon}>
+            <Ionicons
+              name="call"
+              size={22}
+              color="#FFFFFF"
+            />
+          </View>
+
+          <View style={styles.emergencyTextContainer}>
+            <Text style={styles.emergencyTitle}>
+              EMERGENCY
+            </Text>
+            <Text style={styles.emergencySubtitle}>
+              Call SCDF Ambulance & Fire — 995
+            </Text>
+          </View>
+
+          <Ionicons
+            name="chevron-forward"
+            size={22}
+            color="#FFFFFF"
           />
-          <Text style={styles.heroTitle}>Climate Emergency Hub</Text>
-          <Text style={styles.heroSubtitle}>Singapore Preparedness & Safety</Text>
+        </TouchableOpacity>
+
+        {/* BEFORE / DURING / AFTER */}
+        <Text style={styles.phaseSectionLabel}>
+          DISASTER RESPONSE
+        </Text>
+
+        <View style={styles.phaseSelector}>
+          {renderPhaseButton(
+            'before',
+            'shield-checkmark',
+            'BEFORE',
+            'Prepare'
+          )}
+
+          {renderPhaseButton(
+            'during',
+            'warning',
+            'DURING',
+            'Respond'
+          )}
+
+          {renderPhaseButton(
+            'after',
+            'refresh',
+            'AFTER',
+            'Recover'
+          )}
         </View>
 
-        {/* LANGUAGE SELECTOR */}
-        <View style={styles.languageSelector}>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-            <Chip
-              icon="translate"
-              selected={language === 'en'}
-              onPress={() => setLanguage('en')}
-              style={styles.chip}
+        {/* ACTIVE PHASE CONTENT */}
+        <View style={styles.contentCard}>
+          {renderCurrentPhase()}
+        </View>
+
+        {/* EMERGENCY CONTACTS */}
+        <View style={styles.contactsHeader}>
+          <View>
+            <Text style={styles.sectionEyebrow}>
+              IMPORTANT NUMBERS
+            </Text>
+            <Text style={styles.sectionTitle}>
+              Emergency Contacts
+            </Text>
+          </View>
+
+          <Ionicons
+            name="call-outline"
+            size={24}
+            color="#F87171"
+          />
+        </View>
+
+        <View style={styles.contactsCard}>
+          {emergencyContacts.map((contact, index) => (
+            <TouchableOpacity
+              key={contact.number}
+              style={[
+                styles.contactRow,
+                index === emergencyContacts.length - 1 &&
+                  styles.contactRowLast,
+              ]}
+              onPress={() => openEmergencyCall(contact.number)}
+              activeOpacity={0.75}
             >
-              English
-            </Chip>
-          </ScrollView>
+              <View
+                style={[
+                  styles.contactIcon,
+                  { backgroundColor: `${contact.color}18` },
+                ]}
+              >
+                <Ionicons
+                  name={contact.icon}
+                  size={21}
+                  color={contact.color}
+                />
+              </View>
+
+              <View style={styles.contactInfo}>
+                <Text style={styles.contactName}>
+                  {contact.name}
+                </Text>
+                <Text style={styles.contactNumber}>
+                  {contact.number}
+                </Text>
+              </View>
+
+              <View style={styles.callCircle}>
+                <Ionicons
+                  name="call"
+                  size={16}
+                  color="#10B981"
+                />
+              </View>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        {/* CATEGORY BUTTONS */}
-        <View style={styles.categoryButtons}>
-          {/* Flood button */}
-          <TouchableOpacity
-            style={[
-              styles.categoryButton,
-              selectedCategory === 'flood' && styles.selectedCategory,
-            ]}
-            onPress={() => setSelectedCategory('flood')}
-          >
-            <Icon name="water-drop" size={34} color="#0284C7" />
-            <Text style={styles.categoryText}>Flood</Text>
-          </TouchableOpacity>
+        {/* FOOTER */}
+        <View style={styles.footerCard}>
+          <Ionicons
+            name="information-circle-outline"
+            size={22}
+            color="#38BDF8"
+          />
 
-          {/* Haze button */}
-          <TouchableOpacity
-            style={[
-              styles.categoryButton,
-              selectedCategory === 'haze' && styles.selectedCategory,
-            ]}
-            onPress={() => setSelectedCategory('haze')}
-          >
-            <Icon name="air" size={34} color="#D97706" />
-            <Text style={styles.categoryText}>Haze</Text>
-          </TouchableOpacity>
-
-          {/* Emergency button */}
-          <TouchableOpacity
-            style={[
-              styles.categoryButton,
-              selectedCategory === 'emergency' && styles.selectedCategory,
-            ]}
-            onPress={() => setSelectedCategory('emergency')}
-          >
-            <Icon name="phone" size={34} color="#DC2626" />
-            <Text style={styles.categoryText}>SOS</Text>
-          </TouchableOpacity>
+          <Text style={styles.footerText}>
+            This hub provides preparedness information and quick access
+            to safety tools. Always follow official emergency instructions
+            during an active incident.
+          </Text>
         </View>
-
-        {/* STATUS BANNER */}
-        <View style={styles.statusBanner}>
-          <Icon name="cloud" size={22} color="white" />
-          <Text style={styles.statusText}>Weather Advisory Monitoring Active</Text>
-        </View>
-
-        {/* MAIN CONTENT CARD */}
-        <Card style={styles.resourceCard}>
-          <Card.Content style={styles.cardContent}>
-            
-            {/* EMERGENCY CONTACTS VIEW */}
-            {selectedCategory === 'emergency' ? (
-              <>
-                <Title style={styles.resourceTitle}>{currentResource.title}</Title>
-                {currentResource.contacts.map((contact, index) => (
-                  <TouchableOpacity
-                    key={index}
-                    style={styles.contactCard}
-                    onPress={() => Linking.openURL(`tel:${contact.number}`)}
-                  >
-                    <Icon name={contact.icon} size={36} color={contact.color} />
-                    <View style={styles.contactInfo}>
-                      <Text style={styles.contactName}>{contact.name}</Text>
-                      <Text style={styles.contactNumber}>{contact.number}</Text>
-                    </View>
-                    <Icon name="phone" size={28} color="#10B981" />
-                  </TouchableOpacity>
-                ))}
-              </>
-            ) : (
-              /* DISASTER INSTRUCTION TILES */
-              <>
-                <Image source={{ uri: currentResource.image }} style={styles.heroImage} />
-                <Title style={styles.resourceTitle}>{currentResource.title}</Title>
-                
-                <View style={styles.resourceContent}>
-                  {currentResource.content.split('\n').map((line, index) => (
-                    <Text key={index} style={styles.contentLine}>
-                      • {line}
-                    </Text>
-                  ))}
-                </View>
-
-                <Title style={styles.kitTitle}>Emergency Kit Items</Title>
-                {currentResource.kit.map((item, index) => (
-                  <View key={index} style={styles.kitItem}>
-                    <Icon name="check-circle" size={24} color="#10B981" />
-                    <Text style={styles.kitText}>{item}</Text>
-                  </View>
-                ))}
-              </>
-            )}
-
-          </Card.Content>
-        </Card>
 
       </ScrollView>
     </LinearGradient>
   );
 };
 
-/* =========================================================
-   STYLES
-========================================================= */
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  heroCard: { backgroundColor: '#FFFFFF', padding: 28, borderRadius: 30, alignItems: 'center', marginBottom: 24, shadowColor: '#CBD5E1', shadowOffset: { width: -6, height: -6 }, shadowOpacity: 0.5, shadowRadius: 10, elevation: 8 },
-  heroTitle: { fontSize: 24, fontWeight: 'bold', color: '#0F172A', marginTop: 14, textAlign: 'center' },
-  heroSubtitle: { fontSize: 15, color: '#64748B', marginTop: 6, textAlign: 'center' },
-  languageSelector: { marginBottom: 24 },
-  chip: { marginRight: 12 },
-  categoryButtons: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 24 },
-  categoryButton: { backgroundColor: '#F1F5F9', width: '31%', paddingVertical: 22, borderRadius: 24, alignItems: 'center', shadowColor: '#FFFFFF', shadowOffset: { width: -6, height: -6 }, shadowOpacity: 1, shadowRadius: 8, elevation: 8 },
-  selectedCategory: { backgroundColor: '#FFE5D9', elevation: 14 },
-  categoryText: { marginTop: 10, fontSize: 16, fontWeight: '600', color: '#0F172A' },
-  statusBanner: { backgroundColor: '#2563EB', padding: 16, borderRadius: 20, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 24 },
-  statusText: { color: 'white', marginLeft: 10, fontSize: 15, fontWeight: '600' },
-  resourceCard: { borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.9)', borderWidth: 1, borderColor: 'rgba(255,255,255,0.5)', elevation: 10, marginBottom: 30 },
-  cardContent: { padding: 24 },
-  heroImage: { width: 140, height: 140, alignSelf: 'center', marginBottom: 18, resizeMode: 'contain' },
-  resourceTitle: { fontSize: 24, fontWeight: 'bold', color: '#1E3A8A', marginBottom: 20, textAlign: 'center' },
-  resourceContent: { marginBottom: 24 },
-  contentLine: { fontSize: 16, lineHeight: 26, marginBottom: 12, color: '#334155' },
-  kitTitle: { fontSize: 20, fontWeight: 'bold', color: '#1E3A8A', marginBottom: 18 },
-  kitItem: { flexDirection: 'row', alignItems: 'center', marginBottom: 16 },
-  kitText: { marginLeft: 14, fontSize: 16, color: '#334155' },
-  contactCard: { flexDirection: 'row', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.75)', borderRadius: 24, padding: 20, marginBottom: 18, borderWidth: 1, borderColor: 'rgba(255,255,255,0.4)', shadowColor: '#94A3B8', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.2, shadowRadius: 12, elevation: 8 },
-  contactInfo: { flex: 1, marginLeft: 16 },
-  contactName: { fontSize: 17, fontWeight: 'bold', color: '#111827' },
-  contactNumber: { fontSize: 15, marginTop: 4, color: '#475569' },
+  container: {
+    flex: 1,
+  },
+
+  scrollContent: {
+    padding: 16,
+    paddingTop: 40,
+    paddingBottom: 50,
+  },
+
+  /* HERO */
+
+  hero: {
+    alignItems: 'center',
+    paddingVertical: 12,
+    marginBottom: 24,
+  },
+
+  heroIcon: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    backgroundColor: '#0C2438',
+    borderWidth: 1,
+    borderColor: '#164E63',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+
+  heroTitle: {
+    color: '#FFFFFF',
+    fontSize: 25,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+
+  heroSubtitle: {
+    color: '#94A3B8',
+    fontSize: 13,
+    marginTop: 7,
+    textAlign: 'center',
+  },
+
+  locationBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 12,
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    paddingHorizontal: 11,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+
+  locationText: {
+    color: '#94A3B8',
+    fontSize: 10,
+    fontWeight: '700',
+    marginLeft: 5,
+  },
+
+  /* QUICK ACCESS */
+
+  quickAccessLabel: {
+    color: '#64748B',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: 10,
+  },
+
+  quickGrid: {
+    flexDirection: 'row',
+    gap: 10,
+    marginBottom: 14,
+  },
+
+  quickCard: {
+    flex: 1,
+    minHeight: 170,
+    borderRadius: 18,
+    padding: 15,
+    borderWidth: 1,
+    position: 'relative',
+  },
+
+  familyCard: {
+    backgroundColor: '#17112D',
+    borderColor: '#4C1D95',
+  },
+
+  healthCard: {
+    backgroundColor: '#06271F',
+    borderColor: '#065F46',
+  },
+
+  quickIconFamily: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    backgroundColor: '#2E1065',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  quickIconHealth: {
+    width: 46,
+    height: 46,
+    borderRadius: 14,
+    backgroundColor: '#064E3B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+
+  quickTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '900',
+  },
+
+  quickDescription: {
+    color: '#94A3B8',
+    fontSize: 10,
+    lineHeight: 15,
+    marginTop: 5,
+  },
+
+  quickArrow: {
+    position: 'absolute',
+    right: 13,
+    bottom: 13,
+  },
+
+  /* EMERGENCY MAIN BUTTON */
+
+  emergencyMainButton: {
+    backgroundColor: '#991B1B',
+    borderWidth: 1,
+    borderColor: '#DC2626',
+    borderRadius: 17,
+    padding: 14,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 28,
+  },
+
+  emergencyIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    backgroundColor: '#DC2626',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  emergencyTextContainer: {
+    flex: 1,
+    marginLeft: 12,
+  },
+
+  emergencyTitle: {
+    color: '#FCA5A5',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1,
+  },
+
+  emergencySubtitle: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '700',
+    marginTop: 3,
+  },
+
+  /* PHASE SELECTOR */
+
+  phaseSectionLabel: {
+    color: '#64748B',
+    fontSize: 10,
+    fontWeight: '900',
+    letterSpacing: 1.5,
+    marginBottom: 10,
+  },
+
+  phaseSelector: {
+    flexDirection: 'row',
+    gap: 8,
+    marginBottom: 14,
+  },
+
+  phaseButton: {
+    flex: 1,
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    borderRadius: 15,
+    paddingVertical: 13,
+    alignItems: 'center',
+  },
+
+  phaseButtonActive: {
+    backgroundColor: '#075985',
+    borderColor: '#0EA5E9',
+  },
+
+  phaseIcon: {
+    width: 35,
+    height: 35,
+    borderRadius: 12,
+    backgroundColor: '#1E293B',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+
+  phaseIconActive: {
+    backgroundColor: '#0284C7',
+  },
+
+  phaseTitle: {
+    color: '#CBD5E1',
+    fontSize: 10,
+    fontWeight: '900',
+  },
+
+  phaseTitleActive: {
+    color: '#FFFFFF',
+  },
+
+  phaseSubtitle: {
+    color: '#64748B',
+    fontSize: 9,
+    marginTop: 2,
+  },
+
+  phaseSubtitleActive: {
+    color: '#BAE6FD',
+  },
+
+  /* CONTENT */
+
+  contentCard: {
+    backgroundColor: '#0F172A',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    padding: 18,
+    marginBottom: 28,
+  },
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+
+  sectionEyebrow: {
+    color: '#38BDF8',
+    fontSize: 9,
+    fontWeight: '900',
+    letterSpacing: 1.4,
+  },
+
+  sectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 21,
+    fontWeight: '900',
+    marginTop: 3,
+  },
+
+  sectionIconBlue: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#082F49',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  sectionIconRed: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#450A0A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  sectionIconGreen: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    backgroundColor: '#064E3B',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  sectionIntro: {
+    color: '#94A3B8',
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 10,
+    marginBottom: 17,
+  },
+
+  infoCard: {
+    flexDirection: 'row',
+    backgroundColor: '#111C2E',
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    padding: 13,
+    marginBottom: 10,
+  },
+
+  infoIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 13,
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
+  infoContent: {
+    flex: 1,
+    marginLeft: 12,
+  },
+
+  infoTitle: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    fontWeight: '800',
+  },
+
+  infoDescription: {
+    color: '#94A3B8',
+    fontSize: 11,
+    lineHeight: 17,
+    marginTop: 3,
+  },
+
+  /* CONTACTS */
+
+  contactsHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+
+  contactsCard: {
+    backgroundColor: '#0F172A',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    paddingHorizontal: 15,
+    marginBottom: 20,
+  },
+
+  contactRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1E293B',
+  },
+
+  contactRowLast: {
+    borderBottomWidth: 0,
+  },
+
+  contactIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 13,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  contactInfo: {
+    flex: 1,
+    marginLeft: 12,
+  },
+
+  contactName: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+  },
+
+  contactNumber: {
+    color: '#64748B',
+    fontSize: 11,
+    marginTop: 3,
+  },
+
+  callCircle: {
+    width: 34,
+    height: 34,
+    borderRadius: 17,
+    backgroundColor: '#064E3B',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  /* FOOTER */
+
+  footerCard: {
+    flexDirection: 'row',
+    backgroundColor: '#082F49',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#075985',
+    padding: 14,
+    alignItems: 'flex-start',
+  },
+
+  footerText: {
+    flex: 1,
+    color: '#BAE6FD',
+    fontSize: 10,
+    lineHeight: 16,
+    marginLeft: 10,
+  },
 });
 
 export default ResourcesScreen;

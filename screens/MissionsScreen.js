@@ -1,445 +1,601 @@
-// import React from 'react';
-// import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
-// import { Ionicons } from '@expo/vector-icons';
-
-// const { width } = Dimensions.get('window');
-
-// export default function MissionsScreen({ navigation }) {
-  
-//   // MAP NODES CONFIGURATION (Sequential Path)
-//   const MAP_MISSIONS = [
-//     {
-//       id: 'GoBag',
-//       level: 1,
-//       title: '🎒 Bug-Out Packing Drill',
-//       desc: 'Optimize custom survival inventories under a strict 15-second window.',
-//       difficulty: 'EASY',
-//       diffColor: '#34D399',
-//       icon: 'briefcase',
-//       reward: '40 XP',
-//       status: 'completed', // 'completed', 'unlocked', 'locked'
-//     },
-//     {
-//       id: 'QuizGame',
-//       level: 2,
-//       title: '⚡ Dynamic Response Quiz',
-//       desc: 'Test quick reflexes on civil emergency protocols under time limits.',
-//       difficulty: 'MEDIUM',
-//       diffColor: '#38BDF8',
-//       icon: 'flash',
-//       reward: '50 XP',
-//       status: 'current',
-//     },
-//     {
-//       id: 'ClimateDefence',
-//       level: 3,
-//       title: '🌍 Climate Defence Simulator',
-//       desc: 'Formulate mitigation blueprints against shifting microclimates.',
-//       difficulty: 'HARD',
-//       diffColor: '#EF4444',
-//       icon: 'earth',
-//       reward: '100 XP',
-//       status: 'locked',
-//     }
-//   ];
-
-//   return (
-//     <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
-      
-//       {/* MAP HEADER */}
-//       <View style={styles.header}>
-//         <View style={styles.badgeRow}>
-//           <Ionicons name="map" size={14} color="#EC4899" />
-//           <Text style={styles.sectionLabel}>CAMPAIGN WORLD MAP</Text>
-//         </View>
-//         <Text style={styles.mainHeading}>Survival Journey</Text>
-//         <Text style={styles.subHeading}>
-//           Progress through the tactical sectors to achieve your First Responder Certification.
-//         </Text>
-//       </View>
-
-//       {/* SQUIGGLY PATH MAP CONTAINER */}
-//       <View style={styles.mapContainer}>
-//         {/* Decorative background winding path line representation */}
-//         <View style={styles.windingLineBackground} />
-
-//         {MAP_MISSIONS.map((mission, index) => {
-//           // Calculate winding offset: even indexes align left, odd align right for the Candy Crush zig-zag effect
-//           const isEven = index % 2 === 0;
-//           const isLocked = mission.status === 'locked';
-//           const isCurrent = mission.status === 'current';
-
-//           return (
-//             <View key={mission.id} style={[styles.nodeRow, isEven ? styles.rowLeft : styles.rowRight]}>
-              
-//               {/* Node Circle / Button */}
-//               <TouchableOpacity
-//                 activeOpacity={isLocked ? 1 : 0.8}
-//                 onPress={() => !isLocked && navigation.navigate(mission.id)}
-//                 style={[
-//                   styles.mapNode,
-//                   isCurrent && styles.nodeCurrent,
-//                   isLocked && styles.nodeLocked,
-//                   { borderColor: mission.diffColor }
-//                 ]}
-//               >
-//                 {/* Status Indicator Icon Overlay */}
-//                 {mission.status === 'completed' && (
-//                   <View style={styles.statusBadgeCompleted}>
-//                     <Ionicons name="checkmark" size={12} color="#FFFFFF" />
-//                   </View>
-//                 )}
-//                 {isLocked && (
-//                   <View style={styles.statusBadgeLocked}>
-//                     <Ionicons name="lock-closed" size={12} color="#94A3B8" />
-//                   </View>
-//                 )}
-
-//                 <Ionicons 
-//                   name={mission.icon} 
-//                   size={28} 
-//                   color={isLocked ? '#475569' : '#FFFFFF'} 
-//                 />
-//                 <Text style={[styles.nodeLevelText, isLocked && { color: '#475569' }]}>
-//                   LVL {mission.level}
-//                 </Text>
-//               </TouchableOpacity>
-
-//               {/* Floating Info Card Attached to Node */}
-//               <View style={[styles.nodeCard, isLocked && styles.cardLocked]}>
-//                 <View style={styles.cardHeaderTop}>
-//                   <View style={[styles.diffTag, { backgroundColor: mission.diffColor + '20', borderColor: mission.diffColor }]}>
-//                     <Text style={[styles.diffTagText, { color: mission.diffColor }]}>{mission.difficulty}</Text>
-//                   </View>
-//                   <View style={styles.rewardPill}>
-//                     <Ionicons name="trophy-outline" size={12} color="#F59E0B" />
-//                     <Text style={styles.rewardText}>{mission.reward}</Text>
-//                   </View>
-//                 </View>
-
-//                 <Text style={[styles.gameTitle, isLocked && { color: '#64748B' }]}>{mission.title}</Text>
-//                 <Text style={[styles.gameDesc, isLocked && { color: '#475569' }]}>{mission.desc}</Text>
-
-//                 {!isLocked ? (
-//                   <TouchableOpacity 
-//                     style={styles.playButton}
-//                     onPress={() => navigation.navigate(mission.id)}
-//                   >
-//                     <Text style={styles.playButtonText}>{isCurrent ? 'Play Mission' : 'Replay Mission'}</Text>
-//                     <Ionicons name="play" size={12} color="#FFFFFF" />
-//                   </TouchableOpacity>
-//                 ) : (
-//                   <Text style={styles.lockedNotice}>Complete previous level to unlock</Text>
-//                 )}
-//               </View>
-
-//             </View>
-//           );
-//         })}
-//       </View>
-
-//       {/* PROGRESS FOOTER BANNER */}
-//       <View style={styles.campaignCard}>
-//         <Ionicons name="ribbon" size={28} color="#A855F7" style={styles.campIcon} />
-//         <View style={{ flex: 1 }}>
-//           <Text style={styles.campTitle}>First Responder Certificate</Text>
-//           <Text style={styles.campSub}>Level 1 of 3 Complete (33%)</Text>
-//           <View style={styles.progressBar}>
-//             <View style={[styles.progressFill, { width: '33%', backgroundColor: '#A855F7' }]} />
-//           </View>
-//         </View>
-//       </View>
-
-//     </ScrollView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, backgroundColor: '#020617', paddingHorizontal: 16 },
-//   header: { paddingTop: 40, marginBottom: 32, alignItems: 'center' },
-//   badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#1E1B4B', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, marginBottom: 8 },
-//   sectionLabel: { color: '#EC4899', fontSize: 10, fontWeight: '800', letterSpacing: 1 },
-//   mainHeading: { color: '#FFFFFF', fontSize: 28, fontWeight: '900', textAlign: 'center' },
-//   subHeading: { color: '#94A3B8', fontSize: 13, lineHeight: 20, textAlign: 'center', marginTop: 4, paddingHorizontal: 20 },
-  
-//   mapContainer: { position: 'relative', gap: 32, marginBottom: 32 },
-//   windingLineBackground: {
-//     position: 'absolute',
-//     top: 20,
-//     bottom: 20,
-//     left: '50%',
-//     width: 4,
-//     backgroundColor: '#1E293B',
-//     transform: [{ translateX: -2 }],
-//     borderRadius: 2,
-//     zIndex: -1,
-//   },
-  
-//   nodeRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-//   rowLeft: { flexDirection: 'row' },
-//   rowRight: { flexDirection: 'row-reverse' },
-
-//   mapNode: {
-//     width: 72,
-//     height: 72,
-//     borderRadius: 36,
-//     backgroundColor: '#0F172A',
-//     borderWidth: 3,
-//     justifyContent: 'center',
-//     alignItems: 'center',
-//     position: 'relative',
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 4 },
-//     shadowOpacity: 0.3,
-//     shadowRadius: 4,
-//     elevation: 6,
-//   },
-//   nodeCurrent: {
-//     backgroundColor: '#1E1B4B',
-//     transform: [{ scale: 1.1 }],
-//   },
-//   nodeLocked: {
-//     backgroundColor: '#090D16',
-//     borderColor: '#1E293B' ? '#1E293B' : '#334155',
-//   },
-//   nodeLevelText: { fontSize: 9, fontWeight: '900', color: '#FFFFFF', position: 'absolute', bottom: 6 },
-  
-//   statusBadgeCompleted: { position: 'absolute', top: -4, right: -4, backgroundColor: '#10B981', width: 20, height: 20, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#020617' },
-//   statusBadgeLocked: { position: 'absolute', top: -4, right: -4, backgroundColor: '#1E293B', width: 20, height: 20, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#020617' },
-
-//   nodeCard: { flex: 1, backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E2937', borderRadius: 20, padding: 14 },
-//   cardLocked: { backgroundColor: '#070A12', borderColor: '#111827' },
-//   cardHeaderTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  
-//   diffTag: { borderWidth: 1, paddingVertical: 2, paddingHorizontal: 8, borderRadius: 6 },
-//   diffTagText: { fontSize: 9, fontWeight: '800' },
-//   rewardPill: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-//   rewardText: { color: '#F59E0B', fontSize: 10, fontWeight: '700' },
-
-//   gameTitle: { color: '#FFFFFF', fontSize: 15, fontWeight: '800', marginBottom: 4 },
-//   gameDesc: { color: '#94A3B8', fontSize: 11, lineHeight: 16, marginBottom: 12 },
-
-//   playButton: { backgroundColor: '#3B82F6', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 8, borderRadius: 10, gap: 6 },
-//   playButtonText: { color: '#FFFFFF', fontSize: 11, fontWeight: '700' },
-//   lockedNotice: { color: '#475569', fontSize: 10, fontStyle: 'italic', textAlign: 'center' },
-
-//   campaignCard: { backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E2937', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center' },
-//   campIcon: { marginRight: 14 },
-//   campTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
-//   campSub: { color: '#64748B', fontSize: 12, marginTop: 1 },
-//   progressBar: { height: 4, backgroundColor: '#1E2937', borderRadius: 2, marginTop: 10 },
-//   progressFill: { height: '100%' }
-// });
-
-
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView, Dimensions } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useUser } from '../contexts/UserContext';
 
-const { width } = Dimensions.get('window');
+export default function MissionsScreen({ navigation, route }) {
+  /*
+   * ---------------------------------------------------------
+   * USER DATA
+   * ---------------------------------------------------------
+   *
+   * Your UserContext should provide:
+   *   points
+   *   coins
+   *
+   * We keep earnedPoints from navigation as a temporary
+   * addition in case a mission sends the user back here
+   * with route.params.earnedPoints.
+   */
+  const { points, coins } = useUser();
 
-export default function MissionsScreen({ navigation }) {
-  
-  // MAP NODES CONFIGURATION (Sequential Path)
+  const [bonusPoints, setBonusPoints] = useState(0);
+
+  useEffect(() => {
+    const earned = Number(route?.params?.earnedPoints || 0);
+
+    if (earned > 0) {
+      setBonusPoints((previous) => previous + earned);
+
+      // Prevent adding the same navigation parameter again
+      // if this screen re-renders.
+      navigation.setParams({
+        earnedPoints: undefined,
+      });
+    }
+  }, [route?.params?.earnedPoints, navigation]);
+
+  const displayedPoints = Number(points || 0) + bonusPoints;
+
+  /*
+   * ---------------------------------------------------------
+   * MISSION DATA
+   * ---------------------------------------------------------
+   *
+   * This is the single source of truth for the campaign.
+   *
+   * Status:
+   *   completed = finished
+   *   current   = available to play
+   *   locked    = unavailable
+   *
+   * You currently have 3 missions.
+   */
   const MAP_MISSIONS = [
     {
       id: 'GoBag',
       level: 1,
       title: 'Bug-Out Packing Drill',
-      desc: 'Optimize custom survival inventories under a strict 15-second window.',
+      desc:
+        'Optimize custom survival inventories under a strict 15-second window.',
       difficulty: 'EASY',
       diffColor: '#34D399',
       icon: 'briefcase-outline',
-      reward: '40 XP',
-      status: 'completed', // 'completed', 'unlocked', 'locked'
+      reward: 40,
+      status: 'completed',
+      tag: 'PREPAREDNESS DRILL',
     },
     {
       id: 'QuizGame',
       level: 2,
       title: 'Dynamic Response Quiz',
-      desc: 'Test quick reflexes on civil emergency protocols under time limits.',
+      desc:
+        'Test quick reflexes on civil emergency protocols under time limits.',
       difficulty: 'MEDIUM',
       diffColor: '#38BDF8',
       icon: 'flash-outline',
-      reward: '50 XP',
+      reward: 50,
       status: 'current',
+      tag: 'CLIMATE CRISIS DRILL',
     },
     {
       id: 'ClimateDefence',
       level: 3,
       title: 'Climate Defence Simulator',
-      desc: 'Formulate mitigation blueprints against shifting microclimates.',
+      desc:
+        'Formulate mitigation blueprints against shifting microclimates.',
       difficulty: 'HARD',
       diffColor: '#EF4444',
       icon: 'globe-outline',
-      reward: '100 XP',
+      reward: 100,
       status: 'locked',
-    }
+      tag: 'ADVANCED RESILIENCE DRILL',
+    },
   ];
 
+  /*
+   * ---------------------------------------------------------
+   * CAMPAIGN PROGRESS
+   * ---------------------------------------------------------
+   */
+  const completedMissions = useMemo(() => {
+    return MAP_MISSIONS.filter(
+      (mission) => mission.status === 'completed'
+    ).length;
+  }, [MAP_MISSIONS]);
+
+  const totalMissions = MAP_MISSIONS.length;
+
+  const progressPercentage =
+    totalMissions > 0
+      ? Math.round((completedMissions / totalMissions) * 100)
+      : 0;
+
+  /*
+   * ---------------------------------------------------------
+   * NAVIGATION
+   * ---------------------------------------------------------
+   *
+   * All mission navigation goes through this function.
+   * This prevents accidentally navigating to locked missions.
+   */
+  const openMission = (mission) => {
+    if (mission.status === 'locked') {
+      return;
+    }
+
+    navigation.navigate(mission.id);
+  };
+
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 60 }} showsVerticalScrollIndicator={false}>
-      
-      {/* --- TOP USER AVATAR & STATS BAR --- */}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.contentContainer}
+      showsVerticalScrollIndicator={false}
+    >
+      {/* =====================================================
+          USER STATS HEADER
+          ===================================================== */}
       <View style={styles.topProfileBar}>
         <View style={styles.avatarContainer}>
           <Ionicons name="person" size={22} color="#38BDF8" />
         </View>
+
         <View style={styles.profileMeta}>
           <Text style={styles.profileName}>First Responder</Text>
-          <View style={styles.coinsBadge}>
-            <Ionicons name="flash" size={12} color="#F59E0B" />
-            <Text style={styles.coinsText}>120 Prep Points</Text>
+
+          <View style={styles.statsRow}>
+            <View style={styles.statItem}>
+              <Ionicons name="flash" size={12} color="#F59E0B" />
+              <Text style={styles.pointsText}>
+                {displayedPoints} PrepPoints
+              </Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <Ionicons name="ellipse" size={9} color="#FBBF24" />
+              <Text style={styles.coinsText}>
+                {Number(coins || 0)} Coins
+              </Text>
+            </View>
           </View>
         </View>
-        <TouchableOpacity style={styles.profileBadgeIcon}>
-          <Ionicons name="shield-checkmark" size={20} color="#10B981" />
-        </TouchableOpacity>
+
+        <View style={styles.profileBadgeIcon}>
+          <Ionicons
+            name="shield-checkmark"
+            size={20}
+            color="#10B981"
+          />
+        </View>
       </View>
 
-      {/* MAP HEADER */}
+      {/* =====================================================
+          MAIN HEADER
+          ===================================================== */}
       <View style={styles.header}>
         <View style={styles.badgeRow}>
-          <Ionicons name="map-outline" size={14} color="#EC4899" />
-          <Text style={styles.sectionLabel}>CAMPAIGN WORLD MAP</Text>
+          <Ionicons
+            name="map-outline"
+            size={14}
+            color="#EC4899"
+          />
+
+          <Text style={styles.sectionLabel}>
+            CAMPAIGN WORLD MAP
+          </Text>
         </View>
-        <Text style={styles.mainHeading}>Survival Journey</Text>
+
+        <Text style={styles.mainHeading}>
+          Missions Hub
+        </Text>
+
         <Text style={styles.subHeading}>
-          Progress through the tactical sectors to achieve your First Responder Certification.
+          Singapore Resilience Drills
+        </Text>
+
+        <Text style={styles.description}>
+          Progress through tactical sectors, complete crisis
+          simulations and build your First Responder certification.
         </Text>
       </View>
 
-      {/* --- REWARDS HUB PROMOTION BANNER (TOP SHORTCUT) --- */}
-      <TouchableOpacity 
+      {/* =====================================================
+          HOW MISSIONS WORK
+          ===================================================== */}
+      <View style={styles.instructionCard}>
+        <View style={styles.instructionHeader}>
+          <Ionicons
+            name="information-circle"
+            size={20}
+            color="#38BDF8"
+          />
+
+          <Text style={styles.instructionTitle}>
+            How Missions Work
+          </Text>
+        </View>
+
+        <View style={styles.instructionRow}>
+          <Ionicons
+            name="flash"
+            size={15}
+            color="#38BDF8"
+          />
+
+          <Text style={styles.instructionText}>
+            Complete crisis simulations and rapid-response drills
+            to earn{' '}
+            <Text style={styles.highlightXp}>
+              PrepPoints (XP)
+            </Text>{' '}
+            and raise your rank.
+          </Text>
+        </View>
+
+        <View style={styles.instructionRow}>
+          <Ionicons
+            name="ribbon"
+            size={15}
+            color="#34D399"
+          />
+
+          <Text style={styles.instructionText}>
+            Complete harder drills and demonstrate strong
+            performance to progress through the campaign.
+          </Text>
+        </View>
+
+        <View style={styles.instructionRow}>
+          <Ionicons
+            name="lock-open"
+            size={15}
+            color="#A855F7"
+          />
+
+          <Text style={styles.instructionText}>
+            Completing a previous campaign level unlocks the
+            next mission.
+          </Text>
+        </View>
+      </View>
+
+      {/* =====================================================
+          REWARDS HUB
+          ===================================================== */}
+      <TouchableOpacity
         style={styles.rewardsLinkBanner}
         onPress={() => navigation.navigate('VoucherStore')}
         activeOpacity={0.85}
       >
         <View style={styles.bannerLeft}>
           <View style={styles.bannerIconBox}>
-            <Ionicons name="gift-outline" size={22} color="#34D399" />
+            <Ionicons
+              name="gift-outline"
+              size={22}
+              color="#34D399"
+            />
           </View>
-          <View style={{ marginLeft: 12, flex: 1 }}>
-            <Text style={styles.bannerHeaderTitle}>Preparedness Rewards Hub</Text>
+
+          <View style={styles.bannerTextContainer}>
+            <Text style={styles.bannerHeaderTitle}>
+              Preparedness Rewards Hub
+            </Text>
+
             <Text style={styles.bannerHeaderSub}>
-              Redeem N95 masks, flood dry bags & heatwave kits with your points!
+              Redeem preparedness rewards with your points.
             </Text>
           </View>
         </View>
-        <Ionicons name="chevron-forward" size={18} color="#94A3B8" />
+
+        <Ionicons
+          name="chevron-forward"
+          size={18}
+          color="#94A3B8"
+        />
       </TouchableOpacity>
 
-      {/* SQUIGGLY PATH MAP CONTAINER */}
+      {/* =====================================================
+          CAMPAIGN MAP
+          ===================================================== */}
+      <View style={styles.mapSectionHeader}>
+        <View>
+          <Text style={styles.mapSectionTitle}>
+            Survival Journey
+          </Text>
+
+          <Text style={styles.mapSectionSubtitle}>
+            {completedMissions} of {totalMissions} missions complete
+          </Text>
+        </View>
+
+        <View style={styles.progressBadge}>
+          <Text style={styles.progressBadgeText}>
+            {progressPercentage}%
+          </Text>
+        </View>
+      </View>
+
       <View style={styles.mapContainer}>
-        {/* Decorative background winding path line representation */}
+        {/* Decorative vertical path */}
         <View style={styles.windingLineBackground} />
 
         {MAP_MISSIONS.map((mission, index) => {
-          // Calculate winding offset: even indexes align left, odd align right for the Candy Crush zig-zag effect
           const isEven = index % 2 === 0;
           const isLocked = mission.status === 'locked';
           const isCurrent = mission.status === 'current';
+          const isCompleted = mission.status === 'completed';
 
           return (
-            <View key={mission.id} style={[styles.nodeRow, isEven ? styles.rowLeft : styles.rowRight]}>
-              
-              {/* Node Circle / Button */}
+            <View
+              key={mission.id}
+              style={[
+                styles.nodeRow,
+                isEven
+                  ? styles.rowLeft
+                  : styles.rowRight,
+              ]}
+            >
+              {/* ---------------------------------------------
+                  MISSION NODE
+                  --------------------------------------------- */}
               <TouchableOpacity
                 activeOpacity={isLocked ? 1 : 0.8}
-                onPress={() => !isLocked && navigation.navigate(mission.id)}
+                disabled={isLocked}
+                onPress={() => openMission(mission)}
                 style={[
                   styles.mapNode,
                   isCurrent && styles.nodeCurrent,
                   isLocked && styles.nodeLocked,
-                  { borderColor: mission.diffColor }
+                  {
+                    borderColor: isLocked
+                      ? '#1E293B'
+                      : mission.diffColor,
+                  },
                 ]}
               >
-                {/* Status Indicator Icon Overlay */}
-                {mission.status === 'completed' && (
+                {isCompleted && (
                   <View style={styles.statusBadgeCompleted}>
-                    <Ionicons name="checkmark" size={12} color="#FFFFFF" />
-                  </View>
-                )}
-                {isLocked && (
-                  <View style={styles.statusBadgeLocked}>
-                    <Ionicons name="lock-closed" size={12} color="#94A3B8" />
+                    <Ionicons
+                      name="checkmark"
+                      size={12}
+                      color="#FFFFFF"
+                    />
                   </View>
                 )}
 
-                <Ionicons 
-                  name={mission.icon} 
-                  size={28} 
-                  color={isLocked ? '#475569' : '#FFFFFF'} 
+                {isLocked && (
+                  <View style={styles.statusBadgeLocked}>
+                    <Ionicons
+                      name="lock-closed"
+                      size={12}
+                      color="#94A3B8"
+                    />
+                  </View>
+                )}
+
+                <Ionicons
+                  name={mission.icon}
+                  size={28}
+                  color={
+                    isLocked
+                      ? '#475569'
+                      : '#FFFFFF'
+                  }
                 />
-                <Text style={[styles.nodeLevelText, isLocked && { color: '#475569' }]}>
+
+                <Text
+                  style={[
+                    styles.nodeLevelText,
+                    isLocked && styles.nodeLevelLocked,
+                  ]}
+                >
                   LVL {mission.level}
                 </Text>
               </TouchableOpacity>
 
-              {/* Floating Info Card Attached to Node */}
-              <View style={[styles.nodeCard, isLocked && styles.cardLocked]}>
+              {/* ---------------------------------------------
+                  MISSION INFORMATION CARD
+                  --------------------------------------------- */}
+              <View
+                style={[
+                  styles.nodeCard,
+                  isLocked && styles.cardLocked,
+                ]}
+              >
                 <View style={styles.cardHeaderTop}>
-                  <View style={[styles.diffTag, { backgroundColor: mission.diffColor + '20', borderColor: mission.diffColor }]}>
-                    <Text style={[styles.diffTagText, { color: mission.diffColor }]}>{mission.difficulty}</Text>
+                  <View
+                    style={[
+                      styles.diffTag,
+                      {
+                        backgroundColor:
+                          mission.diffColor + '20',
+                        borderColor:
+                          mission.diffColor,
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.diffTagText,
+                        {
+                          color:
+                            mission.diffColor,
+                        },
+                      ]}
+                    >
+                      {mission.difficulty}
+                    </Text>
                   </View>
+
                   <View style={styles.rewardPill}>
-                    <Ionicons name="trophy-outline" size={12} color="#F59E0B" />
-                    <Text style={styles.rewardText}>{mission.reward}</Text>
+                    <Ionicons
+                      name="trophy-outline"
+                      size={12}
+                      color="#F59E0B"
+                    />
+
+                    <Text style={styles.rewardText}>
+                      {mission.reward} XP
+                    </Text>
                   </View>
                 </View>
 
-                <Text style={[styles.gameTitle, isLocked && { color: '#64748B' }]}>{mission.title}</Text>
-                <Text style={[styles.gameDesc, isLocked && { color: '#475569' }]}>{mission.desc}</Text>
+                <Text style={styles.missionTag}>
+                  {mission.tag}
+                </Text>
 
+                <Text
+                  style={[
+                    styles.gameTitle,
+                    isLocked && styles.lockedTitle,
+                  ]}
+                >
+                  {mission.title}
+                </Text>
+
+                <Text
+                  style={[
+                    styles.gameDesc,
+                    isLocked && styles.lockedDescription,
+                  ]}
+                >
+                  {mission.desc}
+                </Text>
+
+                {/* Mission action */}
                 {!isLocked ? (
-                  <TouchableOpacity 
+                  <TouchableOpacity
                     style={styles.playButton}
-                    onPress={() => navigation.navigate(mission.id)}
+                    onPress={() => openMission(mission)}
+                    activeOpacity={0.8}
                   >
-                    <Text style={styles.playButtonText}>{isCurrent ? 'Play Mission' : 'Replay Mission'}</Text>
-                    <Ionicons name="play" size={12} color="#FFFFFF" />
+                    <Text style={styles.playButtonText}>
+                      {isCurrent
+                        ? 'Play Mission'
+                        : 'Replay Mission'}
+                    </Text>
+
+                    <Ionicons
+                      name="play"
+                      size={12}
+                      color="#FFFFFF"
+                    />
                   </TouchableOpacity>
                 ) : (
-                  <Text style={styles.lockedNotice}>Complete previous level to unlock</Text>
+                  <View style={styles.lockedContainer}>
+                    <Ionicons
+                      name="lock-closed-outline"
+                      size={13}
+                      color="#475569"
+                    />
+
+                    <Text style={styles.lockedNotice}>
+                      Complete previous level to unlock
+                    </Text>
+                  </View>
                 )}
               </View>
-
             </View>
           );
         })}
       </View>
 
-      {/* PROGRESS FOOTER BANNER */}
+      {/* =====================================================
+          CERTIFICATION PROGRESS
+          ===================================================== */}
       <View style={styles.campaignCard}>
-        <Ionicons name="ribbon-outline" size={28} color="#A855F7" style={styles.campIcon} />
-        <View style={{ flex: 1 }}>
-          <Text style={styles.campTitle}>First Responder Certificate</Text>
-          <Text style={styles.campSub}>Level 1 of 3 Complete (33%)</Text>
+        <View style={styles.campIconContainer}>
+          <Ionicons
+            name="ribbon-outline"
+            size={28}
+            color="#A855F7"
+          />
+        </View>
+
+        <View style={styles.campaignContent}>
+          <Text style={styles.campTitle}>
+            First Responder Certificate
+          </Text>
+
+          <Text style={styles.campSub}>
+            Level {completedMissions} of {totalMissions}{' '}
+            Complete ({progressPercentage}%)
+          </Text>
+
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, { width: '33%', backgroundColor: '#A855F7' }]} />
+            <View
+              style={[
+                styles.progressFill,
+                {
+                  width: `${progressPercentage}%`,
+                },
+              ]}
+            />
           </View>
         </View>
       </View>
 
+      {/* =====================================================
+          COMPLETION MESSAGE
+          ===================================================== */}
+      {completedMissions === totalMissions && (
+        <View style={styles.completeCard}>
+          <Ionicons
+            name="checkmark-circle"
+            size={24}
+            color="#34D399"
+          />
+
+          <View style={styles.completeTextContainer}>
+            <Text style={styles.completeTitle}>
+              Campaign Complete
+            </Text>
+
+            <Text style={styles.completeSubtitle}>
+              You have completed all available resilience
+              missions.
+            </Text>
+          </View>
+        </View>
+      )}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617', paddingHorizontal: 16 },
-  
-  // TOP PROFILE BAR STYLES
+  container: {
+    flex: 1,
+    backgroundColor: '#020617',
+  },
+
+  contentContainer: {
+    paddingHorizontal: 16,
+    paddingBottom: 60,
+  },
+
+  /* =========================================================
+     PROFILE
+     ========================================================= */
+
   topProfileBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#0F172A',
     borderWidth: 1,
-    borderColor: '#1E2937',
+    borderColor: '#1E293B',
     borderRadius: 16,
     padding: 10,
     marginTop: 40,
-    marginBottom: 10,
+    marginBottom: 18,
   },
+
   avatarContainer: {
     width: 40,
     height: 40,
@@ -450,26 +606,43 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#38BDF8',
   },
+
   profileMeta: {
     flex: 1,
     marginLeft: 12,
   },
+
   profileName: {
     color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '700',
   },
-  coinsBadge: {
+
+  statsRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    marginTop: 3,
+  },
+
+  statItem: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
-    marginTop: 2,
   },
-  coinsText: {
+
+  pointsText: {
     color: '#F59E0B',
     fontSize: 11,
     fontWeight: '800',
   },
+
+  coinsText: {
+    color: '#FBBF24',
+    fontSize: 11,
+    fontWeight: '800',
+  },
+
   profileBadgeIcon: {
     width: 32,
     height: 32,
@@ -479,13 +652,106 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  header: { paddingTop: 10, marginBottom: 16, alignItems: 'center' },
-  badgeRow: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: '#1E1B4B', paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20, marginBottom: 8 },
-  sectionLabel: { color: '#EC4899', fontSize: 10, fontWeight: '800', letterSpacing: 1 },
-  mainHeading: { color: '#FFFFFF', fontSize: 28, fontWeight: '900', textAlign: 'center' },
-  subHeading: { color: '#94A3B8', fontSize: 13, lineHeight: 20, textAlign: 'center', marginTop: 4, paddingHorizontal: 20 },
-  
-  // VOUCHER BANNER STYLES
+  /* =========================================================
+     HEADER
+     ========================================================= */
+
+  header: {
+    paddingTop: 4,
+    marginBottom: 18,
+    alignItems: 'center',
+  },
+
+  badgeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: '#1E1B4B',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 20,
+    marginBottom: 8,
+  },
+
+  sectionLabel: {
+    color: '#EC4899',
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+
+  mainHeading: {
+    color: '#FFFFFF',
+    fontSize: 28,
+    fontWeight: '900',
+    textAlign: 'center',
+  },
+
+  subHeading: {
+    color: '#38BDF8',
+    fontSize: 13,
+    fontWeight: '700',
+    marginTop: 3,
+  },
+
+  description: {
+    color: '#94A3B8',
+    fontSize: 13,
+    lineHeight: 20,
+    textAlign: 'center',
+    marginTop: 7,
+    paddingHorizontal: 18,
+  },
+
+  /* =========================================================
+     HOW MISSIONS WORK
+     ========================================================= */
+
+  instructionCard: {
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+  },
+
+  instructionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    gap: 8,
+  },
+
+  instructionTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+  },
+
+  instructionRow: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    gap: 9,
+    marginBottom: 9,
+  },
+
+  instructionText: {
+    flex: 1,
+    color: '#FFFFFF',
+    fontSize: 12,
+    lineHeight: 18,
+  },
+
+  highlightXp: {
+    color: '#38BDF8',
+    fontWeight: '800',
+  },
+
+  /* =========================================================
+     REWARDS
+     ========================================================= */
+
   rewardsLinkBanner: {
     flexDirection: 'row',
     backgroundColor: '#064E3B',
@@ -493,44 +759,95 @@ const styles = StyleSheet.create({
     borderColor: '#059669',
     borderRadius: 16,
     padding: 14,
-    marginBottom: 28,
+    marginBottom: 24,
     alignItems: 'center',
     justifyContent: 'space-between',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
   },
+
   bannerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
     flex: 1,
   },
+
   bannerIconBox: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#022C22',
+    backgroundColor: '#FFFFFF',
     justifyContent: 'center',
     alignItems: 'center',
   },
+
+  bannerTextContainer: {
+    marginLeft: 12,
+    flex: 1,
+  },
+
   bannerHeaderTitle: {
-    color: '#34D399',
+    color: '#FFFFFF',
     fontSize: 13,
     fontWeight: '800',
   },
+
   bannerHeaderSub: {
-    color: '#A7F3D0',
+    color: '#FFFFFF',
     fontSize: 11,
     marginTop: 2,
   },
 
-  mapContainer: { position: 'relative', gap: 32, marginBottom: 32 },
+  /* =========================================================
+     MAP HEADER
+     ========================================================= */
+
+  mapSectionHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+
+  mapSectionTitle: {
+    color: '#FFFFFF',
+    fontSize: 19,
+    fontWeight: '900',
+  },
+
+  mapSectionSubtitle: {
+    color: '#64748B',
+    fontSize: 11,
+    marginTop: 2,
+  },
+
+  progressBadge: {
+    backgroundColor: '#1E1B4B',
+    borderWidth: 1,
+    borderColor: '#7C3AED',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+  },
+
+  progressBadgeText: {
+    color: '#C084FC',
+    fontSize: 11,
+    fontWeight: '900',
+  },
+
+  /* =========================================================
+     MAP
+     ========================================================= */
+
+  mapContainer: {
+    position: 'relative',
+    gap: 32,
+    marginBottom: 28,
+  },
+
   windingLineBackground: {
     position: 'absolute',
-    top: 20,
-    bottom: 20,
+    top: 30,
+    bottom: 30,
     left: '50%',
     width: 4,
     backgroundColor: '#1E293B',
@@ -538,10 +855,20 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     zIndex: -1,
   },
-  
-  nodeRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
-  rowLeft: { flexDirection: 'row' },
-  rowRight: { flexDirection: 'row-reverse' },
+
+  nodeRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 14,
+  },
+
+  rowLeft: {
+    flexDirection: 'row',
+  },
+
+  rowRight: {
+    flexDirection: 'row-reverse',
+  },
 
   mapNode: {
     width: 72,
@@ -552,45 +879,262 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     position: 'relative',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
+    shadowColor: '#FFFFFF',
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 6,
   },
+
   nodeCurrent: {
-    backgroundColor: '#1E1B4B',
-    transform: [{ scale: 1.1 }],
+    backgroundColor: '#484B1B',
+    transform: [{ scale: 1.08 }],
   },
+
   nodeLocked: {
     backgroundColor: '#090D16',
     borderColor: '#1E293B',
+    shadowOpacity: 0,
   },
-  nodeLevelText: { fontSize: 9, fontWeight: '900', color: '#FFFFFF', position: 'absolute', bottom: 6 },
-  
-  statusBadgeCompleted: { position: 'absolute', top: -4, right: -4, backgroundColor: '#10B981', width: 20, height: 20, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#020617' },
-  statusBadgeLocked: { position: 'absolute', top: -4, right: -4, backgroundColor: '#1E293B', width: 20, height: 20, borderRadius: 10, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: '#020617' },
 
-  nodeCard: { flex: 1, backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E2937', borderRadius: 20, padding: 14 },
-  cardLocked: { backgroundColor: '#070A12', borderColor: '#111827' },
-  cardHeaderTop: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 },
-  
-  diffTag: { borderWidth: 1, paddingVertical: 2, paddingHorizontal: 8, borderRadius: 6 },
-  diffTagText: { fontSize: 9, fontWeight: '800' },
-  rewardPill: { flexDirection: 'row', alignItems: 'center', gap: 4 },
-  rewardText: { color: '#F59E0B', fontSize: 10, fontWeight: '700' },
+  nodeLevelText: {
+    fontSize: 9,
+    fontWeight: '900',
+    color: '#FFFFFF',
+    position: 'absolute',
+    bottom: 6,
+  },
 
-  gameTitle: { color: '#FFFFFF', fontSize: 15, fontWeight: '800', marginBottom: 4 },
-  gameDesc: { color: '#94A3B8', fontSize: 11, lineHeight: 16, marginBottom: 12 },
+  nodeLevelLocked: {
+    color: '#475569',
+  },
 
-  playButton: { backgroundColor: '#3B82F6', flexDirection: 'row', justifyContent: 'center', alignItems: 'center', paddingVertical: 8, borderRadius: 10, gap: 6 },
-  playButtonText: { color: '#FFFFFF', fontSize: 11, fontWeight: '700' },
-  lockedNotice: { color: '#475569', fontSize: 10, fontStyle: 'italic', textAlign: 'center' },
+  statusBadgeCompleted: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#10B981',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#020617',
+    zIndex: 5,
+  },
 
-  campaignCard: { backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E2937', borderRadius: 18, padding: 16, flexDirection: 'row', alignItems: 'center' },
-  campIcon: { marginRight: 14 },
-  campTitle: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
-  campSub: { color: '#64748B', fontSize: 12, marginTop: 1 },
-  progressBar: { height: 4, backgroundColor: '#1E2937', borderRadius: 2, marginTop: 10 },
-  progressFill: { height: '100%' }
+  statusBadgeLocked: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
+    backgroundColor: '#1E293B',
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: '#020617',
+    zIndex: 5,
+  },
+
+  /* =========================================================
+     MISSION CARDS
+     ========================================================= */
+
+  nodeCard: {
+    flex: 1,
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    borderRadius: 20,
+    padding: 14,
+  },
+
+  cardLocked: {
+    backgroundColor: '#070A12',
+    borderColor: '#111827',
+  },
+
+  cardHeaderTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 7,
+  },
+
+  diffTag: {
+    borderWidth: 1,
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 6,
+  },
+
+  diffTagText: {
+    fontSize: 9,
+    fontWeight: '800',
+  },
+
+  rewardPill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+
+  rewardText: {
+    color: '#F59E0B',
+    fontSize: 10,
+    fontWeight: '700',
+  },
+
+  missionTag: {
+    color: '#64748B',
+    fontSize: 8,
+    fontWeight: '900',
+    letterSpacing: 0.8,
+    marginBottom: 4,
+  },
+
+  gameTitle: {
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '800',
+    marginBottom: 4,
+  },
+
+  lockedTitle: {
+    color: '#64748B',
+  },
+
+  gameDesc: {
+    color: '#94A3B8',
+    fontSize: 11,
+    lineHeight: 16,
+    marginBottom: 12,
+  },
+
+  lockedDescription: {
+    color: '#475569',
+  },
+
+  playButton: {
+    backgroundColor: '#3B82F6',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderRadius: 10,
+    gap: 6,
+  },
+
+  playButtonText: {
+    color: '#FFFFFF',
+    fontSize: 11,
+    fontWeight: '700',
+  },
+
+  lockedContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 5,
+  },
+
+  lockedNotice: {
+    color: '#475569',
+    fontSize: 10,
+    fontStyle: 'italic',
+    textAlign: 'center',
+  },
+
+  /* =========================================================
+     CERTIFICATE
+     ========================================================= */
+
+  campaignCard: {
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    borderRadius: 18,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+  },
+
+  campIconContainer: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: '#2E1065',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 14,
+  },
+
+  campaignContent: {
+    flex: 1,
+  },
+
+  campTitle: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+
+  campSub: {
+    color: '#64748B',
+    fontSize: 12,
+    marginTop: 2,
+  },
+
+  progressBar: {
+    height: 5,
+    backgroundColor: '#1E293B',
+    borderRadius: 3,
+    marginTop: 10,
+    overflow: 'hidden',
+  },
+
+  progressFill: {
+    height: '100%',
+    backgroundColor: '#A855F7',
+    borderRadius: 3,
+  },
+
+  /* =========================================================
+     COMPLETION
+     ========================================================= */
+
+  completeCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#064E3B',
+    borderWidth: 1,
+    borderColor: '#059669',
+    borderRadius: 16,
+    padding: 15,
+  },
+
+  completeTextContainer: {
+    flex: 1,
+    marginLeft: 10,
+  },
+
+  completeTitle: {
+    color: '#34D399',
+    fontSize: 14,
+    fontWeight: '800',
+  },
+
+  completeSubtitle: {
+    color: '#A7F3D0',
+    fontSize: 11,
+    lineHeight: 16,
+    marginTop: 2,
+  },
 });

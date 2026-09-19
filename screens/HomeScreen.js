@@ -341,10 +341,24 @@ export default function HomeScreen({ navigation }) {
     const healthProgress = (hasBloodType + hasAllergiesLogged + hasQrGenerated) / 3;
 
     return [
-      { id: 'QuizGame', title: 'Quiz Mastery', progress: quizProgress, icon: 'school-outline', color: '#6366F1' },
-      { id: 'GoBag', title: 'Go Bag Deployment', progress: goBagProgress, icon: 'bag-outline', color: '#10B981' },
-      { id: 'FamilySafety', title: 'Family Sync Link', progress: familyProgress, icon: 'people-outline', color: '#F59E0B' },
-      { id: 'HealthQR', title: 'Health ID Matrix', progress: healthProgress, icon: 'medical-outline', color: '#EF4444' },
+      {
+        id: 'Missions',
+        title: 'Missions',
+        progress: quizProgress,
+        icon: 'school-outline',
+        color: '#6366F1',
+      },
+      {
+        id: 'Profile',
+        title: 'Profile',
+        progress: (
+          goBagProgress +
+          familyProgress +
+          healthProgress
+        ) / 3,
+        icon: 'person-circle-outline',
+        color: '#10B981',
+      },
     ];
   }, [user]);
 
