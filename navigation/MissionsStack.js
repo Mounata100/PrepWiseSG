@@ -15,6 +15,7 @@ export default function MissionsStack() {
       <Stack.Screen name="GoBag" component={GoBagScreen} />
       <Stack.Screen name="QuizGame" component={QuizGameScreen} />
       <Stack.Screen name="ClimateDefence" component={ClimateDefence} />
+      <Stack.Screen name="Voucher" component={VoucherScreen} />
     </Stack.Navigator>
   );
 }

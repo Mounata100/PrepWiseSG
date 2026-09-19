@@ -8,108 +8,98 @@ import {
   FlatList,
   Modal,
   Alert,
-  SafeAreaView,
   StatusBar,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
-import { useUser } from '../contexts/UserContext'; // Adjust path if needed
+import { useUser } from '../contexts/UserContext';
 
-// Mock Vouchers Data (Healthy365 style)
-const AVAILABLE_VOUCHERS = [
+const AVAILABLE_REWARDS = [
   {
-    id: 'v1',
-    merchant: 'FairPrice',
-    title: '$5 FairPrice eVoucher',
+    id: 'r1',
+    category: 'Haze Protection',
+    title: 'N95 Respirator Mask Pack (Box of 10)',
+    cost: 350,
+    icon: 'medical-outline',
+    description: 'High-filtration masks essential for shielding your respiratory system during severe cross-border haze conditions.',
+    code: 'HAZE-N95-01',
+  },
+  {
+    id: 'r2',
+    category: 'Flood Preparedness',
+    title: 'Waterproof Document & Tech Dry Bag',
     cost: 500,
-    category: 'Groceries',
-    icon: 'cart-outline',
-    description: 'Valid for 30 days at all FairPrice outlets across Singapore.',
-    code: 'FP-SG365-9821',
+    icon: 'water-outline',
+    description: 'Heavy-duty sealable pouch to keep passports, insurance papers, and emergency cash dry during sudden flash floods.',
+    code: 'FLOOD-BAG-02',
   },
   {
-    id: 'v2',
-    merchant: 'Hawker Centre',
-    title: '$3 CDC Meal Voucher',
-    cost: 300,
-    category: 'Food',
-    icon: 'restaurant-outline',
-    description: 'Redeemable at participating SG Hawker Stalls and Coffee Shops.',
-    code: 'HWK-8821-FOOD',
+    id: 'r3',
+    category: 'Heatwave Safety',
+    title: 'Electrolyte & Oral Rehydration Kit',
+    cost: 250,
+    icon: 'sunny-outline',
+    description: 'Essential rehydration salts and cooling patches to prevent heat exhaustion and dehydration during extreme heat waves.',
+    code: 'HEAT-ORC-03',
   },
   {
-    id: 'v3',
-    merchant: 'LiHO Tea',
-    title: 'Free Medium Bubble Tea',
-    cost: 450,
-    category: 'Beverage',
-    icon: 'cafe-outline',
-    description: 'Valid for standard size milk teas. Top up available for toppings.',
-    code: 'LIHO-BOBA-7711',
+    id: 'r4',
+    category: 'Emergency Utility',
+    title: 'Solar-Powered Hand Crank Emergency Radio',
+    cost: 900,
+    icon: 'radio-outline',
+    description: 'Stay updated on weather advisories and evacuation orders even during total power grid and cellular network outages.',
+    code: 'UTILITY-RADIO-04',
   },
   {
-    id: 'v4',
-    merchant: 'SMRT / SimplyGo',
-    title: '$2 Transit Top-Up',
-    cost: 200,
-    category: 'Transport',
-    icon: 'bus-outline',
-    description: 'Instant credit top-up to your SimplyGo EZ-Link account.',
-    code: 'SMRT-BUS-3320',
-  },
-  {
-    id: 'v5',
-    merchant: 'Decathlon',
-    title: '$10 Sports Equipment eVoucher',
-    cost: 950,
-    category: 'Fitness',
+    id: 'r5',
+    category: 'Family Kit',
+    title: 'Portable First Aid Trauma Module',
+    cost: 650,
     icon: 'fitness-outline',
-    description: 'Gear up! Redeemable at all Decathlon SG stores or online app.',
-    code: 'DECA-FIT-5541',
+    description: 'Compact medical kit stocked with bandages, antiseptic wipes, and burn gel tailored for common urban emergencies.',
+    code: 'KIT-FA-05',
   },
 ];
 
 export default function VoucherStoreScreen({ navigation }) {
-  // Pull coins and update functions from your UserContext if available,
-  // or default to local state for testing
-  const userContext = useUser ? useUser() : null;
-  const userCoins = userContext?.currentUserCoins ?? 1200; // Mock 1200 coins fallback
+  const { user, spendPrepCoins, addInventoryItem } = useUser();
+  
+  const currentUserCoins = user?.prepCoins ?? 0;
+  const myInventory = user?.inventory ?? [];
 
-  const [activeTab, setActiveTab] = useState('store'); // 'store' or 'my_vouchers'
-  const [selectedVoucher, setSelectedVoucher] = useState(null);
-  const [myClaimedVouchers, setMyClaimedVouchers] = useState([]);
-  const [selectedClaimedVoucher, setSelectedClaimedVoucher] = useState(null);
+  const [activeTab, setActiveTab] = useState('store'); 
+  const [selectedReward, setSelectedReward] = useState(null);
+  const [selectedInventoryItem, setSelectedInventoryItem] = useState(null);
 
-  // Handle Voucher Purchase with Coins
   const handleRedeemConfirm = () => {
-    if (!selectedVoucher) return;
+    if (!selectedReward) return;
 
-    if (userCoins < selectedVoucher.cost) {
+    if (currentUserCoins < selectedReward.cost) {
       Alert.alert(
-        'Insufficient Coins',
-        `You need ${selectedVoucher.cost - userCoins} more coins to redeem this voucher! Complete daily drills to earn more.`
+        'Insufficient Prep Points',
+        `You need ${selectedReward.cost - currentUserCoins} more points to claim this preparedness item. Complete daily hazard quizzes and drills to earn more!`
       );
       return;
     }
 
-    // Deduct coins if function exists in Context
-    if (userContext?.spendCoins) {
-      userContext.spendCoins(selectedVoucher.cost);
-    }
+    // Deduct coins persistently
+    spendPrepCoins(selectedReward.cost);
 
-    // Add to My Vouchers list
-    const newClaimedItem = {
-      ...selectedVoucher,
-      claimedAt: new Date().toLocaleDateString('en-SG'),
-      redemptionCode: `${selectedVoucher.code}-${Math.floor(1000 + Math.random() * 9000)}`,
+    // Save item persistently to user inventory
+    const newInventoryItem = {
+      ...selectedReward,
+      unlockedAt: new Date().toLocaleDateString('en-SG'),
+      serialCode: `${selectedReward.code}-${Math.floor(1000 + Math.random() * 9000)}`,
     };
 
-    setMyClaimedVouchers([newClaimedItem, ...myClaimedVouchers]);
-    setSelectedVoucher(null);
+    addInventoryItem(newInventoryItem);
+    setSelectedReward(null);
 
     Alert.alert(
-      '🎉 Redemption Successful!',
-      `You redeemed ${newClaimedItem.title} for ${selectedVoucher.cost} coins. Check 'My Vouchers' to view your promo code.`,
-      [{ text: 'View My Vouchers', onPress: () => setActiveTab('my_vouchers') }]
+      '🎉 Preparedness Item Claimed!',
+      `You successfully secured your voucher for ${newInventoryItem.title}. Check 'My Vouchers' to view your redemption code.`,
+      [{ text: 'View My Vouchers', onPress: () => setActiveTab('my_inventory') }]
     );
   };
 
@@ -122,29 +112,29 @@ export default function VoucherStoreScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Voucher Rewards</Text>
+        <Text style={styles.headerTitle}>Preparedness Rewards Hub</Text>
         <View style={styles.coinBadge}>
-          <Ionicons name="ribbon" size={16} color="#F59E0B" />
-          <Text style={styles.coinText}>{userCoins} PTS</Text>
+          <Ionicons name="shield-checkmark" size={16} color="#34D399" />
+          <Text style={styles.coinText}>{currentUserCoins} PTS</Text>
         </View>
       </View>
 
-      {/* Healthy365 Style Segmented Control Header */}
+      {/* Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity
           style={[styles.tabButton, activeTab === 'store' && styles.activeTabButton]}
           onPress={() => setActiveTab('store')}
         >
           <Text style={[styles.tabText, activeTab === 'store' && styles.activeTabText]}>
-            Redeem Rewards
+            Available Rewards
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.tabButton, activeTab === 'my_vouchers' && styles.activeTabButton]}
-          onPress={() => setActiveTab('my_vouchers')}
+          style={[styles.tabButton, activeTab === 'my_inventory' && styles.activeTabButton]}
+          onPress={() => setActiveTab('my_inventory')}
         >
-          <Text style={[styles.tabText, activeTab === 'my_vouchers' && styles.activeTabText]}>
-            My Vouchers ({myClaimedVouchers.length})
+          <Text style={[styles.tabText, activeTab === 'my_inventory' && styles.activeTabText]}>
+            My Vouchers ({myInventory.length})
           </Text>
         </TouchableOpacity>
       </View>
@@ -153,84 +143,84 @@ export default function VoucherStoreScreen({ navigation }) {
       {activeTab === 'store' ? (
         <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
           <View style={styles.bannerContainer}>
-            <Ionicons name="shield-checkmark" size={28} color="#10B981" />
+            <Ionicons name="alert-circle-outline" size={28} color="#34D399" />
             <View style={styles.bannerTextContainer}>
-              <Text style={styles.bannerTitle}>No Cash Required!</Text>
+              <Text style={styles.bannerTitle}>Redeem Your Safety Points</Text>
               <Text style={styles.bannerSub}>
-                Trade your disaster prep coins earned from drills for real merchant eVouchers.
+                Exchange your earned points for real emergency gear, protection kits, and survival essentials against haze, floods, and heatwaves.
               </Text>
             </View>
           </View>
 
-          <Text style={styles.sectionTitle}>Available eVouchers</Text>
+          <Text style={styles.sectionTitle}>Emergency Readiness Supplies</Text>
 
-          {AVAILABLE_VOUCHERS.map((voucher) => {
-            const canAfford = userCoins >= voucher.cost;
+          {AVAILABLE_REWARDS.map((reward) => {
+            const canAfford = currentUserCoins >= reward.cost;
             return (
               <TouchableOpacity
-                key={voucher.id}
+                key={reward.id}
                 style={styles.voucherCard}
-                onPress={() => setSelectedVoucher(voucher)}
+                onPress={() => setSelectedReward(reward)}
               >
                 <View style={styles.voucherIconBox}>
-                  <Ionicons name={voucher.icon} size={30} color="#0F766E" />
+                  <Ionicons name={reward.icon} size={28} color="#0D9488" />
                 </View>
 
                 <View style={styles.voucherInfo}>
-                  <Text style={styles.merchantName}>{voucher.merchant}</Text>
-                  <Text style={styles.voucherTitle}>{voucher.title}</Text>
-                  <Text style={styles.voucherCat}>{voucher.category}</Text>
+                  <Text style={styles.merchantName}>{reward.category.toUpperCase()}</Text>
+                  <Text style={styles.voucherTitle}>{reward.title}</Text>
+                  <Text style={styles.voucherCat}>{reward.description.substring(0, 48)}...</Text>
                 </View>
 
                 <View style={styles.costBadgeContainer}>
                   <View style={[styles.costBadge, !canAfford && styles.costBadgeDisabled]}>
-                    <Ionicons name="ribbon-outline" size={14} color="white" />
-                    <Text style={styles.costText}>{voucher.cost} PTS</Text>
+                    <Ionicons name="shield-outline" size={14} color="white" />
+                    <Text style={styles.costText}>{reward.cost} PTS</Text>
                   </View>
-                  <Text style={styles.tapToView}>Tap to view</Text>
+                  <Text style={styles.tapToView}>Tap to redeem</Text>
                 </View>
               </TouchableOpacity>
             );
           })}
         </ScrollView>
       ) : (
-        /* MY CLAIMED VOUCHERS TAB */
+        /* MY INVENTORY / VOUCHERS TAB */
         <View style={styles.myVouchersContainer}>
-          {myClaimedVouchers.length === 0 ? (
+          {myInventory.length === 0 ? (
             <View style={styles.emptyState}>
-              <Ionicons name="ticket-outline" size={64} color="#475569" />
-              <Text style={styles.emptyTitle}>No Vouchers Redeemed Yet</Text>
+              <Ionicons name="receipt-outline" size={64} color="#64748B" />
+              <Text style={styles.emptyTitle}>No Vouchers Claimed Yet</Text>
               <Text style={styles.emptySub}>
-                Complete quizzes and preparedness drills to collect coins and claim your first rewards!
+                Complete safety modules, hazard drills, and quizzes to accumulate points and claim real emergency gear vouchers!
               </Text>
               <TouchableOpacity
                 style={styles.exploreBtn}
                 onPress={() => setActiveTab('store')}
               >
-                <Text style={styles.exploreBtnText}>Browse Voucher Store</Text>
+                <Text style={styles.exploreBtnText}>Browse Rewards Store</Text>
               </TouchableOpacity>
             </View>
           ) : (
             <FlatList
-              data={myClaimedVouchers}
+              data={myInventory}
               keyExtractor={(item, idx) => item.id + idx}
               contentContainerStyle={{ padding: 20 }}
               renderItem={({ item }) => (
                 <TouchableOpacity
                   style={styles.claimedCard}
-                  onPress={() => setSelectedClaimedVoucher(item)}
+                  onPress={() => setSelectedInventoryItem(item)}
                 >
                   <View style={styles.claimedHeader}>
-                    <Text style={styles.claimedMerchant}>{item.merchant}</Text>
+                    <Text style={styles.claimedMerchant}>{item.category.toUpperCase()}</Text>
                     <View style={styles.activeTag}>
-                      <Text style={styles.activeTagText}>READY TO USE</Text>
+                      <Text style={styles.activeTagText}>READY TO REDEEM</Text>
                     </View>
                   </View>
                   <Text style={styles.claimedTitle}>{item.title}</Text>
-                  <Text style={styles.claimedDate}>Claimed on: {item.claimedAt}</Text>
+                  <Text style={styles.claimedDate}>Claimed on: {item.unlockedAt}</Text>
                   <View style={styles.codeSnippetBox}>
-                    <Text style={styles.codeSnippetLabel}>CODE:</Text>
-                    <Text style={styles.codeSnippetValue}>{item.redemptionCode}</Text>
+                    <Text style={styles.codeSnippetLabel}>VOUCHER CODE:</Text>
+                    <Text style={styles.codeSnippetValue}>{item.serialCode}</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -239,34 +229,34 @@ export default function VoucherStoreScreen({ navigation }) {
         </View>
       )}
 
-      {/* REDEMPTION CONFIRMATION MODAL */}
-      <Modal visible={!!selectedVoucher} transparent animationType="slide">
+      {/* REWARD INSPECT / CONFIRM MODAL */}
+      <Modal visible={!!selectedReward} transparent animationType="slide">
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <TouchableOpacity
               style={styles.closeModalBtn}
-              onPress={() => setSelectedVoucher(null)}
+              onPress={() => setSelectedReward(null)}
             >
               <Ionicons name="close" size={24} color="#64748B" />
             </TouchableOpacity>
 
-            {selectedVoucher && (
+            {selectedReward && (
               <>
                 <View style={styles.modalIconCircle}>
-                  <Ionicons name={selectedVoucher.icon} size={40} color="#0F766E" />
+                  <Ionicons name={selectedReward.icon} size={36} color="#0D9488" />
                 </View>
 
-                <Text style={styles.modalMerchant}>{selectedVoucher.merchant}</Text>
-                <Text style={styles.modalTitle}>{selectedVoucher.title}</Text>
-                <Text style={styles.modalDesc}>{selectedVoucher.description}</Text>
+                <Text style={styles.modalMerchant}>{selectedReward.category.toUpperCase()}</Text>
+                <Text style={styles.modalTitle}>{selectedReward.title}</Text>
+                <Text style={styles.modalDesc}>{selectedReward.description}</Text>
 
                 <View style={styles.priceSummaryRow}>
-                  <Text style={styles.priceLabel}>Voucher Price:</Text>
-                  <Text style={styles.priceValue}>{selectedVoucher.cost} PTS</Text>
+                  <Text style={styles.priceLabel}>Points Required:</Text>
+                  <Text style={styles.priceValue}>{selectedReward.cost} PTS</Text>
                 </View>
                 <View style={styles.priceSummaryRow}>
-                  <Text style={styles.priceLabel}>Your Coin Balance:</Text>
-                  <Text style={styles.priceValue}>{userCoins} PTS</Text>
+                  <Text style={styles.priceLabel}>Your Current Balance:</Text>
+                  <Text style={styles.priceValue}>{currentUserCoins} PTS</Text>
                 </View>
 
                 <View style={styles.divider} />
@@ -274,15 +264,15 @@ export default function VoucherStoreScreen({ navigation }) {
                 <TouchableOpacity
                   style={[
                     styles.confirmRedeemBtn,
-                    userCoins < selectedVoucher.cost && styles.confirmBtnDisabled,
+                    currentUserCoins < selectedReward.cost && styles.confirmBtnDisabled,
                   ]}
                   onPress={handleRedeemConfirm}
-                  disabled={userCoins < selectedVoucher.cost}
+                  disabled={currentUserCoins < selectedReward.cost}
                 >
                   <Text style={styles.confirmRedeemText}>
-                    {userCoins >= selectedVoucher.cost
-                      ? `Confirm Redemption (${selectedVoucher.cost} PTS)`
-                      : 'Insufficient Coins'}
+                    {currentUserCoins >= selectedReward.cost
+                      ? `Claim Voucher (${selectedReward.cost} PTS)`
+                      : 'Insufficient Points'}
                   </Text>
                 </TouchableOpacity>
               </>
@@ -291,30 +281,30 @@ export default function VoucherStoreScreen({ navigation }) {
         </View>
       </Modal>
 
-      {/* VIEW CLAIMED VOUCHER CODE MODAL */}
-      <Modal visible={!!selectedClaimedVoucher} transparent animationType="fade">
+      {/* VIEW VOUCHER QR/SERIAL DETAILS MODAL */}
+      <Modal visible={!!selectedInventoryItem} transparent animationType="fade">
         <View style={styles.modalOverlay}>
           <View style={styles.codeModalContent}>
             <TouchableOpacity
               style={styles.closeModalBtn}
-              onPress={() => setSelectedClaimedVoucher(null)}
+              onPress={() => setSelectedInventoryItem(null)}
             >
               <Ionicons name="close" size={24} color="#64748B" />
             </TouchableOpacity>
 
-            {selectedClaimedVoucher && (
+            {selectedInventoryItem && (
               <>
-                <Text style={styles.codeModalHeader}>Show to Merchant Cashier</Text>
-                <Text style={styles.codeModalMerchant}>{selectedClaimedVoucher.merchant}</Text>
-                <Text style={styles.codeModalTitle}>{selectedClaimedVoucher.title}</Text>
+                <Text style={styles.codeModalHeader}>Emergency Supply Voucher</Text>
+                <Text style={styles.codeModalMerchant}>{selectedInventoryItem.category}</Text>
+                <Text style={styles.codeModalTitle}>{selectedInventoryItem.title}</Text>
 
                 <View style={styles.barcodeBox}>
-                  <Ionicons name="qr-code-outline" size={120} color="#0F172A" />
-                  <Text style={styles.barcodeText}>{selectedClaimedVoucher.redemptionCode}</Text>
+                  <Ionicons name="qr-code-outline" size={72} color="#0F172A" />
+                  <Text style={styles.barcodeText}>{selectedInventoryItem.serialCode}</Text>
                 </View>
 
                 <Text style={styles.codeModalFooter}>
-                  Present this QR / Code at checkout counter. Non-refundable once scanned.
+                  Present this verification code at participating community collection centers or emergency preparedness roadshows.
                 </Text>
               </>
             )}
@@ -326,7 +316,7 @@ export default function VoucherStoreScreen({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#020617' },
+  container: { flex: 1, backgroundColor: '#090D16' },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -335,7 +325,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backBtn: { padding: 4 },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: 'white' },
+  headerTitle: { fontSize: 18, fontWeight: '800', color: 'white' },
   coinBadge: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -346,18 +336,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#334155',
   },
-  coinText: { color: '#F59E0B', fontWeight: '700', marginLeft: 6, fontSize: 13 },
+  coinText: { color: '#34D399', fontWeight: '700', marginLeft: 6, fontSize: 13 },
 
   tabContainer: {
     flexDirection: 'row',
     marginHorizontal: 16,
     marginVertical: 12,
-    backgroundColor: '#0F172A',
+    backgroundColor: '#111827',
     borderRadius: 12,
     padding: 4,
   },
   tabButton: { flex: 1, paddingVertical: 10, alignItems: 'center', borderRadius: 10 },
-  activeTabButton: { backgroundColor: '#0F766E' },
+  activeTabButton: { backgroundColor: '#0D9488' },
   tabText: { color: '#94A3B8', fontWeight: '600', fontSize: 13 },
   activeTabText: { color: 'white', fontWeight: '700' },
 
@@ -365,7 +355,7 @@ const styles = StyleSheet.create({
 
   bannerContainer: {
     flexDirection: 'row',
-    backgroundColor: '#022C22',
+    backgroundColor: '#064E3B',
     borderWidth: 1,
     borderColor: '#059669',
     padding: 14,
@@ -374,14 +364,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   bannerTextContainer: { marginLeft: 12, flex: 1 },
-  bannerTitle: { color: '#10B981', fontWeight: '700', fontSize: 14 },
-  bannerSub: { color: '#A7F3D0', fontSize: 12, marginTop: 2 },
+  bannerTitle: { color: '#34D399', fontWeight: '700', fontSize: 14 },
+  bannerSub: { color: '#A7F3D0', fontSize: 12, marginTop: 2, lineHeight: 16 },
 
   sectionTitle: { fontSize: 16, fontWeight: '700', color: '#F8FAFC', marginBottom: 12 },
 
   voucherCard: {
     flexDirection: 'row',
-    backgroundColor: 'white',
+    backgroundColor: '#1E293B',
+    borderWidth: 1,
+    borderColor: '#334155',
     borderRadius: 16,
     padding: 14,
     marginBottom: 12,
@@ -391,25 +383,25 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 25,
-    backgroundColor: '#E6FFFA',
-    justify: 'center',
+    backgroundColor: '#134E4A',
+    justifyContent: 'center',
     alignItems: 'center',
   },
   voucherInfo: { flex: 1, marginLeft: 12 },
-  merchantName: { fontSize: 12, fontWeight: '700', color: '#0F766E' },
-  voucherTitle: { fontSize: 14, fontWeight: '700', color: '#0F172A', marginTop: 2 },
-  voucherCat: { fontSize: 11, color: '#64748B', marginTop: 2 },
+  merchantName: { fontSize: 11, fontWeight: '700', color: '#2DD4BF', letterSpacing: 0.5 },
+  voucherTitle: { fontSize: 14, fontWeight: '700', color: 'white', marginTop: 2 },
+  voucherCat: { fontSize: 11, color: '#94A3B8', marginTop: 2 },
 
   costBadgeContainer: { alignItems: 'flex-end' },
   costBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0F766E',
+    backgroundColor: '#0D9488',
     paddingHorizontal: 10,
     paddingVertical: 6,
     borderRadius: 12,
   },
-  costBadgeDisabled: { backgroundColor: '#94A3B8' },
+  costBadgeDisabled: { backgroundColor: '#475569' },
   costText: { color: 'white', fontWeight: '700', fontSize: 12, marginLeft: 4 },
   tapToView: { fontSize: 10, color: '#94A3B8', marginTop: 4 },
 
@@ -418,7 +410,7 @@ const styles = StyleSheet.create({
   emptyTitle: { color: 'white', fontSize: 18, fontWeight: '700', marginTop: 16 },
   emptySub: { color: '#94A3B8', textAlign: 'center', fontSize: 13, marginTop: 8, lineHeight: 18 },
   exploreBtn: {
-    backgroundColor: '#0F766E',
+    backgroundColor: '#0D9488',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 12,
@@ -435,7 +427,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   claimedHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  claimedMerchant: { color: '#2DD4BF', fontWeight: '700', fontSize: 13 },
+  claimedMerchant: { color: '#2DD4BF', fontWeight: '700', fontSize: 12 },
   activeTag: { backgroundColor: '#064E3B', paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 },
   activeTagText: { color: '#34D399', fontSize: 10, fontWeight: '800' },
   claimedTitle: { color: 'white', fontSize: 16, fontWeight: '700', marginTop: 6 },
@@ -449,33 +441,35 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   codeSnippetLabel: { color: '#64748B', fontSize: 12, fontWeight: '700' },
-  codeSnippetValue: { color: '#F59E0B', fontSize: 13, fontWeight: '800', marginLeft: 8 },
+  codeSnippetValue: { color: '#34D399', fontSize: 13, fontWeight: '800', marginLeft: 8 },
 
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.75)',
+    backgroundColor: 'rgba(0,0,0,0.8)',
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#1E293B',
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
     alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#334155',
   },
   closeModalBtn: { alignSelf: 'flex-end', padding: 4 },
   modalIconCircle: {
     width: 70,
     height: 70,
     borderRadius: 35,
-    backgroundColor: '#E6FFFA',
+    backgroundColor: '#134E4A',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
   },
-  modalMerchant: { color: '#0F766E', fontWeight: '700', fontSize: 14 },
-  modalTitle: { fontSize: 18, fontWeight: '800', color: '#0F172A', marginTop: 4, textAlign: 'center' },
-  modalDesc: { color: '#64748B', fontSize: 13, textAlign: 'center', marginTop: 8, lineHeight: 18 },
+  modalMerchant: { color: '#2DD4BF', fontWeight: '700', fontSize: 12, letterSpacing: 0.5 },
+  modalTitle: { fontSize: 18, fontWeight: '800', color: 'white', marginTop: 4, textAlign: 'center' },
+  modalDesc: { color: '#94A3B8', fontSize: 13, textAlign: 'center', marginTop: 8, lineHeight: 18 },
 
   priceSummaryRow: {
     flexDirection: 'row',
@@ -483,43 +477,45 @@ const styles = StyleSheet.create({
     width: '100%',
     marginTop: 12,
   },
-  priceLabel: { color: '#64748B', fontSize: 14 },
-  priceValue: { color: '#0F172A', fontWeight: '700', fontSize: 14 },
+  priceLabel: { color: '#94A3B8', fontSize: 14 },
+  priceValue: { color: 'white', fontWeight: '700', fontSize: 14 },
 
-  divider: { height: 1, backgroundColor: '#E2E8F0', width: '100%', marginVertical: 16 },
+  divider: { height: 1, backgroundColor: '#334155', width: '100%', marginVertical: 16 },
 
   confirmRedeemBtn: {
-    backgroundColor: '#0F766E',
+    backgroundColor: '#0D9488',
     width: '100%',
     paddingVertical: 16,
     borderRadius: 12,
     alignItems: 'center',
   },
-  confirmBtnDisabled: { backgroundColor: '#94A3B8' },
+  confirmBtnDisabled: { backgroundColor: '#475569' },
   confirmRedeemText: { color: 'white', fontWeight: '700', fontSize: 15 },
 
   codeModalContent: {
-    backgroundColor: 'white',
+    backgroundColor: '#1E293B',
     marginHorizontal: 20,
     marginBottom: 'auto',
     marginTop: 'auto',
     borderRadius: 24,
     padding: 24,
     alignItems: 'center',
-  },
-  codeModalHeader: { fontSize: 12, color: '#64748B', fontWeight: '700', textTransform: 'uppercase' },
-  codeModalMerchant: { fontSize: 18, fontWeight: '800', color: '#0F766E', marginTop: 4 },
-  codeModalTitle: { fontSize: 14, color: '#0F172A', marginTop: 2, textAlign: 'center' },
-  barcodeBox: {
-    backgroundColor: '#F8FAFC',
     borderWidth: 1,
-    borderColor: '#E2E8F0',
+    borderColor: '#334155',
+  },
+  codeModalHeader: { fontSize: 12, color: '#94A3B8', fontWeight: '700', textTransform: 'uppercase' },
+  codeModalMerchant: { fontSize: 14, fontWeight: '800', color: '#2DD4BF', marginTop: 4 },
+  codeModalTitle: { fontSize: 16, color: 'white', marginTop: 2, textAlign: 'center', fontWeight: '700' },
+  barcodeBox: {
+    backgroundColor: '#0F172A',
+    borderWidth: 1,
+    borderColor: '#334155',
     padding: 20,
     borderRadius: 16,
     alignItems: 'center',
     marginVertical: 20,
     width: '100%',
   },
-  barcodeText: { fontSize: 16, fontWeight: '800', color: '#0F172A', marginTop: 10, letterSpacing: 1.5 },
+  barcodeText: { fontSize: 15, fontWeight: '800', color: '#34D399', marginTop: 10, letterSpacing: 1.5 },
   codeModalFooter: { color: '#94A3B8', fontSize: 11, textAlign: 'center', lineHeight: 16 },
 });

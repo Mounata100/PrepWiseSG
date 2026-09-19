@@ -28,6 +28,17 @@ const ACTIONS = {
   SET_THEME: 'SET_THEME',
   REGISTER_USER: 'REGISTER_USER',
   COMPLETE_ONBOARDING: 'COMPLETE_ONBOARDING',
+  SPEND_PREP_COINS: 'SPEND_PREP_COINS',
+  ADD_INVENTORY_ITEM: 'ADD_INVENTORY_ITEM',
+  REMOVE_INVENTORY_ITEM: 'REMOVE_INVENTORY_ITEM',
+  UPDATE_HEALTH_DATA: 'UPDATE_HEALTH_DATA',
+  UPDATE_FAMILY_MEMBERS: 'UPDATE_FAMILY_MEMBERS',
+  UPDATE_COMPLETED_MISSIONS: 'UPDATE_COMPLETED_MISSIONS',
+  UPDATE_FAMILY_EMERGENCY_PLAN_STATUS: 'UPDATE_FAMILY_EMERGENCY_PLAN_STATUS',
+  UPDATE_COMPLETED_QUIZZES: 'UPDATE_COMPLETED_QUIZZES',
+  UPDATE_STREAK: 'UPDATE_STREAK',
+  ADD_PREP_COINS: 'ADD_PREP_COINS',
+  ADD_COMPLETED_MISSION: 'ADD_COMPLETED_MISSION'
 };
 
 const calculateLevel = (points) => {
@@ -64,6 +75,8 @@ const userReducer = (state, action) => {
 
       completedMissions:
         action.payload.completedMissions || {},
+      
+      inventory: action.payload.inventory || [],
 
       prepCoins:
         action.payload.prepCoins || 0
@@ -152,6 +165,33 @@ const userReducer = (state, action) => {
         user: state.user ? { ...state.user, badges: updatedBadges } : null
       };
     }
+
+    case ACTIONS.SPEND_PREP_COINS: {
+      const amountToSpend = action.payload;
+      const currentCoins = state.user?.prepCoins || 0;
+      const newCoins = Math.max(0, currentCoins - amountToSpend);
+      
+      return {
+        ...state,
+        user: state.user ? {
+          ...state.user,
+          prepCoins: newCoins
+        } : null
+      };
+    }
+
+    case ACTIONS.ADD_INVENTORY_ITEM: {
+      const currentInventory = state.user?.inventory || [];
+      const updatedInventory = [action.payload, ...currentInventory];
+
+      return {
+        ...state,
+        user: state.user ? {
+          ...state.user,
+          inventory: updatedInventory
+        } : null
+      };
+    }
     
     case ACTIONS.SET_THEME:
       return { ...state, theme: action.payload };
@@ -202,7 +242,7 @@ export const UserProvider = ({ children }) => {
     loadData();
   }, []);
 
-  // 2. 🔄 Fixed Cascade Persistence Engine
+  //Fixed Cascade Persistence Engine
   useEffect(() => {
     if (!state.isLoading) {
       saveData(state);
@@ -425,6 +465,14 @@ export const UserProvider = ({ children }) => {
     dispatch({ type: ACTIONS.UPDATE_POINTS, payload: pointsToAdd });
   };
 
+  const spendPrepCoins = (amount) => {
+    dispatch({ type: ACTIONS.SPEND_PREP_COINS, payload: amount });
+  }
+
+  const addInventoryItem = (item) => {
+    dispatch({ type: ACTIONS.ADD_INVENTORY_ITEM, payload: item });
+  }
+
   const completeOnboarding = (streakType) => {
     dispatch({
       type: ACTIONS.COMPLETE_ONBOARDING,
@@ -455,6 +503,8 @@ export const UserProvider = ({ children }) => {
       validateEmail,
       validatePassword,
       validateName,
+      spendPrepCoins,
+      addInventoryItem
     }}>
       {children}
     </UserContext.Provider>
