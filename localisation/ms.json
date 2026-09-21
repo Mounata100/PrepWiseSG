@@ -2,44 +2,32 @@
   "auth": {
     "appName": "PrepWiseSG",
     "tagline": "Kesediaan Bencana Singapura",
-
     "signIn": "Log Masuk",
     "signUp": "Daftar",
-
     "welcomeBack": "Selamat kembali!",
     "createAccount": "Cipta akaun anda",
-
     "fullName": "Nama Penuh",
     "enterFullName": "Masukkan nama penuh anda",
     "nameHint": "Sekurang-kurangnya 2 aksara",
-
     "email": "E-mel",
     "enterEmail": "Masukkan e-mel anda",
     "emailHint": "Kami akan menghantar pengesahan ke e-mel ini",
-
     "password": "Kata Laluan",
     "createPassword": "Cipta kata laluan (min. 6 aksara)",
     "enterPassword": "Masukkan kata laluan anda",
     "passwordHint": "Minimum 6 aksara",
     "passwordStrongHint": "Minimum 6 aksara (tambah nombor/simbol untuk kata laluan yang lebih kukuh)",
-
     "forgotPassword": "Lupa Kata Laluan?",
-
     "createAccountButton": "Cipta Akaun",
-
     "or": "atau",
-
     "continueAsGuest": "Teruskan sebagai Tetamu",
-
     "terms": "Dengan meneruskan, anda bersetuju dengan Syarat Perkhidmatan dan Dasar Privasi kami",
-
     "passwordStrength": {
       "weak": "Lemah",
       "fair": "Sederhana",
       "good": "Baik",
       "strong": "Kukuh"
     },
-
     "validation": {
       "emailRequired": "E-mel diperlukan",
       "invalidEmail": "Sila masukkan e-mel yang sah (contoh: john@example.com)",
@@ -48,34 +36,91 @@
       "nameRequired": "Nama diperlukan",
       "nameTooShort": "Nama mestilah sekurang-kurangnya 2 aksara"
     },
-
     "alerts": {
       "completeFieldsTitle": "Sila Lengkapkan Semua Ruangan",
       "completeFieldsMessage": "Isi semua ruangan yang diperlukan dengan betul untuk meneruskan.",
       "ok": "OK",
-
       "signInFailed": "Log Masuk Gagal",
       "accountCreationFailed": "Penciptaan Akaun Gagal",
-
       "guestModeTitle": "Mod Tetamu",
       "guestModeMessage": "Anda boleh meneroka ciri asas. Cipta akaun untuk menyimpan kemajuan anda!",
       "cancel": "Batal",
       "continueGuest": "Teruskan sebagai Tetamu",
-
       "resetPasswordTitle": "Tetapkan Semula Kata Laluan",
       "resetPasswordMessage": "Masukkan alamat e-mel anda dan kami akan menghantar pautan untuk menetapkan semula kata laluan anda.",
       "sendLink": "Hantar Pautan",
-
       "resetLinkSentTitle": "Pautan Tetapan Semula Dihantar!",
       "resetLinkSentMessage": "Sila semak e-mel anda untuk pautan tetapan semula kata laluan."
     }
   },
-
   "language": {
     "title": "Pilih bahasa anda",
     "english": "English",
     "malay": "Bahasa Melayu",
     "chinese": "中文",
     "tamil": "தமிழ்"
+  },
+  "resources": {
+    "hero": {
+      "title": "Pusat Kesediaan dan Tindak Balas Bencana",
+      "subtitle": "Bersedia sebelum. Bertindak dengan selamat. Pulih bersama.",
+      "location": "Iklim & Keselamatan Kecemasan Singapura"
+    },
+    "quickAccess": {
+      "label": "AKSES PANTAS",
+      "familyTitle": "Keluarga Selamat",
+      "familyDesc": "Pelan kecemasan keluarga, kenalan dan status keselamatan.",
+      "healthTitle": "QR ID Kesihatan",
+      "healthDesc": "Pastikan maklumat kesihatan penting boleh diakses semasa kecemasan."
+    },
+    "emergencyBtn": {
+      "title": "KECEMASAN",
+      "subtitle": "Hubungi Ambulans & Bomba SCDF — 995"
+    },
+    "responseSectionLabel": "TINDAK BALAS BENCANA",
+    "phases": {
+      "btnBeforeTitle": "SEBELUM",
+      "btnBeforeSub": "Bersedia",
+      "btnDuringTitle": "SEMASA",
+      "btnDuringSub": "Bertindak",
+      "btnAfterTitle": "SELEPAS",
+      "btnAfterSub": "Pulih",
+      "beforeEyebrow": "SEBELUM BENCANA",
+      "beforeTitle": "Bersedia Sekarang",
+      "beforeIntro": "Persediaan kecil yang dibuat sebelum kecemasan dapat memudahkan anda melindungi diri dan keluarga apabila keadaan berubah dengan cepat.",
+      "duringEyebrow": "SEMASA BENCANA",
+      "duringTitle": "Bertindak Dengan Selamat",
+      "duringIntro": "Ikuti tindakan paling selamat untuk bahaya tersebut. Jika terdapat ancaman langsung kepada nyawa, hubungi perkhidmatan kecemasan.",
+      "afterEyebrow": "SELEPAS BENCANA",
+      "afterTitle": "Pulih Dengan Selamat",
+      "afterIntro": "Sebaik sahaja bahaya serta-merta berlalu, utamakan orang ramai dahulu, kemudian bergerak dengan berhati-hati ke arah pemulihan."
+    },
+    "contacts": {
+      "eyebrow": "NOMBOR PENTING",
+      "title": "Kenalan Kecemasan",
+      "police": "Kecemasan Polis",
+      "scdf": "Ambulans & Bomba SCDF",
+      "pub": "Talian Hotline Banjir PUB",
+      "nea": "Cuaca / Persekitaran NEA"
+    },
+    "topics": {
+      "gobag": { "title": "Beg Kecemasan (Go-Bag)", "desc": "Simpan air, ubat-ubatan, bekalan pertolongan cemas, bank kuasa, lampu suluh, wisel dan dokumen penting dengan bersedia." },
+      "familyPlan": { "title": "Pelan Kecemasan Keluarga", "desc": "Setuju pada tempat pertemuan, kenalan kecemasan dan apa yang perlu dilakukan jika ahli keluarga terpisah." },
+      "docs": { "title": "Dokumen Penting", "desc": "Simpan pengenalan diri, maklumat perubatan, butiran insurans dan kenalan kecemasan agar mudah diakses." },
+      "power": { "title": "Kuasa & Komunikasi", "desc": "Pastikan telefon dicaj dan sediakan kuasa sandaran supaya anda boleh menerima kemas kini kecemasan." }
+    },
+    "guides": {
+      "flood": { "title": "Banjir Kilat", "desc": "Pindah ke tempat yang lebih tinggi. Elakkan jalan yang dinaiki air, terowong bawah tanah dan kawasan bawah tanah. Jangan sekali-kali berjalan atau memandu melalui air banjir." },
+      "heat": { "title": "Haba Ekstrem", "desc": "Minum air dengan kerap, kurangkan aktiviti lasak dan cari tempat tertutup yang sejuk jika anda merasa tidak sihat." },
+      "haze": { "title": "Jerebu / Kualiti Udara Lemah", "desc": "Pantau keadaan kualiti udara, kurangkan aktiviti luar yang berpanjangan dan gunakan perlindungan pernafasan yang sesuai apabila perlu." },
+      "weather": { "title": "Cuaca Buruk", "desc": "Tinggal di dalam rumah apabila keadaan menjadi berbahaya dan jauhi kawasan terdedah, tingkap dan objek yang tidak selamat." }
+    },
+    "recovery": {
+      "injuries": { "title": "Periksa Kecederaan", "desc": "Periksa diri anda dan orang di sekeliling anda. Hubungi perkhidmatan kecemasan untuk kecederaan serius." },
+      "family": { "title": "Kira Anggota Keluarga", "desc": "Gunakan tempat pertemuan dan pelan kenalan yang dipersetujui untuk mengesahkan bahawa ahli keluarga selamat." },
+      "environment": { "title": "Periksa Persekitaran Anda", "desc": "Jangan masuk ke bangunan atau kawasan yang tidak selamat dengan air bertakung, bahaya elektrik atau kerosakan struktur." },
+      "damage": { "title": "Dokumenkan Kerosakan", "desc": "Apabila selamat, rekodkan kerosakan yang berkaitan dan simpan maklumat penting untuk susulan dan pemulihan." }
+    },
+    "footer": "Pusat ini menyediakan maklumat kesediaan dan akses pantas kepada alat keselamatan. Sentiasa ikuti arahan kecemasan rasmi semasa insiden aktif."
   }
 }

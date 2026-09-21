@@ -1,20 +1,96 @@
 // screens/AuthScreen.js
+/**
+ *                     ┌─────────────────┐
+                    │   AuthScreen    │
+                    └────────┬────────┘
+                             │
+                     login / signup
+                             │
+                             ▼
+                    ┌─────────────────┐
+                    │  UserContext    │
+                    └───────┬─────────┘
+                            │
+              ┌─────────────┴─────────────┐
+              │                           │
+              ▼                           ▼
+     ┌─────────────────┐         ┌─────────────────┐
+     │ Firebase Auth   │         │ UserService     │
+     │                 │         │                 │
+     │ UID             │         │ Firestore       │
+     │ Email/password  │         │ users/{uid}     │
+     └─────────────────┘         └────────┬────────┘
+                                          │
+                                          ▼
+                                 ┌─────────────────┐
+                                 │ LocalUserService│
+                                 │                 │
+                                 │ AsyncStorage    │
+                                 │ local cache     │
+                                 └─────────────────┘
+
+                                 Level	Game	Difficulty	Purpose
+1	Climate Defence	Easy	Learn flood/evacuation basics
+2	Flood Routing	Easy	Learn route decisions
+3	Go-Bag	Easy	Learn essential preparation
+4	Climate Defence	Medium	More pressure / more decisions
+5	Flood Routing	Medium	More complex route choices
+6	Go-Bag	Medium	Limited resources
+7	Climate Defence	Hard	Fast tactical scenario
+8	Flood Routing	Hard	Multiple hazards
+9	Go-Bag	Hard	Resource-management challenge
+10	Mission Complete	Final	Checklist / preparedness assessment
+1 ─ Climate Defence ─ EASY
+2 ─ Flood ─ EASY
+3 ─ Go-Bag ─ EASY
+
+4 ─ Climate Defence ─ MEDIUM
+5 ─ Flood ─ MEDIUM
+6 ─ Go-Bag ─ MEDIUM
+
+7 ─ Climate Defence ─ HARD
+8 ─ Flood ─ HARD
+9 ─ Go-Bag ─ HARD
+
+10 ─ FINAL PREPWISE MISSION
+MISSION 10
+PREPAREDNESS PROTOCOL
+
+☐ Emergency contacts saved
+☐ Family rendezvous point configured
+☐ Emergency Go-Bag prepared
+☐ Water supply checked
+☐ Medical information completed
+☐ Emergency flashlight available
+☐ Power bank charged
+☐ Important documents secured
+
+          7 / 8 COMPLETE
+
+       COMPLETE MISSION
+
+ */
 import React, { useState, useEffect } from 'react';
 import { 
   View, Text, StyleSheet, TouchableOpacity, TextInput, 
-  StatusBar, SafeAreaView, KeyboardAvoidingView, Image,
+  StatusBar, KeyboardAvoidingView, Image,
   Platform, ScrollView, ActivityIndicator, Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import logoImage from '../assets/logoImage.png';
 import '../localisation'; //i18n is initialized
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { createUserProfile } from '../services/UserService';
+
+import { saveCachedUser, getCachedUser, clearCachedUser, saveGuestUser, getGuestUser, clearGuestUser } from '../services/localuserService';
+
 
 export default function AuthScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [mode, setMode] = useState('login');
   const [loading, setLoading] = useState(false);
@@ -22,6 +98,8 @@ export default function AuthScreen() {
   const [touched, setTouched] = useState({});
         
   const { login, signup, guestMode } = useUser();
+  const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+
 
   //Load saved users on mount
   useEffect(() => {
@@ -89,22 +167,22 @@ export default function AuthScreen() {
     if (mode === 'login') {
       return email.trim() && password.length >= 6;
     } else {
-      return name.trim() && email.trim() && password.length >= 6;
+      return username.trim() && email.trim() && password.length >= 6;
     }
   };
 
   //Save user to Storage after signup to prevent the user having to 
   //create multiple accounts when opening the application after each time.
-  const saveUserToStorage = async (userEmail, userPassword, userName) => {
+  const saveUserToStorage = async (userEmail, userPassword, username) => {
     try{
       const savedUsers = await AsyncStorage.getItem('users');
       let users = savedUsers ? JSON.parse(savedUsers) : [];
       users.push({ 
         email: userEmail, 
         password: userPassword, 
-        name: userName });
+        username: username });
       await AsyncStorage.setItem('users', JSON.stringify(users));
-      console.log('User saved to storage:', { email: userEmail, password: userPassword, name: userName });
+      console.log('User saved to storage:', { email: userEmail, password: userPassword, username: username });
     } catch (error) {
       console.error('Error saving user to storage:', error);
     }
@@ -137,13 +215,13 @@ export default function AuthScreen() {
 
   const handleAuth = async () => {
     // Mark all fields as touched to show errors
-    setTouched({ email: true, password: true, name: true });
+    setTouched({ email: true, password: true, username: true });
     
     // Validate all fields
     validateField('email', email);
     validateField('password', password);
     if (mode === 'signup') {
-      validateField('name', name);
+      validateField('username', username);
     }
 
     // Check if form is valid
@@ -162,7 +240,7 @@ export default function AuthScreen() {
     if (mode === 'login') {
       result = await login(email.trim().toLowerCase(), password);
     } else {
-      result = await signup(email.trim().toLowerCase(), password, name.trim());
+      result = await signup(email.trim().toLowerCase(), password, username.trim());
     }
 
     setLoading(false);
@@ -265,32 +343,32 @@ export default function AuthScreen() {
                 {mode === 'login' ? 'Welcome back!' : 'Create your account'}
               </Text>
 
-              {/* Name Input (Signup Only) */}
+              {/* User Name Input (Signup Only) */}
               {mode === 'signup' && (
                 <View>
-                  <Text style={styles.label}>Full Name</Text>
+                  <Text style={styles.label}>User Name</Text>
                   <View style={styles.inputContainer}>
-                    <Ionicons name="person-outline" size={20} color={errors.name && touched.name ? '#DC2626' : '#64748B'} />
+                    <Ionicons name="person-outline" size={20} color={errors.username && touched.username ? '#DC2626' : '#64748B'} />
                     <TextInput
-                      placeholder="Enter your full name"
-                      value={name}
-                      onChangeText={setName}
-                      onBlur={() => validateField('name', name)}
-                      style={[styles.input, errors.name && touched.name && styles.inputError]}
+                      placeholder="Enter your user name"
+                      value={username}
+                      onChangeText={setUsername}
+                      onBlur={() => validateField('username', username)}
+                      style={[styles.input, errors.username && touched.username && styles.inputError]}
                       placeholderTextColor="#94A3B8"
                       autoCapitalize="words"
                     />
-                    {name.trim().length >= 2 && (
+                    {username.trim().length >= 2 && (
                       <Ionicons name="checkmark-circle" size={20} color="#22C55E" style={styles.validIcon} />
                     )}
                   </View>
                   {/* Hint */}
                   <Text style={styles.hint}>
-                    💡 At least 2 characters
+                    User name must be at least 2 characters
                   </Text>
                   {/* Error */}
-                  {errors.name && touched.name && (
-                    <Text style={styles.errorText}>⚠️ {errors.name}</Text>
+                  {errors.username && touched.username && (
+                    <Text style={styles.errorText}>⚠️ {errors.username}</Text>
                   )}
                 </View>
               )}
@@ -316,7 +394,7 @@ export default function AuthScreen() {
                 </View>
                 {/* Hint */}
                 <Text style={styles.hint}>
-                  💡 We'll send a confirmation to this email
+                  We will send a confirmation to this email
                 </Text>
                 {/* Error */}
                 {errors.email && touched.email && (
@@ -368,11 +446,11 @@ export default function AuthScreen() {
                 {/* Hint */}
                 {mode === 'signup' ? (
                   <Text style={styles.hint}>
-                    💡 Minimum 6 characters (add numbers/symbols for stronger password)
+                    Minimum 6 characters (add numbers/symbols for stronger password)
                   </Text>
                 ) : (
                   <Text style={styles.hint}>
-                    💡 Minimum 6 characters
+                    Minimum 6 characters
                   </Text>
                 )}
                 

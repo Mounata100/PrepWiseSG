@@ -77,5 +77,92 @@
     "malay": "Bahasa Melayu",
     "chinese": "中文",
     "tamil": "தமிழ்"
+  },
+    "validation": {
+      "emailRequired": "请输入电子邮件",
+      "invalidEmail": "请输入有效的电子邮件（例如：john@example.com）",
+      "passwordRequired": "请输入密码",
+      "passwordTooShort": "密码太短。还需要 {{count}} 个字符。",
+      "nameRequired": "请输入姓名",
+      "nameTooShort": "姓名至少需要 2 个字符"
+    },
+    "alerts": {
+      "completeFieldsTitle": "请完成所有资料",
+      "completeFieldsMessage": "请正确填写所有必填资料后继续。",
+      "ok": "确定",
+      "signInFailed": "登录失败",
+      "accountCreationFailed": "创建账户失败",
+      "guestModeTitle": "访客模式",
+      "guestModeMessage": "您可以探索基本功能。创建账户即可保存您的进度！",
+      "cancel": "取消",
+      "continueGuest": "以访客身份继续",
+      "resetPasswordTitle": "重置密码",
+      "resetPasswordMessage": "请输入您的电子邮件地址，我们会发送重置密码的链接。",
+      "sendLink": "发送链接",
+      "resetLinkSentTitle": "重置链接已发送！",
+      "resetLinkSentMessage": "请检查您的电子邮件以获取密码重置链接。"
+    },
+  "resources": {
+    "hero": {
+      "title": "灾害防备与应急中心",
+      "subtitle": "提前准备。安全应对。共同恢复。",
+      "location": "新加坡气候与应急安全"
+    },
+    "quickAccess": {
+      "label": "快捷访问",
+      "familyTitle": "家庭安全",
+      "familyDesc": "家庭应急计划、联系人及安全状态。",
+      "healthTitle": "健康码二维码",
+      "healthDesc": "在紧急情况下轻松获取重要的健康信息。"
+    },
+    "emergencyBtn": {
+      "title": "紧急求助",
+      "subtitle": "拨打民防部队救护车与消防 — 995"
+    },
+    "responseSectionLabel": "灾害应对",
+    "phases": {
+      "btnBeforeTitle": "灾前",
+      "btnBeforeSub": "防范准备",
+      "btnDuringTitle": "灾中",
+      "btnDuringSub": "安全应对",
+      "btnAfterTitle": "灾后",
+      "btnAfterSub": "善后恢复",
+      "beforeEyebrow": "灾害发生前",
+      "beforeTitle": "立即做好准备",
+      "beforeIntro": "在紧急情况发生前做好小小的准备，当环境迅速变化时，就能更好地保护自己和家人。",
+      "duringEyebrow": "灾害发生时",
+      "duringTitle": "安全应对",
+      "duringIntro": "针对具体灾害采取最安全的行动。如果生命受到直接威胁，请立即联系紧急服务部门。",
+      "afterEyebrow": "灾害发生后",
+      "afterTitle": "安全恢复",
+      "afterIntro": "一旦危险过去，请首先关注人员安全，然后有条不紊地开展恢复工作。"
+    },
+    "contacts": {
+      "eyebrow": "重要电话",
+      "title": "紧急联系人",
+      "police": "警察局紧急热线",
+      "scdf": "民防部队(SCDF)救护车与消防",
+      "pub": "公用事业局(PUB)防汛热线",
+      "nea": "国家环境局(NEA)天气/环境"
+    },
+    "topics": {
+      "gobag": { "title": "应急求生包", "desc": "备好水、药物、急救用品、充电宝、手电筒、口哨以及重要文件。" },
+      "familyPlan": { "title": "家庭应急计划", "desc": "商定集合地点、紧急联系人，以及家庭成员走散时的应对措施。" },
+      "docs": { "title": "重要文件", "desc": "妥善保管身份证明、医疗信息、保险详情以及紧急联系方式，以便随时调阅。" },
+      "power": { "title": "电力与通讯", "desc": "保持手机电量充足，并备好备用电源，以便接收紧急通知。" }
+    },
+    "guides": {
+      "flood": { "title": "突发洪水", "desc": "前往地势较高的地方。避免进入被水淹没的道路、地下通道和地下区域。切勿涉水步行或驾车通过。" },
+      "heat": { "title": "极端高温", "desc": "定时饮水，减少剧烈活动，若感到身体不适请前往凉爽的室内场所。" },
+      "haze": { "title": "烟霾 / 空气质量差", "desc": "关注空气质量状况，减少长时间的户外活动，必要时佩戴合适的呼吸防护装备。" },
+      "weather": { "title": "恶劣天气", "desc": "天气恶劣时请留在室内，远离暴露区域、窗户及未固定好的物品。" }
+    },
+    "recovery": {
+      "injuries": { "title": "检查伤情", "desc": "检查自己和周围人的身体状况。如遇严重受伤，请立即呼叫紧急医疗服务。" },
+      "family": { "title": "确认家人平安", "desc": "利用事先商定的集合地点和联系计划，确认家庭成员均已安全。" },
+      "environment": { "title": "检查周围环境", "desc": "切勿进入有积水、触电风险或结构受损的不安全建筑物或区域。" },
+      "damage": { "title": "记录财产损失", "desc": "在确保安全的前提下，记录相关损失并保留重要信息，以便后续跟进和理赔恢复。" }
+    },
+    "footer": "本中心提供防备指南以及安全工具的快捷访问。在突发事件发生时，请务必遵从官方发布的紧急指令。"
   }
 }

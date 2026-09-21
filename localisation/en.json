@@ -77,5 +77,70 @@
     "malay": "Bahasa Melayu",
     "chinese": "中文",
     "tamil": "தமிழ்"
+  },
+
+  "resources": {
+    "hero": {
+      "title": "Disaster Preparedness and Response Hub",
+      "subtitle": "Prepare before. Respond safely. Recover together.",
+      "location": "Singapore Climate & Emergency Safety"
+    },
+    "quickAccess": {
+      "label": "QUICK ACCESS",
+      "familyTitle": "Family Safe",
+      "familyDesc": "Family emergency plan, contacts and safety status.",
+      "healthTitle": "Health ID QR",
+      "healthDesc": "Keep important health information accessible in an emergency."
+    },
+    "emergencyBtn": {
+      "title": "EMERGENCY",
+      "subtitle": "Call SCDF Ambulance & Fire — 995"
+    },
+    "responseSectionLabel": "DISASTER RESPONSE",
+    "phases": {
+      "btnBeforeTitle": "BEFORE",
+      "btnBeforeSub": "Prepare",
+      "btnDuringTitle": "DURING",
+      "btnDuringSub": "Respond",
+      "btnAfterTitle": "AFTER",
+      "btnAfterSub": "Recover",
+      "beforeEyebrow": "BEFORE A DISASTER",
+      "beforeTitle": "Prepare Now",
+      "beforeIntro": "Small preparations made before an emergency can make it easier to protect yourself and your family when conditions change quickly.",
+      "duringEyebrow": "DURING A DISASTER",
+      "duringTitle": "Respond Safely",
+      "duringIntro": "Follow the safest action for the hazard. If there is an immediate threat to life, contact emergency services.",
+      "afterEyebrow": "AFTER A DISASTER",
+      "afterTitle": "Recover Safely",
+      "afterIntro": "Once the immediate danger has passed, focus on people first, then move carefully towards recovery."
+    },
+    "contacts": {
+      "eyebrow": "IMPORTANT NUMBERS",
+      "title": "Emergency Contacts",
+      "police": "Police Emergency",
+      "scdf": "SCDF Ambulance & Fire",
+      "pub": "PUB Flood Hotline",
+      "nea": "NEA Weather / Environment"
+    },
+    "topics": {
+      "gobag": { "title": "Emergency Go-Bag", "desc": "Keep water, medication, first aid supplies, power bank, torch, whistle and important documents ready." },
+      "familyPlan": { "title": "Family Emergency Plan", "desc": "Agree on meeting points, emergency contacts and what to do if family members become separated." },
+      "docs": { "title": "Important Documents", "desc": "Keep identification, medical information, insurance details and emergency contacts accessible." },
+      "power": { "title": "Power & Communication", "desc": "Keep phones charged and have backup power available so you can receive emergency updates." }
+    },
+    "guides": {
+      "flood": { "title": "Flash Flood", "desc": "Move to higher ground. Avoid flooded roads, underpasses and underground areas. Never walk or drive through floodwater." },
+      "heat": { "title": "Extreme Heat", "desc": "Drink water regularly, reduce strenuous activity and seek a cool indoor location if you feel unwell." },
+      "haze": { "title": "Haze / Poor Air Quality", "desc": "Monitor air-quality conditions, reduce prolonged outdoor activity and use appropriate respiratory protection when necessary." },
+      "weather": { "title": "Severe Weather", "desc": "Stay indoors when conditions become dangerous and keep away from exposed areas, windows and unsecured objects." }
+    },
+    "recovery": {
+      "injuries": { "title": "Check for Injuries", "desc": "Check yourself and people around you. Call emergency services for serious injuries." },
+      "family": { "title": "Account for Family", "desc": "Use your agreed meeting point and contact plan to confirm that family members are safe." },
+      "environment": { "title": "Check Your Environment", "desc": "Do not enter unsafe buildings or areas with standing water, electrical hazards or structural damage." },
+      "damage": { "title": "Document Damage", "desc": "When it is safe, record relevant damage and keep important information for follow-up and recovery." }
+    },
+    "footer": "This hub provides preparedness information and quick access to safety tools. Always follow official emergency instructions during an active incident."
   }
-}
+  }
+

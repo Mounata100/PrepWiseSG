@@ -57,58 +57,201 @@ export default function MissionsScreen({ navigation, route }) {
    *
    * You currently have 3 missions.
    */
+  // const MAP_MISSIONS = [
+  //   {
+  //     id: 'GoBag',
+  //     level: 1,
+  //     title: 'Bug-Out Packing Drill',
+  //     desc:
+  //       'Optimize custom survival inventories under a strict 15-second window.',
+  //     difficulty: 'EASY',
+  //     diffColor: '#34D399',
+  //     icon: 'briefcase-outline',
+  //     reward: 40,
+  //     status: 'completed',
+  //     tag: 'PREPAREDNESS DRILL',
+  //   },
+  //   {
+  //     id: 'QuizGame',
+  //     level: 2,
+  //     title: 'Dynamic Response Quiz',
+  //     desc:
+  //       'Test quick reflexes on civil emergency protocols under time limits.',
+  //     difficulty: 'MEDIUM',
+  //     diffColor: '#38BDF8',
+  //     icon: 'flash-outline',
+  //     reward: 50,
+  //     status: 'current',
+  //     tag: 'CLIMATE CRISIS DRILL',
+  //   },
+  //   {
+  //     id: 'ClimateDefence',
+  //     level: 3,
+  //     title: 'Climate Defence Simulator',
+  //     desc:
+  //       'Formulate mitigation blueprints against shifting microclimates.',
+  //     difficulty: 'HARD',
+  //     diffColor: '#EF4444',
+  //     icon: 'globe-outline',
+  //     reward: 100,
+  //     status: 'locked',
+  //     tag: 'ADVANCED RESILIENCE DRILL',
+  //   },
+  // ];
   const MAP_MISSIONS = [
     {
-      id: 'GoBag',
+      id: 'level-1',
       level: 1,
-      title: 'Bug-Out Packing Drill',
-      desc:
-        'Optimize custom survival inventories under a strict 15-second window.',
+      game: 'ClimateDefence',
+      title: 'Climate Defence',
+      desc: 'Learn the basics of flood response and evacuation decisions.',
+      difficulty: 'EASY',
+      diffColor: '#34D399',
+      icon: 'cloud-outline',
+      reward: 40,
+      tag: 'CLIMATE RESPONSE',
+    },
+
+    {
+      id: 'level-2',
+      level: 2,
+      game: 'FloodRouting',
+      title: 'Flood Routing',
+      desc: 'Learn how to choose safer routes during a flood.',
+      difficulty: 'EASY',
+      diffColor: '#34D399',
+      icon: 'water-outline',
+      reward: 40,
+      tag: 'ROUTE DECISION',
+    },
+
+    {
+      id: 'level-3',
+      level: 3,
+      game: 'GoBag',
+      title: 'Go-Bag',
+      desc: 'Learn which emergency supplies belong in your Go-Bag.',
       difficulty: 'EASY',
       diffColor: '#34D399',
       icon: 'briefcase-outline',
       reward: 40,
-      status: 'completed',
-      tag: 'PREPAREDNESS DRILL',
+      tag: 'PREPAREDNESS BASICS',
     },
+
     {
-      id: 'QuizGame',
-      level: 2,
-      title: 'Dynamic Response Quiz',
-      desc:
-        'Test quick reflexes on civil emergency protocols under time limits.',
+      id: 'level-4',
+      level: 4,
+      game: 'ClimateDefence',
+      title: 'Climate Defence',
+      desc: 'Respond to a more demanding climate emergency scenario.',
       difficulty: 'MEDIUM',
-      diffColor: '#38BDF8',
-      icon: 'flash-outline',
-      reward: 50,
-      status: 'current',
-      tag: 'CLIMATE CRISIS DRILL',
+      diffColor: '#FBBF24',
+      icon: 'cloud-outline',
+      reward: 60,
+      tag: 'CLIMATE RESPONSE',
     },
+
     {
-      id: 'ClimateDefence',
-      level: 3,
-      title: 'Climate Defence Simulator',
-      desc:
-        'Formulate mitigation blueprints against shifting microclimates.',
+      id: 'level-5',
+      level: 5,
+      game: 'FloodRunnerGameModal',
+      title: 'Flood Routing',
+      desc: 'Navigate increasingly complex flood route decisions.',
+      difficulty: 'MEDIUM',
+      diffColor: '#FBBF24',
+      icon: 'water-outline',
+      reward: 60,
+      tag: 'ROUTE DECISION',
+    },
+
+    {
+      id: 'level-6',
+      level: 6,
+      game: 'GoBag',
+      title: 'Go-Bag',
+      desc: 'Build an effective emergency kit while managing limited resources.',
+      difficulty: 'MEDIUM',
+      diffColor: '#FBBF24',
+      icon: 'briefcase-outline',
+      reward: 60,
+      tag: 'RESOURCE MANAGEMENT',
+    },
+
+    {
+      id: 'level-7',
+      level: 7,
+      game: 'ClimateDefence',
+      title: 'Climate Defence',
+      desc: 'Make rapid tactical decisions under pressure.',
       difficulty: 'HARD',
       diffColor: '#EF4444',
-      icon: 'globe-outline',
+      icon: 'cloud-outline',
       reward: 100,
-      status: 'locked',
-      tag: 'ADVANCED RESILIENCE DRILL',
+      tag: 'TACTICAL RESPONSE',
+    },
+
+    {
+      id: 'level-8',
+      level: 8,
+      game: 'FloodRouting',
+      title: 'Flood Routing',
+      desc: 'Navigate multiple hazards and changing route conditions.',
+      difficulty: 'HARD',
+      diffColor: '#EF4444',
+      icon: 'water-outline',
+      reward: 100,
+      tag: 'MULTI-HAZARD',
+    },
+
+    {
+      id: 'level-9',
+      level: 9,
+      game: 'GoBag',
+      title: 'Go-Bag',
+      desc: 'Manage limited resources while preparing for an emergency.',
+      difficulty: 'HARD',
+      diffColor: '#EF4444',
+      icon: 'briefcase-outline',
+      reward: 100,
+      tag: 'RESOURCE CHALLENGE',
+    },
+
+    {
+      id: 'level-10',
+      game: 'FinalMission',
+      level: 10,
+      title: 'Preparedness Protocol',
+      desc: 'Complete your final preparedness assessment.',
+      difficulty: 'FINAL',
+      diffColor: '#A855F7',
+      icon: 'shield-checkmark-outline',
+      reward: 200,
+      tag: 'FINAL MISSION',
     },
   ];
+
 
   /*
    * ---------------------------------------------------------
    * CAMPAIGN PROGRESS
    * ---------------------------------------------------------
    */
+  const completedLevels = user?.campaign?.completedLevels || [];
+
+  //const completedMissions = useMemo(() => {
+    //return MAP_MISSIONS.filter(
+      //(mission) => mission.status === 'completed'
+    //).length;
+  //}, [MAP_MISSIONS]);
   const completedMissions = useMemo(() => {
-    return MAP_MISSIONS.filter(
-      (mission) => mission.status === 'completed'
-    ).length;
-  }, [MAP_MISSIONS]);
+    if(completedLevels.includes(mission.level)) {
+      return 'completed';
+    } else if (completedLevels.length === mission.level - 1) {
+      return 'current';
+    } else {
+      return 'locked';
+    }
+  }, [completedLevels]);
 
   const totalMissions = MAP_MISSIONS.length;
 
@@ -129,8 +272,12 @@ export default function MissionsScreen({ navigation, route }) {
     if (mission.status === 'locked') {
       return;
     }
-
-    navigation.navigate(mission.id);
+    navigation.navigate('ClimateDefence', {
+      level: mission.level,
+      difficulty: mission.difficulty,
+      reward: mission.reward,
+    });
+    //navigation.navigate(mission.id);
   };
 
   return (
