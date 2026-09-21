@@ -90,6 +90,7 @@ import HealthQRScreen from '../screens/HealthQRScreen';
 import FamilySafetyScreen from '../screens/SafeFamilyScreen';
 import QuizGameScreen from '../screens/QuizGameScreen';
 import GoBagScreen from '../screens/GoBagScreen';
+import ResourcesScreen from '../screens/ResourcesScreen';
 import VoucherStoreScreen from '../screens/VoucherStoreScreen';
 
 const Stack = createNativeStackNavigator();
@@ -228,6 +229,11 @@ export default function AppNavigator() {
             <Stack.Screen
               name="Leaderboard"
               component={LeaderBoardScreen}
+            />
+
+            <Stack.Screen
+              name="Resources"
+              component={ResourcesScreen}
             />
 
             <Stack.Screen

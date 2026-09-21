@@ -1,4 +1,14 @@
 // FamilySafetyScreen.js
+//FireBase
+// rules_version = '2';
+
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       allow read, write: if false;
+//     }
+//   }
+// }
 import React, { useEffect, useState } from 'react';
 
 import {
@@ -39,7 +49,7 @@ import {
   onAuthStateChanged,
 } from 'firebase/auth';
 
-import { auth, db } from '../firebase';
+import { auth, db } from '../firebase/config';
 
 
 // ============================================================
@@ -636,7 +646,7 @@ export default function FamilySafetyScreen({ navigation }) {
 
       Alert.alert(
         'Unable to Create Family',
-        'Please try again when you have an internet connection.'
+        `${error.code}\n${error.message}`
       );
 
     } finally {

@@ -23,7 +23,7 @@ export default function MissionsScreen({ navigation, route }) {
    * addition in case a mission sends the user back here
    * with route.params.earnedPoints.
    */
-  const { points, coins } = useUser();
+  const { user, points, coins } = useUser();
 
   const [bonusPoints, setBonusPoints] = useState(0);
 
@@ -236,22 +236,32 @@ export default function MissionsScreen({ navigation, route }) {
    * CAMPAIGN PROGRESS
    * ---------------------------------------------------------
    */
+  // const completedLevels = user?.campaign?.completedLevels || [];
+
+  // //const completedMissions = useMemo(() => {
+  //   //return MAP_MISSIONS.filter(
+  //     //(mission) => mission.status === 'completed'
+  //   //).length;
+  // //}, [MAP_MISSIONS]);
+  // const completedMissions = useMemo(() => {
+  //   if(completedLevels.includes(mission.level)) {
+  //     return 'completed';
+  //   } else if (completedLevels.length === mission.level - 1) {
+  //     return 'current';
+  //   } else {
+  //     return 'locked';
+  //   }
+  // }, [completedLevels]);
+
+  // const totalMissions = MAP_MISSIONS.length;
+
+  // const progressPercentage =
+  //   totalMissions > 0
+  //     ? Math.round((completedMissions / totalMissions) * 100)
+  //     : 0;
   const completedLevels = user?.campaign?.completedLevels || [];
 
-  //const completedMissions = useMemo(() => {
-    //return MAP_MISSIONS.filter(
-      //(mission) => mission.status === 'completed'
-    //).length;
-  //}, [MAP_MISSIONS]);
-  const completedMissions = useMemo(() => {
-    if(completedLevels.includes(mission.level)) {
-      return 'completed';
-    } else if (completedLevels.length === mission.level - 1) {
-      return 'current';
-    } else {
-      return 'locked';
-    }
-  }, [completedLevels]);
+  const completedMissions = completedLevels.length;
 
   const totalMissions = MAP_MISSIONS.length;
 
@@ -259,6 +269,7 @@ export default function MissionsScreen({ navigation, route }) {
     totalMissions > 0
       ? Math.round((completedMissions / totalMissions) * 100)
       : 0;
+
 
   /*
    * ---------------------------------------------------------
@@ -301,7 +312,7 @@ export default function MissionsScreen({ navigation, route }) {
             <View style={styles.statItem}>
               <Ionicons name="flash" size={12} color="#F59E0B" />
               <Text style={styles.pointsText}>
-                {displayedPoints} PrepPoints
+                {displayedPoints} XP
               </Text>
             </View>
 

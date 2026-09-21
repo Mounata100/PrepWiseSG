@@ -5,6 +5,7 @@ import MissionsScreen from '../screens/MissionsScreen';
 import GoBagScreen from '../screens/GoBagScreen';
 import QuizGameScreen from '../screens/QuizGameScreen';
 import ClimateDefence from '../screens/ClimateDefence';
+import VoucherStoreScreen from '../screens/VoucherStoreScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,7 +16,7 @@ export default function MissionsStack() {
       <Stack.Screen name="GoBag" component={GoBagScreen} />
       <Stack.Screen name="QuizGame" component={QuizGameScreen} />
       <Stack.Screen name="ClimateDefence" component={ClimateDefence} />
-      <Stack.Screen name="Voucher" component={VoucherScreen} />
+      <Stack.Screen name="VoucherStore" component={VoucherStoreScreen} />
     </Stack.Navigator>
   );
 }
