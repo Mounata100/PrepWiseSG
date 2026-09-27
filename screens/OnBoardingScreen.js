@@ -518,7 +518,6 @@ export default function OnboardingScreen() {
       }
     } catch (error) {
       console.error('Unable to complete onboarding:', error);
-
       Alert.alert(
         'Unable to Complete Setup',
         'Your onboarding information could not be saved. Please try again.'

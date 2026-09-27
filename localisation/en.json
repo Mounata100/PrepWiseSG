@@ -2,44 +2,45 @@
   "auth": {
     "appName": "PrepWiseSG",
     "tagline": "Singapore's Disaster Preparedness",
-
     "signIn": "Sign In",
     "signUp": "Sign Up",
-
     "welcomeBack": "Welcome back!",
     "createAccount": "Create your account",
-
     "fullName": "Full Name",
     "enterFullName": "Enter your full name",
     "nameHint": "At least 2 characters",
-
     "email": "Email",
     "enterEmail": "Enter your email",
     "emailHint": "We'll send a confirmation to this email",
-
     "password": "Password",
     "createPassword": "Create a password (min 6 characters)",
     "enterPassword": "Enter your password",
     "passwordHint": "Minimum 6 characters",
     "passwordStrongHint": "Minimum 6 characters (add numbers/symbols for stronger password)",
-
     "forgotPassword": "Forgot Password?",
-
+    "forgotPasswordTitle": "Reset Your Password",
+    "forgotPasswordMessage": "Enter the email address associated with your account, then choose a new password.",
+    "resetEmail": "Email",
+    "resetEmailPlaceholder": "Enter your account email",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "enterNewPassword": "Enter your new password",
+    "enterConfirmPassword": "Confirm your new password",
+    "passwordsDoNotMatch": "Passwords do not match",
+    "resetPassword": "Reset Password",
+    "passwordResetSuccessTitle": "Password Reset Successful",
+    "passwordResetSuccessMessage": "Your password has been updated. You can now sign in with your new password.",
+    "passwordResetFailed": "Unable to reset your password. Please check your email and try again.",
     "createAccountButton": "Create Account",
-
     "or": "or",
-
     "continueAsGuest": "Continue as Guest",
-
     "terms": "By continuing, you agree to our Terms of Service and Privacy Policy",
-
     "passwordStrength": {
       "weak": "Weak",
       "fair": "Fair",
       "good": "Good",
       "strong": "Strong"
     },
-
     "validation": {
       "emailRequired": "Email is required",
       "invalidEmail": "Please enter a valid email (e.g., john@example.com)",
@@ -48,26 +49,321 @@
       "nameRequired": "Name is required",
       "nameTooShort": "Name must be at least 2 characters"
     },
-
     "alerts": {
       "completeFieldsTitle": "Please Complete All Fields",
       "completeFieldsMessage": "Fill in all required fields correctly to continue.",
       "ok": "OK",
-
       "signInFailed": "Sign In Failed",
       "accountCreationFailed": "Account Creation Failed",
-
       "guestModeTitle": "Guest Mode",
       "guestModeMessage": "You can explore basic features. Create an account to save your progress!",
       "cancel": "Cancel",
       "continueGuest": "Continue as Guest",
-
       "resetPasswordTitle": "Reset Password",
       "resetPasswordMessage": "Enter your email address and we will send you a link to reset your password.",
       "sendLink": "Send Link",
-
       "resetLinkSentTitle": "Reset Link Sent!",
       "resetLinkSentMessage": "Please check your email for the password reset link."
+    }
+  },
+  "onboarding": {
+    "steps": {
+      "stepOf": "Step {{current}} of {{total}}"
+    },
+    "welcome": {
+      "title": "Welcome",
+      "subtitle": "Build your preparedness profile and develop practical skills for responding to climate-related emergencies in Singapore.",
+      "expectTitle": "What you can expect",
+      "bullet1": "Build and complete personalised emergency checklists.",
+      "bullet2": "Complete quizzes and preparedness activities to earn experience points.",
+      "bullet3": "Receive relevant environmental and emergency notifications.",
+      "bullet4": "Track your progress and improve your preparedness over time.",
+      "continue": "Continue"
+    },
+    "preferences": {
+      "title": "App Preferences",
+      "subtitle": "Configure the application according to your preferences.",
+      "darkMode": "Dark Mode",
+      "darkModeDescription": "Use a darker interface for improved visibility in low-light environments.",
+      "emergencyNotifications": "Emergency Notifications",
+      "emergencyNotificationsDescription": "Receive relevant preparedness reminders and emergency notifications.",
+      "continue": "Save and Continue"
+    },
+    "preparednessLevel": {
+      "title": "Preparedness Level",
+      "subtitle": "Select the option that best describes your current level of emergency preparedness.",
+      "beginner": {
+        "title": "Getting Started",
+        "description": "I have limited emergency supplies or a preparedness plan."
+      },
+      "intermediate": {
+        "title": "Somewhat Prepared",
+        "description": "I have basic supplies such as water, food, and first-aid equipment."
+      },
+      "advanced": {
+        "title": "Well Prepared",
+        "description": "I have an emergency kit, communication plan, and established response procedures."
+      },
+      "continue": "Continue"
+    },
+    "readinessSchedule": {
+      "title": "Readiness Schedule",
+      "subtitle": "Choose how frequently you would like to complete preparedness activities and maintain your readiness progress.",
+      "daily": {
+        "label": "Daily Readiness",
+        "description": "Complete a short preparedness activity each day."
+      },
+      "threeDay": {
+        "label": "3-Day Challenge",
+        "description": "Complete preparedness activities over a three-day cycle."
+      },
+      "fiveDay": {
+        "label": "5-Day Challenge",
+        "description": "Complete a structured five-day preparedness cycle."
+      },
+      "weekly": {
+        "label": "Weekly Readiness",
+        "description": "Review and improve your preparedness once each week."
+      },
+      "complete": "Complete Setup",
+      "footer": "You can change your preferences and readiness schedule later from Settings."
+    },
+    "common": {
+      "back": "Back",
+      "saving": "Saving..."
+    },
+    "alerts": {
+      "unableToCompleteTitle": "Unable to Complete Setup",
+      "unableToCompleteMessage": "Your onboarding information could not be saved. Please try again."
+    },
+    "accessibility": {
+      "back": "Go back to the previous step",
+      "darkMode": "Dark Mode",
+      "emergencyNotifications": "Emergency Notifications"
+    }
+  },
+  "home": {
+    "defaults": {
+      "newResponder": "New Responder"
+    },
+
+    "branding": {
+      "avatar": "Responder",
+      "level": "LEVEL {{level}}"
+    },
+
+    "progress": {
+      "nextLevel": "NEXT LEVEL",
+      "xpRemaining": "Score {{xp}} more XP to hit Level {{level}}"
+    },
+
+    "milestones": {
+      "sectionTitle": "STREAK MILESTONES",
+      "oneDay": "1 Day",
+      "threeDays": "3 Days",
+      "fiveDays": "5 Days",
+      "weekly": "Weekly"
+    },
+
+    "readiness": {
+      "sectionTitle": "READINESS PROGRESS",
+      "missions": "Missions",
+      "profile": "Profile"
+    },
+
+    "checklist": {
+      "title": "Checklist"
+    },
+
+    "alerts": {
+      "title": "Alerts",
+      "activeThreats": "{{count}} Active Threat Broadcasts",
+      "latest": "Latest: {{title}}",
+      "environmentalHazard": "Environmental Hazard Logged",
+      "dailyCheckin": {
+        "title": "Daily Check-in Claimed!",
+        "message": "Welcome back! You extended your streak to {{streak}} Days!\n\nRewards: +{{coins}} PrepCoins & +{{xp}} XP."
+      },
+      "missionCompleted": {
+        "title": "🎉 Mission Completed!",
+        "message": "You successfully mastered the {{mission}} protocol and earned +{{xp}} XP 🪙 +{{coins}} PrepCoins!\nYour total PrepCoins balance is now: {{totalCoins}}!"
+      },
+      "missionAlreadyComplete": {
+        "message": "You've already completed today's weekly mission."
+      }
+    },
+
+    "mission": {
+      "activeDrill": "Active Climate Drill ({{day}})",
+      "tacticalDecision": "Tap to Take Tactical Decision Drill",
+      "completedReview": "✅ Mission completed - review mode",
+      "complete": "Complete Mission"
+    },
+
+    "missionDays": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+
+    "familySync": {
+      "title": "SGSecure Family Node",
+      "safe": "Status updated: Household marked as SAFE for current climate alert.",
+      "awaiting": "Status updated: Awaiting member response check-in."
+    },
+
+    "leaderboard": {
+      "title": "Regional Leaderboard",
+      "needXp": "Need +{{xp}} XP to pass {{rank}}",
+      "you": "You",
+      "streak": "{{days}} Day Continuous Active Streak",
+      "awaitingConfiguration": "Awaiting system configuration metrics..."
+    },
+
+    "missions": {
+      "sun_heat": {
+        "title": "Severe Heatwave Protocol",
+        "desc": "Temperature spikes past 38°C in concrete blocks. Mitigate urban heat stress.",
+        "scenario": "A severe heatwave alert is issued. Your indoor temperature is rising rapidly. What is your immediate tactical action?",
+        "options": [
+          {
+            "text": "Keep all windows tightly sealed and shut curtains",
+            "feedback": "Incorrect! Sealing traps heat inside. You need cross-ventilation."
+          },
+          {
+            "text": "Draw thermal curtains, open windows for cross-breeze, and hydrate",
+            "feedback": "Correct! Blocking direct solar radiation while promoting airflow can help reduce heat stress."
+          },
+          {
+            "text": "Turn off all ceiling fans to conserve emergency energy",
+            "feedback": "Incorrect! Fans can assist evaporative cooling on the skin."
+          }
+        ]
+      },
+
+      "mon_flood": {
+        "title": "Monsoon Flash Flood Routing",
+        "desc": "Torrential downpours trigger sudden water level rises near low-lying canals.",
+        "scenario": "You are driving near a low-lying underpass as rapid flash floods begin submerging the road. What do you do?",
+        "options": [
+          {
+            "text": "Drive through quickly before water gets higher",
+            "feedback": "Dangerous! Floodwater can make roads and vehicles unsafe very quickly."
+          },
+          {
+            "text": "Abandon vehicle immediately and seek high-ground terrain on foot",
+            "feedback": "Correct! Avoid driving through flooded underpasses and move to safer elevated ground."
+          },
+          {
+            "text": "Wait inside the locked car and sleep until help arrives",
+            "feedback": "Risky! Water levels can rise quickly and trap you inside."
+          }
+        ]
+      },
+
+      "tue_haze": {
+        "title": "Transboundary Haze Defense",
+        "desc": "PSI levels surge into unhealthy brackets due to regional smoke plumes.",
+        "scenario": "The PSI hits 250 (Very Unhealthy). You need to step outside briefly. What respiratory protection is appropriate?",
+        "options": [
+          {
+            "text": "Wear a standard surgical paper mask",
+            "feedback": "Incorrect. Surgical masks are not designed to provide the same protection against fine particles as a properly fitted respirator."
+          },
+          {
+            "text": "Wear a fitted N95 respirator mask and minimize outdoor exertion",
+            "feedback": "Correct! A properly fitted N95 respirator can reduce exposure to fine particles."
+          },
+          {
+            "text": "Cover your mouth with a damp cotton cloth",
+            "feedback": "Incorrect. A damp cloth does not provide reliable protection against fine haze particles."
+          }
+        ]
+      },
+
+      "wed_water": {
+        "title": "PUB Water Disruption Prep",
+        "desc": "Localized pipeline disruption reported. Secure emergency hydration buffers.",
+        "scenario": "A sudden municipal water supply cut is announced for your block. How much emergency water storage should an adult maintain per day?",
+        "options": [
+          {
+            "text": "0.5 Liters per day for drinking only",
+            "feedback": "Incorrect. That amount may be insufficient for basic hydration and hygiene needs."
+          },
+          {
+            "text": "At least 3 Liters per day for drinking, hygiene, and basic sanitation",
+            "feedback": "Correct! Maintaining an emergency water supply helps provide a basic buffer during disruptions."
+          },
+          {
+            "text": "20 Liters per day for filling bathtubs",
+            "feedback": "Inefficient and unnecessary for a short-term municipal disruption."
+          }
+        ]
+      },
+
+      "thu_supply": {
+        "title": "SCDF Go-Bag Compliance",
+        "desc": "Audit essential life-support equipment inside emergency deployable storage.",
+        "scenario": "When packing your emergency Go-Bag for sudden evacuation, which electronic gear is essential?",
+        "options": [
+          {
+            "text": "High-end gaming laptop and heavy console chargers",
+            "feedback": "Incorrect. These items are bulky and not essential for basic emergency preparedness."
+          },
+          {
+            "text": "Power bank, hand-crank emergency radio, and waterproof flashlight",
+            "feedback": "Correct! Reliable communication, backup power and lighting can be useful during disruptions."
+          },
+          {
+            "text": "An electric portable fan requiring wall sockets",
+            "feedback": "Incorrect. A wall-powered device may not be useful during a power outage."
+          }
+        ]
+      },
+
+      "fri_comm": {
+        "title": "SGSecure Mesh Comms Drill",
+        "desc": "Establish alternative offline contact protocols during cellular network disruptions.",
+        "scenario": "Cellular networks experience complete downtime during a crisis. How should your family sync up?",
+        "options": [
+          {
+            "text": "Keep calling cellular numbers repeatedly until lines clear",
+            "feedback": "Incorrect. Repeated calls may drain your battery when the network is unavailable."
+          },
+          {
+            "text": "Pre-agree on an offline physical rendezvous point and use SMS/mesh apps",
+            "feedback": "Correct! A pre-agreed meeting point provides a clear fallback when normal communication is disrupted."
+          },
+          {
+            "text": "Wait indefinitely inside separate shopping malls",
+            "feedback": "Incorrect. A clear communication and meeting plan is safer than leaving arrangements to chance."
+          }
+        ]
+      },
+
+      "sat_blackout": {
+        "title": "Grid-Down Power Contingency",
+        "desc": "Manage auxiliary battery assets during island-wide grid failures.",
+        "scenario": "An island-wide blackout plunges your apartment into darkness. What is your priority power conservation move?",
+        "options": [
+          {
+            "text": "Leave all room lights switched on so you notice when power returns",
+            "feedback": "Incorrect. Unnecessary lighting wastes available backup power."
+          },
+          {
+            "text": "Unplug sensitive electronics and use low-draw LED lighting/flashlights",
+            "feedback": "Correct! Conserving battery power and protecting sensitive electronics are useful during an outage."
+          },
+          {
+            "text": "Light indoor scented candles next to curtains",
+            "feedback": "Dangerous! Open flames near curtains and other materials can create a fire hazard."
+          }
+        ]
+      }
     }
   },
 
@@ -76,7 +372,277 @@
     "english": "English",
     "malay": "Bahasa Melayu",
     "chinese": "中文",
-    "tamil": "தமிழ்"
+    "tamil": "தமிழ்",
+    "subtitle": "Select your preferred language",
+    "close": "Close"
+  },
+  "missions": {
+    "missions": {
+      "level1": {
+        "title": "Climate Defence",
+        "description": "Learn the basics of flood response and evacuation decisions."
+      },
+      "level2": {
+        "title": "Flood Routing",
+        "description": "Learn how to choose safer routes during a flood."
+      },
+      "level3": {
+        "title": "Go-Bag",
+        "description": "Learn which emergency supplies belong in your Go-Bag."
+      },
+      "level4": {
+        "title": "Climate Defence",
+        "description": "Respond to a more demanding climate emergency scenario."
+      },
+      "level5": {
+        "title": "Flood Routing",
+        "description": "Navigate increasingly complex flood route decisions."
+      },
+      "level6": {
+        "title": "Go-Bag",
+        "description": "Build an effective emergency kit while managing limited resources."
+      },
+      "level7": {
+        "title": "Climate Defence",
+        "description": "Make rapid tactical decisions under pressure."
+      },
+      "level8": {
+        "title": "Flood Routing",
+        "description": "Navigate multiple hazards and changing route conditions."
+      },
+      "level9": {
+        "title": "Go-Bag",
+        "description": "Manage limited resources while preparing for an emergency."
+      },
+      "level10": {
+        "title": "Preparedness Protocol",
+        "description": "Complete your final preparedness assessment."
+      }
+    },
+    "profile": {
+      "firstResponder": "First Responder",
+      "prepCoins": "PrepCoins"
+    },
+    "header": {
+      "campaignWorldMap": "CAMPAIGN WORLD MAP",
+      "missionsHub": "Missions Hub",
+      "singaporeResilienceDrills": "Singapore Resilience Drills",
+      "description": "Progress through tactical sectors, complete crisis simulations and build your First Responder certification."
+    },
+    "howMissionsWork": {
+      "title": "How Missions Work",
+      "completeDrills": "Complete crisis simulations and rapid-response drills to earn",
+      "prepPoints": "PrepPoints (XP)",
+      "andRaiseRank": "and raise your rank.",
+      "harderDrills": "Complete harder drills and demonstrate strong performance to progress through the campaign.",
+      "unlockNext": "Completing a previous campaign level unlocks the next mission."
+    },
+    "rewards": {
+      "title": "Preparedness Rewards Hub",
+      "description": "Redeem preparedness rewards with your points."
+    },
+    "journey": {
+      "title": "Survival Journey",
+      "missionsComplete": "{{completed}} of {{total}} missions complete"
+    },
+    "difficulty": {
+      "easy": "EASY",
+      "medium": "MEDIUM",
+      "hard": "HARD",
+      "final": "FINAL"
+    },
+    "tags": {
+      "climateResponse": "CLIMATE RESPONSE",
+      "routeDecision": "ROUTE DECISION",
+      "preparednessBasics": "PREPAREDNESS BASICS",
+      "resourceManagement": "RESOURCE MANAGEMENT",
+      "tacticalResponse": "TACTICAL RESPONSE",
+      "multiHazard": "MULTI-HAZARD",
+      "resourceChallenge": "RESOURCE CHALLENGE",
+      "finalMission": "FINAL MISSION"
+    },
+    "titles": {
+      "climateDefence": "Climate Defence",
+      "floodRouting": "Flood Routing",
+      "goBag": "Go-Bag",
+      "preparednessProtocol": "Preparedness Protocol"
+    },
+    "descriptions": {
+      "climateBasics": "Learn the basics of flood response and evacuation decisions.",
+      "floodSafetyRoutes": "Learn how to choose safer routes during a flood.",
+      "goBagSupplies": "Learn which emergency supplies belong in your Go-Bag.",
+      "climateDemanding": "Respond to a more demanding climate emergency scenario.",
+      "complexFloodRoutes": "Navigate increasingly complex flood route decisions.",
+      "resourceManagement": "Build an effective emergency kit while managing limited resources.",
+      "rapidTactical": "Make rapid tactical decisions under pressure.",
+      "multipleHazards": "Navigate multiple hazards and changing route conditions.",
+      "resourceChallenge": "Manage limited resources while preparing for an emergency.",
+      "finalAssessment": "Complete your final preparedness assessment."
+    },
+    "actions": {
+      "playMission": "Play Mission",
+      "replayMission": "Replay Mission",
+      "unlockPrevious": "Complete previous level to unlock"
+    },
+    "progress": {
+      "title": "Preparedness Campaign Progress",
+      "levelComplete": "Level {{completed}} of {{total}} Complete ({{percentage}}%)"
+    },
+    "completion": {
+      "title": "Campaign Complete",
+      "description": "You have completed all available resilience missions."
+    },
+    "level": "LVL {{level}}",
+    "xp": "{{amount}} XP"
+  },
+  "climateDefence": {
+    "title": "CLIMATE DEFENCE",
+    "level": "LEVEL {{level}}",
+
+    "difficulty_level": {
+      "EASY": "EASY",
+      "MEDIUM": "MEDIUM",
+      "HARD": "HARD"
+    },
+
+    "seconds": "{{count}}s",
+    "xp": "{{count}} XP",
+
+    "mission_onboarding": {
+      "title": "Climate Defence Exercise",
+      "subtitle": "Multi-stage emergency decision drill",
+      "missionBriefing": "Mission Briefing",
+      "briefingText": "Respond to a series of climate and emergency-preparedness situations. Select the most appropriate action for each situation.",
+      "decisions": "Decisions",
+      "perDecision": "Per Decision",
+      "missionReward": "Mission Reward",
+      "objective": "OBJECTIVE",
+      "objectiveText": "Demonstrate appropriate emergency decision-making across the complete scenario."
+    },
+
+    "play": {
+      "decisionProgress": "DECISION {{current}} OF {{total}}",
+      "responseWindow": "RESPONSE WINDOW",
+      "emergencyDecision": "EMERGENCY DECISION",
+      "selectResponse": "SELECT RESPONSE",
+      "timeoutMessage": "Response window expired. Review the recommended action in the debriefing."
+    },
+
+    "review": {
+      "title": "Mission Debrief",
+      "subtitle": "Review each decision before recording your mission result.",
+      "decisionAccuracy": "DECISION ACCURACY",
+      "stepByStep": "STEP-BY-STEP WALKTHROUGH",
+      "correct": "CORRECT",
+      "timeout": "TIMEOUT",
+      "review": "REVIEW",
+      "recommendedResponse": "RECOMMENDED RESPONSE"
+    },
+
+    "finished": {
+      "completedTitle": "Mission Completed",
+      "recordedTitle": "Mission Recorded",
+      "completedSubtitle": "You demonstrated appropriate decision-making across the climate defence exercise.",
+      "recordedSubtitle": "Review the debriefing guidance and repeat the exercise to improve your preparedness.",
+      "prepPoints": "PrepPoints",
+      "decisions": "Decisions",
+      "difficulty": "Difficulty"
+    },
+
+    "buttons": {
+      "beginMission": "Begin Mission",
+      "recordMissionResult": "Record Mission Result",
+      "returnToMissions": "Return to Missions"
+    },
+
+    "categories": {
+      "hazardIdentification": "HAZARD IDENTIFICATION",
+      "floodResponse": "FLOOD RESPONSE",
+      "evacuationDecision": "EVACUATION DECISION",
+      "earlyWarning": "EARLY WARNING",
+      "preparedness": "PREPAREDNESS",
+      "communication": "COMMUNICATION",
+      "powerInterruption": "POWER INTERRUPTION"
+    },
+
+    "questions": {
+      "floodWarning": {
+        "question": "Heavy rainfall is causing water levels to rise rapidly near your area. What should you do first?",
+        "options": {
+          "a": "Move to a safer location and monitor official emergency information.",
+          "b": "Walk toward the flooded area to assess the water depth.",
+          "c": "Wait outside until the situation becomes more serious.",
+          "d": "Drive through the affected area before the road becomes busier."
+        },
+        "explanation": "When flooding is developing, prioritize personal safety, move away from dangerous areas and follow information from official authorities."
+      },
+
+      "floodWater": {
+        "question": "Floodwater begins entering the ground floor of a building. Which response is most appropriate?",
+        "options": {
+          "a": "Move to a safer location using the recommended evacuation route.",
+          "b": "Enter the water to check whether the route is passable.",
+          "c": "Remain beside the entrance and wait for the water to stop.",
+          "d": "Move electrical equipment through the water to protect it."
+        },
+        "explanation": "Floodwater can conceal hazards and create dangerous conditions. Follow evacuation instructions and avoid entering floodwater whenever possible."
+      },
+
+      "evacuation": {
+        "question": "An official evacuation advisory has been issued for your area. What is the appropriate response?",
+        "options": {
+          "a": "Prepare essential belongings and follow the recommended evacuation instructions.",
+          "b": "Ignore the advisory until neighbours begin leaving.",
+          "c": "Stay behind to observe the developing situation.",
+          "d": "Choose an unfamiliar shortcut without checking whether it is safe."
+        },
+        "explanation": "Official evacuation instructions should be taken seriously. Prepare essential supplies and use recommended routes or instructions."
+      },
+
+      "weatherAlert": {
+        "question": "Your emergency application displays a severe weather warning. What is the most useful immediate action?",
+        "options": {
+          "a": "Check the official warning and prepare according to the identified hazard.",
+          "b": "Disable notifications to avoid unnecessary alerts.",
+          "c": "Continue normal outdoor activities until conditions change.",
+          "d": "Share an unverified warning with everyone immediately."
+        },
+        "explanation": "Early warnings are useful when they lead to appropriate preparation. Verify information through official sources before acting on or sharing it."
+      },
+
+      "goBag": {
+        "question": "You have limited time before leaving home. Which item should receive priority?",
+        "options": {
+          "a": "Essential medication and other critical personal supplies.",
+          "b": "Large entertainment devices.",
+          "c": "Non-essential household decorations.",
+          "d": "Heavy items that are difficult to carry."
+        },
+        "explanation": "When preparing quickly, prioritize essential personal needs, medication, communication and basic emergency supplies."
+      },
+
+      "communication": {
+        "question": "Your family members are separated when an emergency warning is issued. What should you do?",
+        "options": {
+          "a": "Use your agreed communication and rendezvous plan.",
+          "b": "Everyone should independently choose a different location.",
+          "c": "Wait indefinitely without communicating.",
+          "d": "Travel toward the hazard to locate family members."
+        },
+        "explanation": "A family emergency plan should provide agreed communication methods and meeting arrangements so that people know what to do when normal communication is disrupted."
+      },
+
+      "power": {
+        "question": "A severe weather event causes a temporary power interruption. Which preparation is most useful?",
+        "options": {
+          "a": "Keep a flashlight, charged power bank and essential communication devices available.",
+          "b": "Use candles beside combustible materials.",
+          "c": "Open electrical equipment to inspect it.",
+          "d": "Leave emergency supplies outside."
+        },
+        "explanation": "Independent lighting and backup power can help maintain basic communication and visibility during a temporary power interruption."
+      }
+    }
   },
 
   "resources": {
@@ -141,6 +707,76 @@
       "damage": { "title": "Document Damage", "desc": "When it is safe, record relevant damage and keep important information for follow-up and recovery." }
     },
     "footer": "This hub provides preparedness information and quick access to safety tools. Always follow official emergency instructions during an active incident."
-  }
-  }
+  },
+  "profile": {
+    "defaultName": "OPERATOR_ACTIVE",
+    "level": "LEVEL {{level}}",
+    "levelXp": "LEVEL {{level}} XP",
+    "xpUntilLevel": "{{xp}} XP until Level {{level}}",
+    "maximumLevel": "Maximum level reached",
 
+    "streak": {
+      "daysRunning": "{{count}} Days Running",
+      "dailyHabits": "Daily contingency habits functional."
+    },
+
+    "account": {
+      "architecture": "Account Architecture",
+      "changeSettings": "Change Settings",
+      "changeSettingsDescription": "Update passwords and physical identity tags"
+    },
+
+    "achievements": {
+      "title": "Secured Achievements",
+      "empty": "No active insignias found. Complete main modules to earn honors."
+    },
+
+    "badges": {
+      "goBagMaster": {
+        "label": "Go-Bag Master",
+        "description": "Packed perfect kit in under 15s"
+      },
+      "quizMaster": {
+        "label": "Quiz Master",
+        "description": "Maintained optimal protocol streak"
+      },
+      "climateHero": {
+        "label": "Climate Hero",
+        "description": "Stabilized volatile microclimates"
+      },
+      "survivalStreakMaster": {
+        "label": "Streak Master",
+        "description": "Maintained 4+ daily operations"
+      },
+      "firstLogin": {
+        "label": "First Contact",
+        "description": "Initialized baseline telemetry"
+      },
+      "fallbackDescription": "Active operational credential"
+    },
+
+    "logout": "Log Out",
+
+    "photo": {
+      "error": "Error",
+      "failedToCache": "Failed to cache selected image.",
+      "cameraFailure": "Camera processing failure.",
+
+      "pdpaNotice": "PDPA Notice",
+      "cameraDenied": "Camera access was declined. You can securely assign an operational badge emoji instead.",
+      "galleryDenied": "Gallery access was declined. Your privacy is fully respected. You may use our custom emojis instead.",
+
+      "identityUpdate": "Identity Matrix Update",
+      "privacyNotice": "Your privacy is guarded. Images processed here are localized to sandboxed memory space under strict PDPA design guidelines. No telemetry datasets are transmitted externally.",
+
+      "camera": "Initialize Hardware Camera",
+      "gallery": "Access Media Storage Logs",
+      "emoji": "Deploy Anonymous Emoji Tag",
+      "cancel": "Aborted Patch",
+
+      "selectEmoji": "Select Identity Emoji",
+      "emojiPrivacy": "Zero system permissions required. Keep your spatial identities fully unlinked.",
+      "back": "Back"
+    }
+  }
+}

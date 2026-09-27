@@ -112,10 +112,10 @@ export default function VoucherStoreScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backBtn}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Preparedness Rewards Hub</Text>
+        <Text style={styles.headerTitle}> Rewards Hub</Text>
         <View style={styles.coinBadge}>
           <Ionicons name="shield-checkmark" size={16} color="#34D399" />
-          <Text style={styles.coinText}>{currentUserCoins} PTS</Text>
+          <Text style={styles.coinText}>{currentUserCoins} PrepCoins</Text>
         </View>
       </View>
 
@@ -175,7 +175,7 @@ export default function VoucherStoreScreen({ navigation }) {
                 <View style={styles.costBadgeContainer}>
                   <View style={[styles.costBadge, !canAfford && styles.costBadgeDisabled]}>
                     <Ionicons name="shield-outline" size={14} color="white" />
-                    <Text style={styles.costText}>{reward.cost} PTS</Text>
+                    <Text style={styles.costText}>{reward.cost} PrepCoins</Text>
                   </View>
                   <Text style={styles.tapToView}>Tap to redeem</Text>
                 </View>
@@ -252,11 +252,11 @@ export default function VoucherStoreScreen({ navigation }) {
 
                 <View style={styles.priceSummaryRow}>
                   <Text style={styles.priceLabel}>Points Required:</Text>
-                  <Text style={styles.priceValue}>{selectedReward.cost} PTS</Text>
+                  <Text style={styles.priceValue}>{selectedReward.cost} PrepCoins</Text>
                 </View>
                 <View style={styles.priceSummaryRow}>
                   <Text style={styles.priceLabel}>Your Current Balance:</Text>
-                  <Text style={styles.priceValue}>{currentUserCoins} PTS</Text>
+                  <Text style={styles.priceValue}>{currentUserCoins} PrepCoins</Text>
                 </View>
 
                 <View style={styles.divider} />
@@ -271,7 +271,7 @@ export default function VoucherStoreScreen({ navigation }) {
                 >
                   <Text style={styles.confirmRedeemText}>
                     {currentUserCoins >= selectedReward.cost
-                      ? `Claim Voucher (${selectedReward.cost} PTS)`
+                      ? `Claim Voucher (${selectedReward.cost} PrepCoins)`
                       : 'Insufficient Points'}
                   </Text>
                 </TouchableOpacity>

@@ -18,7 +18,20 @@
     "passwordHint": "Minimum 6 aksara",
     "passwordStrongHint": "Minimum 6 aksara (tambah nombor/simbol untuk kata laluan yang lebih kukuh)",
     "forgotPassword": "Lupa Kata Laluan?",
-    "createAccountButton": "Cipta Akaun",
+    "forgotPasswordTitle": "Tetapkan Semula Kata Laluan",
+    "forgotPasswordMessage": "Masukkan e-mel yang dikaitkan dengan akaun anda, kemudian pilih kata laluan baharu.",
+    "resetEmail": "E-mel",
+    "resetEmailPlaceholder": "Masukkan e-mel akaun anda",
+    "newPassword": "Kata Laluan Baharu",
+    "confirmNewPassword": "Sahkan Kata Laluan Baharu",
+    "enterNewPassword": "Masukkan kata laluan baharu",
+    "enterConfirmPassword": "Sahkan kata laluan baharu",
+    "passwordsDoNotMatch": "Kata laluan tidak sepadan",
+    "resetPassword": "Tetapkan Semula",
+    "passwordResetSuccessTitle": "Kata Laluan Berjaya Ditetapkan Semula",
+    "passwordResetSuccessMessage": "Kata laluan anda telah dikemas kini. Anda kini boleh log masuk dengan kata laluan baharu.",
+    "passwordResetFailed": "Kata laluan tidak dapat ditetapkan semula. Semak e-mel anda dan cuba lagi.",
+        "createAccountButton": "Cipta Akaun",
     "or": "atau",
     "continueAsGuest": "Teruskan sebagai Tetamu",
     "terms": "Dengan meneruskan, anda bersetuju dengan Syarat Perkhidmatan dan Dasar Privasi kami",
@@ -53,13 +66,609 @@
       "resetLinkSentMessage": "Sila semak e-mel anda untuk pautan tetapan semula kata laluan."
     }
   },
+  "onboarding": {
+    "steps": {
+      "stepOf": "Langkah {{current}} daripada {{total}}"
+    },
+
+    "welcome": {
+      "title": "Selamat Datang",
+      "subtitle": "Bina profil kesiapsiagaan anda dan pelajari kemahiran praktikal untuk menghadapi kecemasan berkaitan iklim di Singapura.",
+      "expectTitle": "Apa yang boleh anda jangkakan",
+      "bullet1": "Bina dan lengkapkan senarai semak kecemasan yang diperibadikan.",
+      "bullet2": "Lengkapkan kuiz dan aktiviti kesiapsiagaan untuk memperoleh mata pengalaman.",
+      "bullet3": "Terima pemberitahuan alam sekitar dan kecemasan yang berkaitan.",
+      "bullet4": "Jejaki kemajuan anda dan tingkatkan tahap kesiapsiagaan dari semasa ke semasa.",
+      "continue": "Teruskan"
+    },
+
+    "preferences": {
+      "title": "Keutamaan Aplikasi",
+      "subtitle": "Konfigurasikan aplikasi mengikut keutamaan anda.",
+      "darkMode": "Mod Gelap",
+      "darkModeDescription": "Gunakan antara muka yang lebih gelap untuk penglihatan yang lebih baik dalam keadaan cahaya rendah.",
+      "emergencyNotifications": "Pemberitahuan Kecemasan",
+      "emergencyNotificationsDescription": "Terima peringatan kesiapsiagaan dan pemberitahuan kecemasan yang berkaitan.",
+      "continue": "Simpan dan Teruskan"
+    },
+
+    "preparednessLevel": {
+      "title": "Tahap Kesiapsiagaan",
+      "subtitle": "Pilih pilihan yang paling menggambarkan tahap kesiapsiagaan kecemasan anda pada masa ini.",
+      "beginner": {
+        "title": "Baru Bermula",
+        "description": "Saya mempunyai bekalan kecemasan atau pelan kesiapsiagaan yang terhad."
+      },
+      "intermediate": {
+        "title": "Agak Bersedia",
+        "description": "Saya mempunyai bekalan asas seperti air, makanan dan peralatan pertolongan cemas."
+      },
+      "advanced": {
+        "title": "Sangat Bersedia",
+        "description": "Saya mempunyai kit kecemasan, pelan komunikasi dan prosedur tindak balas yang telah ditetapkan."
+      },
+      "continue": "Teruskan"
+    },
+
+    "readinessSchedule": {
+      "title": "Jadual Kesiapsiagaan",
+      "subtitle": "Pilih kekerapan anda ingin menjalankan aktiviti kesiapsiagaan dan mengekalkan tahap kesediaan anda.",
+      "daily": {
+        "label": "Kesiapsiagaan Harian",
+        "description": "Lengkapkan aktiviti kesiapsiagaan ringkas setiap hari."
+      },
+      "threeDay": {
+        "label": "Cabaran 3 Hari",
+        "description": "Lengkapkan aktiviti kesiapsiagaan dalam kitaran tiga hari."
+      },
+      "fiveDay": {
+        "label": "Cabaran 5 Hari",
+        "description": "Lengkapkan kitaran kesiapsiagaan berstruktur selama lima hari."
+      },
+      "weekly": {
+        "label": "Kesiapsiagaan Mingguan",
+        "description": "Semak dan tingkatkan tahap kesiapsiagaan anda setiap minggu."
+      },
+      "complete": "Lengkapkan Persediaan",
+      "footer": "Anda boleh mengubah keutamaan dan jadual kesiapsiagaan anda kemudian melalui Tetapan."
+    },
+
+    "common": {
+      "back": "Kembali",
+      "saving": "Menyimpan..."
+    },
+
+    "alerts": {
+      "unableToCompleteTitle": "Tidak Dapat Melengkapkan Persediaan",
+      "unableToCompleteMessage": "Maklumat persediaan anda tidak dapat disimpan. Sila cuba lagi."
+    },
+
+    "accessibility": {
+      "back": "Kembali ke langkah sebelumnya",
+      "darkMode": "Mod Gelap",
+      "emergencyNotifications": "Pemberitahuan Kecemasan"
+    }
+  },
+  "home": {
+    "defaults": {
+      "newResponder": "Responden Baharu"
+    },
+
+    "branding": {
+      "avatar": "Responden",
+      "level": "TAHAP {{level}}"
+    },
+
+    "progress": {
+      "nextLevel": "TAHAP SETERUSNYA",
+      "xpRemaining": "Dapatkan {{xp}} XP lagi untuk mencapai Tahap {{level}}"
+    },
+
+    "milestones": {
+      "sectionTitle": "PENCAPAIAN RENTETAN",
+      "oneDay": "1 Hari",
+      "threeDays": "3 Hari",
+      "fiveDays": "5 Hari",
+      "weekly": "Mingguan"
+    },
+
+    "readiness": {
+      "sectionTitle": "KEMAJUAN KESEDIAAN",
+      "missions": "Misi",
+      "profile": "Profil"
+    },
+
+    "checklist": {
+      "title": "Senarai Semak"
+    },
+
+    "alerts": {
+      "title": "Makluman",
+      "activeThreats": "{{count}} Siaran Amaran Aktif",
+      "latest": "Terkini: {{title}}",
+      "environmentalHazard": "Bahaya Alam Sekitar Direkodkan",
+
+      "dailyCheckin": {
+        "title": "Daftar Masuk Harian Dituntut!",
+        "message": "Selamat kembali! Anda telah melanjutkan rentetan anda kepada {{streak}} hari!\n\nGanjaran: +{{coins}} PrepCoins & +{{xp}} XP."
+      },
+
+      "missionCompleted": {
+        "title": "🎉 Misi Selesai!",
+        "message": "Anda berjaya menguasai protokol {{mission}} dan memperoleh +{{xp}} XP 🪙 +{{coins}} PrepCoins!\nJumlah baki PrepCoins anda kini: {{totalCoins}}!"
+      },
+
+      "missionAlreadyComplete": {
+        "message": "Anda telah pun menyelesaikan misi mingguan hari ini."
+      }
+    },
+
+    "mission": {
+      "activeDrill": "Latihan Iklim Aktif ({{day}})",
+      "tacticalDecision": "Tekan untuk Menjalankan Latihan Keputusan Taktikal",
+      "completedReview": "✅ Misi selesai - mod semakan",
+      "complete": "Selesaikan Misi"
+    },
+
+    "missionDays": {
+      "sunday": "Ahad",
+      "monday": "Isnin",
+      "tuesday": "Selasa",
+      "wednesday": "Rabu",
+      "thursday": "Khamis",
+      "friday": "Jumaat",
+      "saturday": "Sabtu"
+    },
+
+    "familySync": {
+      "title": "Nod Keluarga SGSecure",
+      "safe": "Status dikemas kini: Isi rumah ditandakan sebagai SELAMAT untuk amaran iklim semasa.",
+      "awaiting": "Status dikemas kini: Menunggu semakan respons ahli keluarga."
+    },
+
+    "leaderboard": {
+      "title": "Papan Pendahulu Serantau",
+      "needXp": "Perlukan +{{xp}} XP untuk melepasi {{rank}}",
+      "you": "Anda",
+      "streak": "Rentetan Aktif Berterusan {{days}} Hari",
+      "awaitingConfiguration": "Menunggu metrik konfigurasi sistem..."
+    },
+
+    "missions": {
+      "sun_heat": {
+        "title": "Protokol Gelombang Haba Teruk",
+        "desc": "Suhu meningkat melebihi 38°C di kawasan bangunan konkrit. Kurangkan tekanan haba bandar.",
+        "scenario": "Amaran gelombang haba teruk dikeluarkan. Suhu dalam rumah anda meningkat dengan cepat. Apakah tindakan taktikal segera anda?",
+        "options": [
+          {
+            "text": "Pastikan semua tingkap tertutup rapat dan tutup langsir",
+            "feedback": "Salah! Menutup semua ruang boleh memerangkap haba. Pengudaraan silang diperlukan."
+          },
+          {
+            "text": "Tutup langsir haba, buka tingkap untuk aliran udara silang dan minum air",
+            "feedback": "Betul! Menghalang cahaya matahari langsung sambil meningkatkan aliran udara boleh membantu mengurangkan tekanan haba."
+          },
+          {
+            "text": "Matikan semua kipas siling untuk menjimatkan tenaga kecemasan",
+            "feedback": "Salah! Kipas boleh membantu proses penyejatan peluh pada kulit."
+          }
+        ]
+      },
+
+      "mon_flood": {
+        "title": "Laluan Banjir Kilat Monsun",
+        "desc": "Hujan lebat menyebabkan paras air meningkat dengan cepat berhampiran kawasan rendah dan longkang.",
+        "scenario": "Anda memandu berhampiran laluan bawah tanah yang rendah apabila banjir kilat mula menenggelami jalan. Apakah tindakan anda?",
+        "options": [
+          {
+            "text": "Pandu dengan cepat sebelum air menjadi lebih tinggi",
+            "feedback": "Berbahaya! Air banjir boleh menyebabkan jalan dan kenderaan menjadi tidak selamat dengan cepat."
+          },
+          {
+            "text": "Tinggalkan kenderaan dan pergi ke kawasan lebih tinggi dengan segera",
+            "feedback": "Betul! Elakkan memandu melalui laluan yang ditenggelami air dan bergerak ke kawasan tinggi yang lebih selamat."
+          },
+          {
+            "text": "Tunggu di dalam kereta yang berkunci sehingga bantuan tiba",
+            "feedback": "Berisiko! Paras air boleh meningkat dengan cepat dan memerangkap anda di dalam."
+          }
+        ]
+      },
+
+      "tue_haze": {
+        "title": "Pertahanan Jerebu Rentas Sempadan",
+        "desc": "Paras PSI meningkat ke tahap tidak sihat akibat asap serantau.",
+        "scenario": "PSI mencapai 250 (Sangat Tidak Sihat). Anda perlu keluar sebentar. Apakah perlindungan pernafasan yang sesuai?",
+        "options": [
+          {
+            "text": "Pakai pelitup muka pembedahan biasa",
+            "feedback": "Salah. Pelitup pembedahan tidak direka untuk memberikan perlindungan yang sama terhadap zarah halus seperti respirator yang dipasang dengan betul."
+          },
+          {
+            "text": "Pakai respirator N95 yang dipasang dengan baik dan kurangkan aktiviti luar",
+            "feedback": "Betul! Respirator N95 yang dipasang dengan baik boleh mengurangkan pendedahan kepada zarah halus."
+          },
+          {
+            "text": "Tutup mulut dengan kain kapas lembap",
+            "feedback": "Salah. Kain lembap tidak memberikan perlindungan yang boleh dipercayai daripada zarah halus jerebu."
+          }
+        ]
+      },
+
+      "wed_water": {
+        "title": "Persediaan Gangguan Bekalan Air PUB",
+        "desc": "Gangguan saluran paip setempat dilaporkan. Sediakan bekalan air kecemasan.",
+        "scenario": "Gangguan bekalan air secara tiba-tiba diumumkan untuk blok anda. Berapakah simpanan air kecemasan yang perlu disediakan oleh seorang dewasa setiap hari?",
+        "options": [
+          {
+            "text": "0.5 Liter sehari untuk minuman sahaja",
+            "feedback": "Salah. Jumlah tersebut mungkin tidak mencukupi untuk keperluan asas minuman dan kebersihan."
+          },
+          {
+            "text": "Sekurang-kurangnya 3 Liter sehari untuk minuman, kebersihan dan sanitasi asas",
+            "feedback": "Betul! Bekalan air kecemasan membantu menyediakan simpanan asas semasa gangguan."
+          },
+          {
+            "text": "20 Liter sehari untuk mengisi tab mandi",
+            "feedback": "Tidak cekap dan tidak diperlukan untuk gangguan bekalan air jangka pendek."
+          }
+        ]
+      },
+
+      "thu_supply": {
+        "title": "Pematuhan Go-Bag SCDF",
+        "desc": "Semak peralatan penting dalam simpanan kecemasan yang boleh dibawa.",
+        "scenario": "Semasa menyediakan Go-Bag kecemasan untuk pemindahan secara tiba-tiba, peralatan elektronik manakah yang penting?",
+        "options": [
+          {
+            "text": "Komputer riba permainan berkuasa tinggi dan pengecas konsol berat",
+            "feedback": "Salah. Barangan ini berat dan bukan keperluan asas untuk situasi kecemasan."
+          },
+          {
+            "text": "Power bank, radio kecemasan dengan pemegang tangan dan lampu suluh kalis air",
+            "feedback": "Betul! Komunikasi, kuasa sandaran dan pencahayaan boleh menjadi penting semasa gangguan."
+          },
+          {
+            "text": "Kipas mudah alih elektrik yang memerlukan soket dinding",
+            "feedback": "Salah. Peranti yang memerlukan soket mungkin tidak berguna semasa gangguan bekalan elektrik."
+          }
+        ]
+      },
+
+      "fri_comm": {
+        "title": "Latihan Komunikasi SGSecure",
+        "desc": "Sediakan kaedah komunikasi alternatif semasa gangguan rangkaian mudah alih.",
+        "scenario": "Rangkaian mudah alih terputus sepenuhnya semasa krisis. Bagaimanakah keluarga anda perlu berhubung?",
+        "options": [
+          {
+            "text": "Terus membuat panggilan berulang kali sehingga talian pulih",
+            "feedback": "Salah. Panggilan berulang boleh menghabiskan bateri apabila rangkaian tidak tersedia."
+          },
+          {
+            "text": "Tetapkan lokasi pertemuan fizikal lebih awal dan gunakan SMS/aplikasi mesh",
+            "feedback": "Betul! Lokasi pertemuan yang dipersetujui terlebih dahulu menyediakan pilihan sandaran apabila komunikasi biasa terganggu."
+          },
+          {
+            "text": "Tunggu tanpa had di pusat beli-belah yang berasingan",
+            "feedback": "Salah. Pelan komunikasi dan lokasi pertemuan yang jelas lebih selamat daripada membiarkan keadaan tanpa perancangan."
+          }
+        ]
+      },
+
+      "sat_blackout": {
+        "title": "Pelan Kuasa Semasa Gangguan Grid",
+        "desc": "Urus sumber bateri tambahan semasa gangguan bekalan elektrik berskala besar.",
+        "scenario": "Gangguan bekalan elektrik menyebabkan apartmen anda gelap. Apakah tindakan utama untuk menjimatkan tenaga?",
+        "options": [
+          {
+            "text": "Biarkan semua lampu bilik terpasang supaya anda tahu apabila elektrik kembali",
+            "feedback": "Salah. Pencahayaan yang tidak diperlukan membazirkan kuasa sandaran."
+          },
+          {
+            "text": "Cabut peralatan elektronik sensitif dan gunakan lampu LED berkuasa rendah atau lampu suluh",
+            "feedback": "Betul! Menjimatkan kuasa bateri dan melindungi peralatan elektronik adalah berguna semasa gangguan."
+          },
+          {
+            "text": "Nyalakan lilin wangi di dalam rumah berhampiran langsir",
+            "feedback": "Berbahaya! Api terbuka berhampiran langsir dan bahan mudah terbakar boleh menyebabkan kebakaran."
+          }
+        ]
+      }
+    }
+  },
+
+    
+  "missions": {
+  "missions": {
+    "level1": {
+      "title": "Pertahanan Iklim",
+      "description": "Pelajari asas tindak balas banjir dan keputusan pemindahan."
+    },
+    "level2": {
+      "title": "Laluan Banjir",
+      "description": "Pelajari cara memilih laluan yang lebih selamat semasa banjir."
+    },
+    "level3": {
+      "title": "Beg Kecemasan",
+      "description": "Pelajari bekalan kecemasan yang perlu dimasukkan ke dalam Beg Kecemasan anda."
+    },
+    "level4": {
+      "title": "Pertahanan Iklim",
+      "description": "Hadapi situasi kecemasan iklim yang lebih mencabar."
+    },
+    "level5": {
+      "title": "Laluan Banjir",
+      "description": "Buat keputusan laluan banjir yang semakin kompleks."
+    },
+    "level6": {
+      "title": "Beg Kecemasan",
+      "description": "Sediakan kit kecemasan yang berkesan sambil mengurus sumber yang terhad."
+    },
+    "level7": {
+      "title": "Pertahanan Iklim",
+      "description": "Buat keputusan taktikal dengan pantas dalam keadaan tertekan."
+    },
+    "level8": {
+      "title": "Laluan Banjir",
+      "description": "Hadapi pelbagai bahaya dan keadaan laluan yang berubah-ubah."
+    },
+    "level9": {
+      "title": "Beg Kecemasan",
+      "description": "Urus sumber yang terhad sambil membuat persediaan menghadapi kecemasan."
+    },
+    "level10": {
+      "title": "Protokol Persediaan",
+      "description": "Lengkapkan penilaian akhir tahap kesiapsiagaan anda."
+    }
+  },
+  "profile": {
+  "firstResponder": "Pegawai Tindak Balas Pertama",
+  "prepCoins": "Syiling Persediaan"
+  },
+
+  "header": {
+  "campaignWorldMap": "PETA DUNIA KEMPEN",
+  "missionsHub": "Pusat Misi",
+  "singaporeResilienceDrills": "Latihan Ketahanan Singapura",
+  "description": "Maju melalui sektor taktikal, lengkapkan simulasi krisis dan bina kemahiran untuk pensijilan Pegawai Tindak Balas Pertama."
+  },
+
+  "howMissionsWork": {
+  "title": "Cara Misi Berfungsi",
+  "completeDrills": "Lengkapkan simulasi krisis dan latihan tindak balas pantas untuk memperoleh",
+  "prepPoints": "Mata Persediaan (XP)",
+  "andRaiseRank": "dan meningkatkan tahap anda.",
+  "harderDrills": "Lengkapkan latihan yang lebih mencabar dan tunjukkan prestasi yang baik untuk maju dalam kempen.",
+  "unlockNext": "Melengkapkan tahap kempen sebelumnya akan membuka misi seterusnya."
+  },
+
+  "rewards": {
+  "title": "Pusat Ganjaran Persediaan",
+  "description": "Tebus ganjaran persediaan menggunakan mata anda."
+  },
+
+  "journey": {
+  "title": "Perjalanan Kelangsungan Hidup",
+  "missionsComplete": "{{completed}} daripada {{total}} misi telah lengkap"
+  },
+
+  "difficulty": {
+  "easy": "MUDAH",
+  "medium": "SEDERHANA",
+  "hard": "SUKAR",
+  "final": "AKHIR"
+  },
+
+  "tags": {
+  "climateResponse": "TINDAK BALAS IKLIM",
+  "routeDecision": "KEPUTUSAN LALUAN",
+  "preparednessBasics": "ASAS PERSEDIAAN",
+  "resourceManagement": "PENGURUSAN SUMBER",
+  "tacticalResponse": "TINDAK BALAS TAKTIKAL",
+  "multiHazard": "PELBAGAI BAHAYA",
+  "resourceChallenge": "CABARAN SUMBER",
+  "finalMission": "MISI AKHIR"
+  },
+
+  "titles": {
+  "climateDefence": "Pertahanan Iklim",
+  "floodRouting": "Laluan Banjir",
+  "goBag": "Beg Kecemasan",
+  "preparednessProtocol": "Protokol Persediaan"
+  },
+
+  "descriptions": {
+  "climateBasics": "Pelajari asas tindak balas banjir dan keputusan pemindahan.",
+  "floodSafetyRoutes": "Pelajari cara memilih laluan yang lebih selamat semasa banjir.",
+  "goBagSupplies": "Pelajari bekalan kecemasan yang perlu dimasukkan ke dalam Beg Kecemasan anda.",
+  "climateDemanding": "Tindak balas terhadap situasi kecemasan iklim yang lebih mencabar.",
+  "complexFloodRoutes": "Navigasi keputusan laluan banjir yang semakin kompleks.",
+  "resourceManagement": "Sediakan kit kecemasan yang berkesan sambil mengurus sumber yang terhad.",
+  "rapidTactical": "Buat keputusan taktikal dengan pantas di bawah tekanan.",
+  "multipleHazards": "Navigasi pelbagai bahaya dan keadaan laluan yang berubah-ubah.",
+  "resourceChallenge": "Urus sumber yang terhad sambil membuat persediaan menghadapi kecemasan.",
+  "finalAssessment": "Lengkapkan penilaian persediaan akhir anda."
+  },
+
+  "actions": {
+  "playMission": "Mulakan Misi",
+  "replayMission": "Main Semula Misi",
+  "unlockPrevious": "Lengkapkan tahap sebelumnya untuk membuka kunci"
+  },
+
+  "progress": {
+  "title": "Kemajuan Kempen Persediaan",
+  "levelComplete": "Tahap {{completed}} daripada {{total}} Lengkap ({{percentage}}%)"
+  },
+
+  "completion": {
+  "title": "Kempen Lengkap",
+  "description": "Anda telah melengkapkan semua misi ketahanan yang tersedia."
+  },
+
+  "level": "TAHAP {{level}}",
+  "xp": "{{amount}} XP"
+  },
   "language": {
     "title": "Pilih bahasa anda",
     "english": "English",
     "malay": "Bahasa Melayu",
     "chinese": "中文",
-    "tamil": "தமிழ்"
+    "tamil": "தமிழ்",
+    "subtitle": "Select your preferred language",
+    "close": "Close"
+
   },
+  "climateDefence": {
+    "title": "PERTAHANAN IKLIM",
+    "level": "Tahap {{level}}",
+
+    "difficulty": {
+      "EASY": "MUDAH",
+      "MEDIUM": "SEDERHANA",
+      "HARD": "SUKAR"
+    },
+
+    "seconds": "{{count}}s",
+    "xp": "{{count}} XP",
+
+    "mission_onboarding": {
+      "title": "Latihan Pertahanan Iklim",
+      "subtitle": "Latihan membuat keputusan kecemasan berperingkat",
+      "missionBriefing": "Taklimat Misi",
+      "briefingText": "Tindak balas terhadap beberapa situasi berkaitan iklim dan persediaan kecemasan. Pilih tindakan yang paling sesuai bagi setiap situasi.",
+      "decisions": "Keputusan",
+      "perDecision": "Setiap Keputusan",
+      "missionReward": "Ganjaran Misi",
+      "objective": "OBJEKTIF",
+      "objectiveText": "Tunjukkan kebolehan membuat keputusan kecemasan yang sesuai sepanjang keseluruhan senario."
+    },
+
+    "play": {
+      "decisionProgress": "KEPUTUSAN {{current}} DARIPADA {{total}}",
+      "responseWindow": "TEMPOH TINDAK BALAS",
+      "emergencyDecision": "KEPUTUSAN KECEMASAN",
+      "selectResponse": "PILIH TINDAK BALAS",
+      "timeoutMessage": "Tempoh tindak balas telah tamat. Semak tindakan yang disyorkan dalam taklimat selepas misi."
+    },
+
+    "review": {
+      "title": "Taklimat Selepas Misi",
+      "subtitle": "Semak setiap keputusan sebelum merekodkan hasil misi anda.",
+      "decisionAccuracy": "KETEPATAN KEPUTUSAN",
+      "stepByStep": "SEMAKAN LANGKAH DEMI LANGKAH",
+      "correct": "BETUL",
+      "timeout": "MASA TAMAT",
+      "review": "SEMAK",
+      "recommendedResponse": "TINDAK BALAS DISYORKAN"
+    },
+
+    "finished": {
+      "completedTitle": "Misi Selesai",
+      "recordedTitle": "Misi Direkodkan",
+      "completedSubtitle": "Anda menunjukkan kebolehan membuat keputusan yang sesuai sepanjang latihan pertahanan iklim.",
+      "recordedSubtitle": "Semak panduan taklimat dan ulang latihan untuk meningkatkan tahap kesiapsiagaan anda.",
+      "prepPoints": "Mata Persediaan",
+      "decisions": "Keputusan",
+      "difficulty": "Kesukaran"
+    },
+
+    "buttons": {
+      "beginMission": "Mulakan Misi",
+      "recordMissionResult": "Rekod Hasil Misi",
+      "returnToMissions": "Kembali ke Misi"
+    },
+
+    "categories": {
+      "hazardIdentification": "PENGENALPASTIAN BAHAYA",
+      "floodResponse": "TINDAK BALAS BANJIR",
+      "evacuationDecision": "KEPUTUSAN PEMINDAHAN",
+      "earlyWarning": "AMARAN AWAL",
+      "preparedness": "KESIAPSIAGAAN",
+      "communication": "KOMUNIKASI",
+      "powerInterruption": "GANGGUAN BEKALAN ELEKTRIK"
+    },
+
+    "questions": {
+      "floodWarning": {
+        "question": "Hujan lebat menyebabkan paras air meningkat dengan cepat berhampiran kawasan anda. Apakah yang perlu anda lakukan terlebih dahulu?",
+        "options": {
+          "a": "Berpindah ke lokasi yang lebih selamat dan pantau maklumat kecemasan rasmi.",
+          "b": "Berjalan ke kawasan banjir untuk menilai kedalaman air.",
+          "c": "Menunggu di luar sehingga keadaan menjadi lebih serius.",
+          "d": "Memandu melalui kawasan terjejas sebelum jalan menjadi lebih sibuk."
+        },
+        "explanation": "Apabila banjir sedang berlaku, utamakan keselamatan diri, jauhi kawasan berbahaya dan ikuti maklumat daripada pihak berkuasa rasmi."
+      },
+
+      "floodWater": {
+        "question": "Air banjir mula memasuki tingkat bawah sebuah bangunan. Apakah tindak balas yang paling sesuai?",
+        "options": {
+          "a": "Berpindah ke lokasi yang lebih selamat menggunakan laluan pemindahan yang disyorkan.",
+          "b": "Masuk ke dalam air untuk memeriksa sama ada laluan boleh dilalui.",
+          "c": "Kekal di sebelah pintu masuk dan tunggu sehingga air berhenti.",
+          "d": "Membawa peralatan elektrik melalui air untuk melindunginya."
+        },
+        "explanation": "Air banjir boleh menyembunyikan bahaya dan mewujudkan keadaan yang berisiko. Ikuti arahan pemindahan dan elakkan memasuki air banjir jika boleh."
+      },
+
+      "evacuation": {
+        "question": "Nasihat pemindahan rasmi telah dikeluarkan untuk kawasan anda. Apakah tindak balas yang sesuai?",
+        "options": {
+          "a": "Sediakan barang keperluan dan ikuti arahan pemindahan yang disyorkan.",
+          "b": "Abaikan nasihat tersebut sehingga jiran mula meninggalkan kawasan.",
+          "c": "Kekal di tempat untuk melihat perkembangan keadaan.",
+          "d": "Pilih jalan pintas yang tidak dikenali tanpa memastikan ia selamat."
+        },
+        "explanation": "Arahan pemindahan rasmi perlu diambil serius. Sediakan bekalan penting dan gunakan laluan yang disyorkan atau ikuti arahan yang diberikan."
+      },
+
+      "weatherAlert": {
+        "question": "Aplikasi kecemasan anda memaparkan amaran cuaca buruk. Apakah tindakan segera yang paling berguna?",
+        "options": {
+          "a": "Semak amaran rasmi dan buat persediaan mengikut bahaya yang dikenal pasti.",
+          "b": "Nyahaktifkan pemberitahuan untuk mengelakkan amaran yang tidak perlu.",
+          "c": "Teruskan aktiviti luar seperti biasa sehingga keadaan berubah.",
+          "d": "Kongsi amaran yang belum disahkan dengan semua orang dengan segera."
+        },
+        "explanation": "Amaran awal berguna apabila ia membawa kepada persediaan yang sesuai. Sahkan maklumat melalui sumber rasmi sebelum bertindak atau berkongsinya."
+      },
+
+      "goBag": {
+        "question": "Anda mempunyai masa yang terhad sebelum meninggalkan rumah. Barang manakah yang perlu diutamakan?",
+        "options": {
+          "a": "Ubat penting dan keperluan peribadi kritikal yang lain.",
+          "b": "Peranti hiburan yang besar.",
+          "c": "Hiasan rumah yang tidak penting.",
+          "d": "Barang berat yang sukar dibawa."
+        },
+        "explanation": "Apabila perlu membuat persediaan dengan cepat, utamakan keperluan peribadi, ubat, komunikasi dan bekalan kecemasan asas."
+      },
+
+      "communication": {
+        "question": "Ahli keluarga anda berada di tempat berbeza apabila amaran kecemasan dikeluarkan. Apakah yang perlu anda lakukan?",
+        "options": {
+          "a": "Gunakan pelan komunikasi dan tempat berkumpul yang telah dipersetujui.",
+          "b": "Setiap orang memilih lokasi yang berbeza secara sendiri.",
+          "c": "Tunggu tanpa berkomunikasi.",
+          "d": "Pergi ke arah kawasan bahaya untuk mencari ahli keluarga."
+        },
+        "explanation": "Pelan kecemasan keluarga perlu menyediakan kaedah komunikasi dan pengaturan tempat berkumpul yang dipersetujui supaya semua orang tahu apa yang perlu dilakukan apabila komunikasi biasa terganggu."
+      },
+
+      "power": {
+        "question": "Satu kejadian cuaca buruk menyebabkan gangguan bekalan elektrik sementara. Apakah persediaan yang paling berguna?",
+        "options": {
+          "a": "Sediakan lampu suluh, power bank yang dicas dan peranti komunikasi penting.",
+          "b": "Gunakan lilin berdekatan bahan mudah terbakar.",
+          "c": "Buka peralatan elektrik untuk memeriksanya.",
+          "d": "Letakkan bekalan kecemasan di luar."
+        },
+        "explanation": "Pencahayaan bebas dan bekalan kuasa sandaran dapat membantu mengekalkan komunikasi asas dan penglihatan semasa gangguan bekalan elektrik sementara."
+      }
+    }
+  },
+
   "resources": {
     "hero": {
       "title": "Pusat Kesediaan dan Tindak Balas Bencana",
@@ -122,5 +731,76 @@
       "damage": { "title": "Dokumenkan Kerosakan", "desc": "Apabila selamat, rekodkan kerosakan yang berkaitan dan simpan maklumat penting untuk susulan dan pemulihan." }
     },
     "footer": "Pusat ini menyediakan maklumat kesediaan dan akses pantas kepada alat keselamatan. Sentiasa ikuti arahan kecemasan rasmi semasa insiden aktif."
+  },
+  "profile": {
+    "defaultName": "OPERATOR_AKTIF",
+    "level": "TAHAP {{level}}",
+    "levelXp": "XP TAHAP {{level}}",
+    "xpUntilLevel": "{{xp}} XP lagi untuk Tahap {{level}}",
+    "maximumLevel": "Tahap maksimum telah dicapai",
+
+    "streak": {
+      "daysRunning": "{{count}} Hari Berturut-turut",
+      "dailyHabits": "Tabiat kesiapsiagaan harian berfungsi dengan baik."
+    },
+
+    "account": {
+      "architecture": "Struktur Akaun",
+      "changeSettings": "Tukar Tetapan",
+      "changeSettingsDescription": "Kemas kini kata laluan dan tag identiti fizikal"
+    },
+
+    "achievements": {
+      "title": "Pencapaian Diperoleh",
+      "empty": "Tiada lencana aktif ditemui. Lengkapkan modul utama untuk memperoleh penghormatan."
+    },
+
+    "badges": {
+      "goBagMaster": {
+        "label": "Pakar Beg Kecemasan",
+        "description": "Menyediakan kit lengkap dalam masa kurang daripada 15 saat"
+      },
+      "quizMaster": {
+        "label": "Pakar Kuiz",
+        "description": "Mengekalkan rentetan protokol yang optimum"
+      },
+      "climateHero": {
+        "label": "Wira Iklim",
+        "description": "Menstabilkan mikroiklim yang tidak menentu"
+      },
+      "survivalStreakMaster": {
+        "label": "Pakar Rentetan",
+        "description": "Mengekalkan operasi harian selama 4 hari atau lebih"
+      },
+      "firstLogin": {
+        "label": "Hubungan Pertama",
+        "description": "Memulakan telemetri asas"
+      },
+      "fallbackDescription": "Kredensial operasi aktif"
+    },
+
+    "logout": "Log Keluar",
+
+    "photo": {
+      "error": "Ralat",
+      "failedToCache": "Gagal menyimpan imej yang dipilih.",
+      "cameraFailure": "Pemprosesan kamera gagal.",
+
+      "pdpaNotice": "Notis PDPA",
+      "cameraDenied": "Akses kamera telah ditolak. Anda boleh menggunakan emoji lencana operasi dengan selamat.",
+      "galleryDenied": "Akses galeri telah ditolak. Privasi anda dihormati sepenuhnya. Anda boleh menggunakan emoji tersuai sebagai gantinya.",
+
+      "identityUpdate": "Kemas Kini Matriks Identiti",
+      "privacyNotice": "Privasi anda dilindungi. Imej yang diproses di sini disimpan dalam ruang memori sandbox tempatan mengikut garis panduan reka bentuk PDPA yang ketat. Tiada set data telemetri dihantar ke luar.",
+
+      "camera": "Aktifkan Kamera Peranti",
+      "gallery": "Akses Storan Media",
+      "emoji": "Gunakan Tag Emoji Tanpa Nama",
+      "cancel": "Batalkan Perubahan",
+
+      "selectEmoji": "Pilih Emoji Identiti",
+      "emojiPrivacy": "Tiada kebenaran sistem diperlukan. Pastikan identiti anda tidak dipautkan dengan maklumat lain.",
+      "back": "Kembali"
+    }
   }
 }

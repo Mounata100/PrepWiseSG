@@ -24,6 +24,19 @@
     "passwordStrongHint": "至少 6 个字符（添加数字/符号可增强密码安全性）",
 
     "forgotPassword": "忘记密码？",
+    "forgotPasswordTitle": "重置密码",
+    "forgotPasswordMessage": "请输入与您的账户关联的电子邮件，然后设置新密码。",
+    "resetEmail": "电子邮件",
+    "resetEmailPlaceholder": "请输入账户电子邮件",
+    "newPassword": "新密码",
+    "confirmNewPassword": "确认新密码",
+    "enterNewPassword": "请输入新密码",
+    "enterConfirmPassword": "请再次输入新密码",
+    "passwordsDoNotMatch": "两次输入的密码不一致",
+    "resetPassword": "重置密码",
+    "passwordResetSuccessTitle": "密码重置成功",
+    "passwordResetSuccessMessage": "您的密码已更新。现在可以使用新密码登录。",
+    "passwordResetFailed": "无法重置密码。请检查电子邮件后重试。",
 
     "createAccountButton": "创建账户",
 
@@ -70,38 +83,607 @@
       "resetLinkSentMessage": "请检查您的电子邮件以获取密码重置链接。"
     }
   },
+  "onboarding": {
+    "steps": {
+      "stepOf": "第 {{current}} 步，共 {{total}} 步"
+    },
 
+    "welcome": {
+      "title": "欢迎",
+      "subtitle": "建立您的防灾准备档案，并培养应对新加坡气候相关紧急情况的实用技能。",
+      "expectTitle": "您可以期待",
+      "bullet1": "建立并完成个性化的紧急情况检查清单。",
+      "bullet2": "完成测验和防灾准备活动，赚取经验值。",
+      "bullet3": "接收相关的环境和紧急情况通知。",
+      "bullet4": "追踪您的进度，并持续提升防灾准备能力。",
+      "continue": "继续"
+    },
+
+    "preferences": {
+      "title": "应用程序偏好设置",
+      "subtitle": "根据您的个人偏好配置应用程序。",
+      "darkMode": "深色模式",
+      "darkModeDescription": "使用较深的界面，以便在低光环境下更清晰地查看内容。",
+      "emergencyNotifications": "紧急通知",
+      "emergencyNotificationsDescription": "接收相关的防灾准备提醒和紧急情况通知。",
+      "continue": "保存并继续"
+    },
+
+    "preparednessLevel": {
+      "title": "防灾准备程度",
+      "subtitle": "选择最符合您目前紧急情况防灾准备程度的选项。",
+      "beginner": {
+        "title": "刚开始准备",
+        "description": "我的紧急物资或防灾准备计划仍然有限。"
+      },
+      "intermediate": {
+        "title": "已有一些准备",
+        "description": "我拥有一些基本物资，例如饮用水、食物和急救用品。"
+      },
+      "advanced": {
+        "title": "准备充分",
+        "description": "我拥有应急包、通讯计划以及完善的应急响应程序。"
+      },
+      "continue": "继续"
+    },
+
+    "readinessSchedule": {
+      "title": "防灾准备计划",
+      "subtitle": "选择您希望进行防灾准备活动的频率，以持续保持准备状态。",
+      "daily": {
+        "label": "每日准备",
+        "description": "每天完成一项简短的防灾准备活动。"
+      },
+      "threeDay": {
+        "label": "3天挑战",
+        "description": "在三天周期内完成防灾准备活动。"
+      },
+      "fiveDay": {
+        "label": "5天挑战",
+        "description": "按照五天计划完成一系列防灾准备活动。"
+      },
+      "weekly": {
+        "label": "每周准备",
+        "description": "每周检查并改善您的防灾准备情况。"
+      },
+      "complete": "完成设置",
+      "footer": "您之后可以在设置中更改偏好和防灾准备计划。"
+    },
+
+    "common": {
+      "back": "返回",
+      "saving": "保存中..."
+    },
+
+    "alerts": {
+      "unableToCompleteTitle": "无法完成设置",
+      "unableToCompleteMessage": "无法保存您的入门设置资料。请再试一次。"
+    },
+
+    "accessibility": {
+      "back": "返回上一步",
+      "darkMode": "深色模式",
+      "emergencyNotifications": "紧急通知"
+    }
+  },
   "language": {
     "title": "选择您的语言",
     "english": "English",
     "malay": "Bahasa Melayu",
     "chinese": "中文",
-    "tamil": "தமிழ்"
+    "tamil": "தமிழ்",
+    "subtitle": "Select your preferred language",
+    "close": "Close"
+
   },
-    "validation": {
-      "emailRequired": "请输入电子邮件",
-      "invalidEmail": "请输入有效的电子邮件（例如：john@example.com）",
-      "passwordRequired": "请输入密码",
-      "passwordTooShort": "密码太短。还需要 {{count}} 个字符。",
-      "nameRequired": "请输入姓名",
-      "nameTooShort": "姓名至少需要 2 个字符"
+  "home": {
+    "defaults": {
+      "newResponder": "新响应者"
     },
+
+    "branding": {
+      "avatar": "响应者",
+      "level": "等级 {{level}}"
+    },
+
+    "progress": {
+      "nextLevel": "下一等级",
+      "xpRemaining": "再获得 {{xp}} XP 即可达到等级 {{level}}"
+    },
+
+    "milestones": {
+      "sectionTitle": "连续签到里程碑",
+      "oneDay": "1 天",
+      "threeDays": "3 天",
+      "fiveDays": "5 天",
+      "weekly": "每周"
+    },
+
+    "readiness": {
+      "sectionTitle": "备灾进度",
+      "missions": "任务",
+      "profile": "个人资料"
+    },
+
+    "checklist": {
+      "title": "检查清单"
+    },
+
     "alerts": {
-      "completeFieldsTitle": "请完成所有资料",
-      "completeFieldsMessage": "请正确填写所有必填资料后继续。",
-      "ok": "确定",
-      "signInFailed": "登录失败",
-      "accountCreationFailed": "创建账户失败",
-      "guestModeTitle": "访客模式",
-      "guestModeMessage": "您可以探索基本功能。创建账户即可保存您的进度！",
-      "cancel": "取消",
-      "continueGuest": "以访客身份继续",
-      "resetPasswordTitle": "重置密码",
-      "resetPasswordMessage": "请输入您的电子邮件地址，我们会发送重置密码的链接。",
-      "sendLink": "发送链接",
-      "resetLinkSentTitle": "重置链接已发送！",
-      "resetLinkSentMessage": "请检查您的电子邮件以获取密码重置链接。"
+      "title": "警报",
+      "activeThreats": "{{count}} 个活跃灾害警报",
+      "latest": "最新：{{title}}",
+      "environmentalHazard": "已记录环境灾害",
+
+      "dailyCheckin": {
+        "title": "每日签到奖励已领取！",
+        "message": "欢迎回来！您的连续签到已延长至 {{streak}} 天！\n\n奖励：+{{coins}} PrepCoins 和 +{{xp}} XP。"
+      },
+
+      "missionCompleted": {
+        "title": "🎉 任务完成！",
+        "message": "您成功完成了 {{mission}} 方案，并获得 +{{xp}} XP 🪙 +{{coins}} PrepCoins！\n您目前的 PrepCoins 总余额为：{{totalCoins}}！"
+      },
+
+      "missionAlreadyComplete": {
+        "message": "您已经完成今天的每周任务。"
+      }
     },
+
+    "mission": {
+      "activeDrill": "当前气候演练（{{day}}）",
+      "tacticalDecision": "点击进行战术决策演练",
+      "completedReview": "✅ 任务已完成 - 复习模式",
+      "complete": "完成任务"
+    },
+
+    "missionDays": {
+      "sunday": "星期日",
+      "monday": "星期一",
+      "tuesday": "星期二",
+      "wednesday": "星期三",
+      "thursday": "星期四",
+      "friday": "星期五",
+      "saturday": "星期六"
+    },
+
+    "familySync": {
+      "title": "SGSecure 家庭节点",
+      "safe": "状态已更新：在当前气候警报下，家庭已标记为安全。",
+      "awaiting": "状态已更新：正在等待家庭成员回应确认。"
+    },
+
+    "leaderboard": {
+      "title": "区域排行榜",
+      "needXp": "还需要 +{{xp}} XP 才能超过 {{rank}}",
+      "you": "您",
+      "streak": "连续活跃 {{days}} 天",
+      "awaitingConfiguration": "正在等待系统配置数据..."
+    },
+
+    "missions": {
+      "sun_heat": {
+        "title": "极端热浪应对方案",
+        "desc": "混凝土建筑区域的温度超过 38°C。采取措施减轻城市热压力。",
+        "scenario": "发布了严重热浪警报。您家中的室内温度正在快速上升。您应立即采取什么战术行动？",
+        "options": [
+          {
+            "text": "紧闭所有窗户并拉上窗帘",
+            "feedback": "错误！完全密闭可能使热量滞留在室内。需要保持空气流通。"
+          },
+          {
+            "text": "拉上隔热窗帘，打开窗户形成对流，并补充水分",
+            "feedback": "正确！阻挡直接阳光并促进空气流通，有助于减轻热压力。"
+          },
+          {
+            "text": "关闭所有吊扇以节省应急电力",
+            "feedback": "错误！风扇可以帮助皮肤上的汗液蒸发，从而帮助散热。"
+          }
+        ]
+      },
+
+      "mon_flood": {
+        "title": "季风暴雨突发洪水路线",
+        "desc": "暴雨导致低洼运河附近的水位迅速上升。",
+        "scenario": "您正在低洼地下通道附近驾驶，突发洪水开始淹没道路。您应该怎么做？",
+        "options": [
+          {
+            "text": "趁水位还不高，快速驾车通过",
+            "feedback": "危险！洪水可能很快使道路和车辆变得不安全。"
+          },
+          {
+            "text": "立即离开车辆，并前往较高且安全的地方",
+            "feedback": "正确！避免驾车通过积水的地下通道，并前往较高的安全地点。"
+          },
+          {
+            "text": "锁好车门留在车内，等待救援",
+            "feedback": "有风险！水位可能迅速上升，使您被困在车内。"
+          }
+        ]
+      },
+
+      "tue_haze": {
+        "title": "跨境烟霾防护",
+        "desc": "受区域烟雾影响，PSI 空气污染指数升至不健康水平。",
+        "scenario": "PSI 达到 250（非常不健康）。您需要短暂外出。什么呼吸防护措施较为合适？",
+        "options": [
+          {
+            "text": "佩戴普通外科口罩",
+            "feedback": "错误。外科口罩并非专门用于提供与正确佩戴的防颗粒物呼吸器相同的细颗粒防护。"
+          },
+          {
+            "text": "佩戴贴合良好的 N95 呼吸防护口罩，并减少户外活动",
+            "feedback": "正确！正确佩戴的 N95 呼吸防护口罩可以减少细颗粒物暴露。"
+          },
+          {
+            "text": "用湿棉布遮住口鼻",
+            "feedback": "错误。湿布无法可靠地防护烟霾中的细颗粒物。"
+          }
+        ]
+      },
+
+      "wed_water": {
+        "title": "PUB 供水中断准备",
+        "desc": "当地报告出现管道供水中断。请准备应急饮水储备。",
+        "scenario": "您的组屋楼栋突然宣布供水中断。成年人每天应准备多少应急储水？",
+        "options": [
+          {
+            "text": "每天 0.5 升，仅用于饮用",
+            "feedback": "错误。这个数量可能不足以满足基本饮水和卫生需求。"
+          },
+          {
+            "text": "每天至少 3 升，用于饮用、卫生和基本清洁",
+            "feedback": "正确！应急储水可以在供水中断期间提供基本储备。"
+          },
+          {
+            "text": "每天 20 升，用于装满浴缸",
+            "feedback": "对于短期供水中断来说，这样做效率较低且没有必要。"
+          }
+        ]
+      },
+
+      "thu_supply": {
+        "title": "SCDF 应急包准备",
+        "desc": "检查可携带应急储备中的重要设备。",
+        "scenario": "为突然疏散准备应急 Go-Bag 时，以下哪种电子设备较为重要？",
+        "options": [
+          {
+            "text": "高端游戏笔记本电脑和笨重的游戏机充电器",
+            "feedback": "错误。这些物品较重，并不是基本应急准备所必需的。"
+          },
+          {
+            "text": "充电宝、手摇应急收音机和防水手电筒",
+            "feedback": "正确！在紧急情况下，可靠的通信、备用电源和照明都可能非常有用。"
+          },
+          {
+            "text": "需要墙壁插座供电的便携式电风扇",
+            "feedback": "错误。停电期间，需要墙壁电源的设备可能无法使用。"
+          }
+        ]
+      },
+
+      "fri_comm": {
+        "title": "SGSecure 通信演练",
+        "desc": "在移动通信网络中断期间建立备用的离线联系方案。",
+        "scenario": "危机期间移动通信网络完全中断。您的家人应该如何保持联系？",
+        "options": [
+          {
+            "text": "不断重复拨打手机号码，直到线路恢复",
+            "feedback": "错误。当网络不可用时，反复拨打电话会快速消耗手机电量。"
+          },
+          {
+            "text": "提前约定实体集合地点，并使用短信或 mesh 应用",
+            "feedback": "正确！提前约定的集合地点可以在正常通信中断时提供明确的备用方案。"
+          },
+          {
+            "text": "分别在不同的购物中心无限期等待",
+            "feedback": "错误。明确的通信和集合计划比毫无安排地等待更加安全。"
+          }
+        ]
+      },
+
+      "sat_blackout": {
+        "title": "电网中断应急电力方案",
+        "desc": "在大范围停电期间管理备用电池资源。",
+        "scenario": "全岛停电，您的公寓陷入黑暗。节约电力的首要措施是什么？",
+        "options": [
+          {
+            "text": "打开所有房间的灯，以便知道电力何时恢复",
+            "feedback": "错误。不必要的照明会浪费备用电力。"
+          },
+          {
+            "text": "拔掉敏感电子设备，并使用低耗电 LED 灯或手电筒",
+            "feedback": "正确！节约电池电量并保护电子设备，在停电期间都很重要。"
+          },
+          {
+            "text": "在窗帘旁边点燃室内香薰蜡烛",
+            "feedback": "危险！靠近窗帘和其他易燃物品使用明火可能引发火灾。"
+          }
+        ]
+      }
+    }
+  },
+
+  "missions": {
+    "missions": {
+      "level1": {
+        "title": "气候防御",
+        "description": "学习洪水应对和疏散决策的基本知识。"
+      },
+      "level2": {
+        "title": "洪水路线",
+        "description": "学习如何在洪水期间选择更安全的路线。"
+      },
+      "level3": {
+        "title": "应急包",
+        "description": "了解哪些应急物资应放入你的应急包。"
+      },
+      "level4": {
+        "title": "气候防御",
+        "description": "应对更加严峻的气候紧急情况。"
+      },
+      "level5": {
+        "title": "洪水路线",
+        "description": "应对越来越复杂的洪水路线选择。"
+      },
+      "level6": {
+        "title": "应急包",
+        "description": "在有限资源下准备一套有效的应急装备。"
+      },
+      "level7": {
+        "title": "气候防御",
+        "description": "在压力下迅速作出战术应对决定。"
+      },
+      "level8": {
+        "title": "洪水路线",
+        "description": "应对多重灾害和不断变化的路线状况。"
+      },
+      "level9": {
+        "title": "应急包",
+        "description": "管理有限资源，同时为紧急情况做好准备。"
+      },
+      "level10": {
+        "title": "应急准备协议",
+        "description": "完成最终的应急准备评估。"
+      }
+    },
+    "profile": {
+    "firstResponder": "第一响应人员",
+    "prepCoins": "准备金币"
+    },
+
+    "header": {
+    "campaignWorldMap": "任务世界地图",
+    "missionsHub": "任务中心",
+    "singaporeResilienceDrills": "新加坡韧性训练",
+    "description": "通过战术区域，完成危机模拟训练，提升应急响应能力并获得第一响应人员认证。"
+    },
+
+    "howMissionsWork": {
+    "title": "任务如何进行",
+    "completeDrills": "完成危机模拟和快速响应训练即可获得",
+    "prepPoints": "准备积分（XP）",
+    "andRaiseRank": "并提升你的等级。",
+    "harderDrills": "完成更高难度的训练并展现良好表现，以推进任务进度。",
+    "unlockNext": "完成前一个任务等级后，即可解锁下一个任务。"
+    },
+
+    "rewards": {
+    "title": "备灾奖励中心",
+    "description": "使用你的积分兑换备灾奖励。"
+    },
+
+    "journey": {
+    "title": "生存之旅",
+    "missionsComplete": "已完成 {{completed}} / {{total}} 个任务"
+    },
+
+    "difficulty": {
+    "easy": "简单",
+    "medium": "中等",
+    "hard": "困难",
+    "final": "最终"
+    },
+
+    "tags": {
+    "climateResponse": "气候响应",
+    "routeDecision": "路线决策",
+    "preparednessBasics": "备灾基础",
+    "resourceManagement": "资源管理",
+    "tacticalResponse": "战术响应",
+    "multiHazard": "多重灾害",
+    "resourceChallenge": "资源挑战",
+    "finalMission": "最终任务"
+    },
+
+    "titles": {
+    "climateDefence": "气候防御",
+    "floodRouting": "洪水路线规划",
+    "goBag": "应急包",
+    "preparednessProtocol": "备灾应对方案"
+    },
+
+    "descriptions": {
+    "climateBasics": "了解洪水应对和疏散决策的基础知识。",
+    "floodSafetyRoutes": "学习如何在洪水期间选择更安全的路线。",
+    "goBagSupplies": "了解哪些应急物资应该放入你的应急包。",
+    "climateDemanding": "应对更具挑战性的气候紧急情况。",
+    "complexFloodRoutes": "应对越来越复杂的洪水路线决策。",
+    "resourceManagement": "在有限资源下准备有效的应急装备。",
+    "rapidTactical": "在压力下迅速作出战术决策。",
+    "multipleHazards": "应对多重灾害和不断变化的路线状况。",
+    "resourceChallenge": "在准备应急情况的同时管理有限资源。",
+    "finalAssessment": "完成最终的备灾能力评估。"
+    },
+
+    "actions": {
+    "playMission": "开始任务",
+    "replayMission": "再次挑战",
+    "unlockPrevious": "完成上一等级后解锁"
+    },
+
+    "progress": {
+    "title": "备灾任务进度",
+    "levelComplete": "已完成第 {{completed}} / {{total}} 级（{{percentage}}%）"
+    },
+
+    "completion": {
+    "title": "任务全部完成",
+    "description": "你已完成所有可用的韧性任务。"
+    },
+
+    "level": "第 {{level}} 级",
+    "xp": "{{amount}} XP"
+    },
+  "climateDefence": {
+    "title": "气候防卫",
+    "level": "第 {{level}} 级",
+
+    "difficulty": {
+      "EASY": "简单",
+      "MEDIUM": "中等",
+      "HARD": "困难"
+    },
+
+    "seconds": "{{count}}秒",
+    "xp": "{{count}} XP",
+
+    "mission_onboarding": {
+      "title": "气候防卫训练",
+      "subtitle": "多阶段紧急情况决策演练",
+      "missionBriefing": "任务简报",
+      "briefingText": "应对一系列气候和应急准备情境。为每种情况选择最合适的行动。",
+      "decisions": "决策",
+      "perDecision": "每项决策",
+      "missionReward": "任务奖励",
+      "objective": "目标",
+      "objectiveText": "在完整情境中展现适当的紧急情况决策能力。"
+    },
+
+    "play": {
+      "decisionProgress": "决策 {{current}} / {{total}}",
+      "responseWindow": "响应时间",
+      "emergencyDecision": "紧急情况决策",
+      "selectResponse": "选择回应",
+      "timeoutMessage": "响应时间已结束。请在任务复盘中查看建议行动。"
+    },
+
+    "review": {
+      "title": "任务复盘",
+      "subtitle": "记录任务结果前，请查看每项决策。",
+      "decisionAccuracy": "决策准确率",
+      "stepByStep": "逐步复盘",
+      "correct": "正确",
+      "timeout": "超时",
+      "review": "复查",
+      "recommendedResponse": "建议回应"
+    },
+
+    "finished": {
+      "completedTitle": "任务完成",
+      "recordedTitle": "任务已记录",
+      "completedSubtitle": "你在气候防卫训练中展现了适当的决策能力。",
+      "recordedSubtitle": "查看复盘指导，并再次进行训练以提高应急准备能力。",
+      "prepPoints": "准备积分",
+      "decisions": "决策",
+      "difficulty": "难度"
+    },
+
+    "buttons": {
+      "beginMission": "开始任务",
+      "recordMissionResult": "记录任务结果",
+      "returnToMissions": "返回任务列表"
+    },
+
+    "categories": {
+      "hazardIdentification": "危险识别",
+      "floodResponse": "洪水应对",
+      "evacuationDecision": "疏散决策",
+      "earlyWarning": "预警",
+      "preparedness": "应急准备",
+      "communication": "沟通",
+      "powerInterruption": "停电"
+    },
+
+    "questions": {
+      "floodWarning": {
+        "question": "持续强降雨导致你所在地区附近的水位迅速上升。你首先应该做什么？",
+        "options": {
+          "a": "前往更安全的地点，并关注官方紧急信息。",
+          "b": "走向被淹区域，查看水深。",
+          "c": "留在外面，直到情况变得更加严重。",
+          "d": "在道路变得更加拥堵之前驾车穿过受影响区域。"
+        },
+        "explanation": "发生洪水时，应优先确保人身安全，远离危险区域，并遵循官方部门发布的信息。"
+      },
+
+      "floodWater": {
+        "question": "洪水开始进入建筑物的一楼。哪种应对方式最合适？",
+        "options": {
+          "a": "按照建议的疏散路线前往更安全的地点。",
+          "b": "进入积水中确认路线是否可以通行。",
+          "c": "留在入口附近等待积水停止。",
+          "d": "涉水搬运电器设备以保护它们。"
+        },
+        "explanation": "洪水可能隐藏危险并造成不安全的环境。请遵循疏散指示，并尽可能避免进入洪水区域。"
+      },
+
+      "evacuation": {
+        "question": "你所在地区发布了官方疏散建议。适当的应对方式是什么？",
+        "options": {
+          "a": "准备必要物品，并遵循建议的疏散指示。",
+          "b": "等到邻居开始离开后再考虑疏散。",
+          "c": "留下来观察情况的发展。",
+          "d": "不确认安全性的情况下选择不熟悉的捷径。"
+        },
+        "explanation": "应认真对待官方疏散指示。准备必要物资，并使用建议的路线或遵循相关指示。"
+      },
+
+      "weatherAlert": {
+        "question": "你的应急应用显示严重天气警报。最有用的立即行动是什么？",
+        "options": {
+          "a": "查看官方警报，并根据所识别的危险做好准备。",
+          "b": "关闭通知，以避免不必要的警报。",
+          "c": "继续正常进行户外活动，直到天气发生变化。",
+          "d": "立即向所有人分享未经核实的警报。"
+        },
+        "explanation": "预警只有在促成适当准备时才有帮助。在采取行动或分享信息之前，应通过官方来源进行核实。"
+      },
+
+      "goBag": {
+        "question": "你离开家之前的时间有限。哪类物品应该优先准备？",
+        "options": {
+          "a": "必要药物和其他重要个人用品。",
+          "b": "大型娱乐设备。",
+          "c": "非必要的家居装饰品。",
+          "d": "难以携带的重物。"
+        },
+        "explanation": "在需要快速准备时，应优先考虑个人基本需求、药物、通信设备和基本应急物资。"
+      },
+
+      "communication": {
+        "question": "紧急警报发布时，你的家人分散在不同地方。你应该怎么做？",
+        "options": {
+          "a": "使用已经约定好的通信方式和集合计划。",
+          "b": "每个人自行选择不同的地点。",
+          "c": "不进行沟通，一直等待。",
+          "d": "前往危险区域寻找家人。"
+        },
+        "explanation": "家庭应急计划应包含约定的通信方式和集合安排，让每个人在正常通信受影响时知道该怎么做。"
+      },
+
+      "power": {
+        "question": "严重天气事件导致暂时停电。哪项准备最有用？",
+        "options": {
+          "a": "准备手电筒、充满电的移动电源和必要的通信设备。",
+          "b": "在易燃材料旁使用蜡烛。",
+          "c": "打开电器设备检查内部情况。",
+          "d": "将应急物资放在室外。"
+        },
+        "explanation": "独立照明设备和备用电源有助于在暂时停电期间维持基本通信和照明。"
+      }
+    }
+  },
   "resources": {
     "hero": {
       "title": "灾害防备与应急中心",
@@ -164,5 +746,76 @@
       "damage": { "title": "记录财产损失", "desc": "在确保安全的前提下，记录相关损失并保留重要信息，以便后续跟进和理赔恢复。" }
     },
     "footer": "本中心提供防备指南以及安全工具的快捷访问。在突发事件发生时，请务必遵从官方发布的紧急指令。"
+  },
+  "profile": {
+    "defaultName": "行动员_ACTIVE",
+    "level": "等级 {{level}}",
+    "levelXp": "等级 {{level}} XP",
+    "xpUntilLevel": "距离等级 {{level}} 还需 {{xp}} XP",
+    "maximumLevel": "已达到最高等级",
+
+    "streak": {
+      "daysRunning": "连续行动 {{count}} 天",
+      "dailyHabits": "每日应急习惯运行正常。"
+    },
+
+    "account": {
+      "architecture": "账户架构",
+      "changeSettings": "更改设置",
+      "changeSettingsDescription": "更新密码和身份标签"
+    },
+
+    "achievements": {
+      "title": "已获得的成就",
+      "empty": "暂无可用徽章。完成主要模块以获得荣誉。"
+    },
+
+    "badges": {
+      "goBagMaster": {
+        "label": "应急包大师",
+        "description": "在 15 秒内完成完美装备包"
+      },
+      "quizMaster": {
+        "label": "测验大师",
+        "description": "保持最佳协议连续记录"
+      },
+      "climateHero": {
+        "label": "气候英雄",
+        "description": "稳定不稳定的微气候环境"
+      },
+      "survivalStreakMaster": {
+        "label": "连续行动大师",
+        "description": "保持 4 天以上的每日行动"
+      },
+      "firstLogin": {
+        "label": "首次接触",
+        "description": "初始化基础数据监测"
+      },
+      "fallbackDescription": "有效行动凭证"
+    },
+
+    "logout": "退出登录",
+
+    "photo": {
+      "error": "错误",
+      "failedToCache": "无法缓存所选图片。",
+      "cameraFailure": "相机处理失败。",
+
+      "pdpaNotice": "个人资料保护声明",
+      "cameraDenied": "相机访问被拒绝。你可以安全地使用行动徽章表情符号。",
+      "galleryDenied": "图库访问被拒绝。我们充分尊重你的隐私。你可以改用自定义表情符号。",
+
+      "identityUpdate": "身份矩阵更新",
+      "privacyNotice": "你的隐私受到保护。此处处理的图片仅保存在受沙盒保护的本地存储空间中，并遵循严格的个人资料保护设计原则。不会向外部传输遥测数据集。",
+
+      "camera": "启用硬件相机",
+      "gallery": "访问媒体存储",
+      "emoji": "使用匿名表情身份标签",
+      "cancel": "取消修改",
+
+      "selectEmoji": "选择身份表情",
+      "emojiPrivacy": "无需任何系统权限。保持你的身份信息完全不关联。",
+      "back": "返回"
+    }
   }
 }

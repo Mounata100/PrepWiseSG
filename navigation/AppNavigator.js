@@ -88,7 +88,7 @@ import MainTabNavigator from '../navigation/MainTabNavigator';
 import LeaderBoardScreen from '../screens/LeaderBoardScreen';
 import HealthQRScreen from '../screens/HealthQRScreen';
 import FamilySafetyScreen from '../screens/SafeFamilyScreen';
-import QuizGameScreen from '../screens/QuizGameScreen';
+import ChecklistScreen from '../screens/ChecklistScreen';
 import GoBagScreen from '../screens/GoBagScreen';
 import ResourcesScreen from '../screens/ResourcesScreen';
 import VoucherStoreScreen from '../screens/VoucherStoreScreen';
@@ -247,8 +247,8 @@ export default function AppNavigator() {
             />
 
             <Stack.Screen
-              name="QuizGame"
-              component={QuizGameScreen}
+              name="Checklist"
+              component={ChecklistScreen}
             />
 
             <Stack.Screen

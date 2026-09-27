@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback } from 'react';
 import {
   View,
   Text,
@@ -7,288 +7,247 @@ import {
   ScrollView,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useUser } from '../contexts/UserContext';
+import { useTranslation } from 'react-i18next';
 
 export default function MissionsScreen({ navigation, route }) {
-  /*
-   * ---------------------------------------------------------
-   * USER DATA
-   * ---------------------------------------------------------
-   *
-   * Your UserContext should provide:
-   *   points
-   *   coins
-   *
-   * We keep earnedPoints from navigation as a temporary
-   * addition in case a mission sends the user back here
-   * with route.params.earnedPoints.
-   */
-  const { user, points, coins } = useUser();
+  const { t } = useTranslation();
+  const { user } = useUser();
 
-  const [bonusPoints, setBonusPoints] = useState(0);
-
-  useEffect(() => {
-    const earned = Number(route?.params?.earnedPoints || 0);
-
-    if (earned > 0) {
-      setBonusPoints((previous) => previous + earned);
-
-      // Prevent adding the same navigation parameter again
-      // if this screen re-renders.
-      navigation.setParams({
-        earnedPoints: undefined,
-      });
-    }
-  }, [route?.params?.earnedPoints, navigation]);
-
-  const displayedPoints = Number(points || 0) + bonusPoints;
+  const currentUserCoins = user?.prepCoins ?? 0;
 
   /*
    * ---------------------------------------------------------
    * MISSION DATA
    * ---------------------------------------------------------
    *
-   * This is the single source of truth for the campaign.
-   *
-   * Status:
-   *   completed = finished
-   *   current   = available to play
-   *   locked    = unavailable
-   *
-   * You currently have 3 missions.
+   * Keep IDs and game names untranslated.
+   * Only user-facing text is translated through t().
    */
-  // const MAP_MISSIONS = [
-  //   {
-  //     id: 'GoBag',
-  //     level: 1,
-  //     title: 'Bug-Out Packing Drill',
-  //     desc:
-  //       'Optimize custom survival inventories under a strict 15-second window.',
-  //     difficulty: 'EASY',
-  //     diffColor: '#34D399',
-  //     icon: 'briefcase-outline',
-  //     reward: 40,
-  //     status: 'completed',
-  //     tag: 'PREPAREDNESS DRILL',
-  //   },
-  //   {
-  //     id: 'QuizGame',
-  //     level: 2,
-  //     title: 'Dynamic Response Quiz',
-  //     desc:
-  //       'Test quick reflexes on civil emergency protocols under time limits.',
-  //     difficulty: 'MEDIUM',
-  //     diffColor: '#38BDF8',
-  //     icon: 'flash-outline',
-  //     reward: 50,
-  //     status: 'current',
-  //     tag: 'CLIMATE CRISIS DRILL',
-  //   },
-  //   {
-  //     id: 'ClimateDefence',
-  //     level: 3,
-  //     title: 'Climate Defence Simulator',
-  //     desc:
-  //       'Formulate mitigation blueprints against shifting microclimates.',
-  //     difficulty: 'HARD',
-  //     diffColor: '#EF4444',
-  //     icon: 'globe-outline',
-  //     reward: 100,
-  //     status: 'locked',
-  //     tag: 'ADVANCED RESILIENCE DRILL',
-  //   },
-  // ];
   const MAP_MISSIONS = [
     {
       id: 'level-1',
       level: 1,
       game: 'ClimateDefence',
-      title: 'Climate Defence',
-      desc: 'Learn the basics of flood response and evacuation decisions.',
-      difficulty: 'EASY',
+      titleKey: 'missions.missions.level1.title',
+      descKey: 'missions.missions.level1.description',
+      difficultyKey: 'missions.difficulty.easy',
       diffColor: '#34D399',
       icon: 'cloud-outline',
-      reward: 40,
-      tag: 'CLIMATE RESPONSE',
+      xpreward: 180,
+      coinreward: 40,
+      tagKey: 'missions.tags.climateResponse',
     },
 
     {
       id: 'level-2',
       level: 2,
-      game: 'FloodRouting',
-      title: 'Flood Routing',
-      desc: 'Learn how to choose safer routes during a flood.',
-      difficulty: 'EASY',
+      game: 'FloodRunnerGameModal',
+      titleKey: 'missions.missions.level2.title',
+      descKey: 'missions.missions.level2.description',
+      difficultyKey: 'missions.difficulty.easy',
       diffColor: '#34D399',
       icon: 'water-outline',
-      reward: 40,
-      tag: 'ROUTE DECISION',
+      xpreward: 180,
+      coinreward: 40,
+      tagKey: 'missions.tags.routeDecision',
     },
 
     {
       id: 'level-3',
       level: 3,
       game: 'GoBag',
-      title: 'Go-Bag',
-      desc: 'Learn which emergency supplies belong in your Go-Bag.',
-      difficulty: 'EASY',
+      titleKey: 'missions.missions.level3.title',
+      descKey: 'missions.missions.level3.description',
+      difficultyKey: 'missions.difficulty.easy',
       diffColor: '#34D399',
       icon: 'briefcase-outline',
-      reward: 40,
-      tag: 'PREPAREDNESS BASICS',
+      xpreward: 20,
+      coinreward: 20,
+      tagKey: 'missions.tags.preparednessBasics',
     },
 
     {
       id: 'level-4',
       level: 4,
       game: 'ClimateDefence',
-      title: 'Climate Defence',
-      desc: 'Respond to a more demanding climate emergency scenario.',
-      difficulty: 'MEDIUM',
+      titleKey: 'missions.missions.level4.title',
+      descKey: 'missions.missions.level4.description',
+      difficultyKey: 'missions.difficulty.medium',
       diffColor: '#FBBF24',
       icon: 'cloud-outline',
-      reward: 60,
-      tag: 'CLIMATE RESPONSE',
+      xpreward: 30,
+      coinreward: 30,
+      tagKey: 'missions.tags.climateResponse',
     },
 
     {
       id: 'level-5',
       level: 5,
       game: 'FloodRunnerGameModal',
-      title: 'Flood Routing',
-      desc: 'Navigate increasingly complex flood route decisions.',
-      difficulty: 'MEDIUM',
+      titleKey: 'missions.missions.level5.title',
+      descKey: 'missions.missions.level5.description',
+      difficultyKey: 'missions.difficulty.medium',
       diffColor: '#FBBF24',
       icon: 'water-outline',
-      reward: 60,
-      tag: 'ROUTE DECISION',
+      xpreward: 30,
+      coinreward: 30,
+      tagKey: 'missions.tags.routeDecision',
     },
 
     {
       id: 'level-6',
       level: 6,
       game: 'GoBag',
-      title: 'Go-Bag',
-      desc: 'Build an effective emergency kit while managing limited resources.',
-      difficulty: 'MEDIUM',
+      titleKey: 'missions.missions.level6.title',
+      descKey: 'missions.missions.level6.description',
+      difficultyKey: 'missions.difficulty.medium',
       diffColor: '#FBBF24',
       icon: 'briefcase-outline',
-      reward: 60,
-      tag: 'RESOURCE MANAGEMENT',
+      xpreward: 30,
+      coinreward: 30,
+      tagKey: 'missions.tags.resourceManagement',
     },
 
     {
       id: 'level-7',
       level: 7,
       game: 'ClimateDefence',
-      title: 'Climate Defence',
-      desc: 'Make rapid tactical decisions under pressure.',
-      difficulty: 'HARD',
+      titleKey: 'missions.missions.level7.title',
+      descKey: 'missions.missions.level7.description',
+      difficultyKey: 'missions.difficulty.hard',
       diffColor: '#EF4444',
       icon: 'cloud-outline',
-      reward: 100,
-      tag: 'TACTICAL RESPONSE',
+      xpreward: 50,
+      coinreward: 50,
+      tagKey: 'missions.tags.tacticalResponse',
     },
 
     {
       id: 'level-8',
       level: 8,
-      game: 'FloodRouting',
-      title: 'Flood Routing',
-      desc: 'Navigate multiple hazards and changing route conditions.',
-      difficulty: 'HARD',
+      game: 'FloodRunnerGameModal',
+      titleKey: 'missions.missions.level8.title',
+      descKey: 'missions.missions.level8.description',
+      difficultyKey: 'missions.difficulty.hard',
       diffColor: '#EF4444',
       icon: 'water-outline',
-      reward: 100,
-      tag: 'MULTI-HAZARD',
+      xpreward: 50,
+      coinreward: 50,
+      tagKey: 'missions.tags.multiHazard',
     },
 
     {
       id: 'level-9',
       level: 9,
       game: 'GoBag',
-      title: 'Go-Bag',
-      desc: 'Manage limited resources while preparing for an emergency.',
-      difficulty: 'HARD',
+      titleKey: 'missions.missions.level9.title',
+      descKey: 'missions.missions.level9.description',
+      difficultyKey: 'missions.difficulty.hard',
       diffColor: '#EF4444',
       icon: 'briefcase-outline',
-      reward: 100,
-      tag: 'RESOURCE CHALLENGE',
+      xpreward: 50,
+      coinreward: 50,
+      tagKey: 'missions.tags.resourceChallenge',
     },
 
     {
       id: 'level-10',
-      game: 'FinalMission',
       level: 10,
-      title: 'Preparedness Protocol',
-      desc: 'Complete your final preparedness assessment.',
-      difficulty: 'FINAL',
+      game: 'FinalMission',
+      titleKey: 'missions.missions.level10.title',
+      descKey: 'missions.missions.level10.description',
+      difficultyKey: 'missions.difficulty.final',
       diffColor: '#A855F7',
       icon: 'shield-checkmark-outline',
-      reward: 200,
-      tag: 'FINAL MISSION',
+      xpreward: 100,
+      coinreward: 100,
+      tagKey: 'missions.tags.finalMission',
     },
   ];
-
 
   /*
    * ---------------------------------------------------------
    * CAMPAIGN PROGRESS
    * ---------------------------------------------------------
    */
-  // const completedLevels = user?.campaign?.completedLevels || [];
 
-  // //const completedMissions = useMemo(() => {
-  //   //return MAP_MISSIONS.filter(
-  //     //(mission) => mission.status === 'completed'
-  //   //).length;
-  // //}, [MAP_MISSIONS]);
-  // const completedMissions = useMemo(() => {
-  //   if(completedLevels.includes(mission.level)) {
-  //     return 'completed';
-  //   } else if (completedLevels.length === mission.level - 1) {
-  //     return 'current';
-  //   } else {
-  //     return 'locked';
-  //   }
-  // }, [completedLevels]);
+  const completedMissions = user?.completedMissions || {};
 
-  // const totalMissions = MAP_MISSIONS.length;
-
-  // const progressPercentage =
-  //   totalMissions > 0
-  //     ? Math.round((completedMissions / totalMissions) * 100)
-  //     : 0;
-  const completedLevels = user?.campaign?.completedLevels || [];
-
-  const completedMissions = completedLevels.length;
+  const completedMissionCount = MAP_MISSIONS.filter((mission) =>
+    Boolean(completedMissions[mission.id])
+  ).length;
 
   const totalMissions = MAP_MISSIONS.length;
 
   const progressPercentage =
     totalMissions > 0
-      ? Math.round((completedMissions / totalMissions) * 100)
+      ? Math.round((completedMissionCount / totalMissions) * 100)
       : 0;
 
+  /*
+   * ---------------------------------------------------------
+   * REFRESH WHEN SCREEN BECOMES ACTIVE
+   * ---------------------------------------------------------
+   */
+
+  useFocusEffect(
+    useCallback(() => {
+      // UserContext remains the source of truth.
+    }, [])
+  );
+
+  /*
+   * ---------------------------------------------------------
+   * MISSION STATUS
+   * ---------------------------------------------------------
+   */
+
+  const getMissionStatus = useCallback(
+    (mission) => {
+      const isCompleted =
+        completedMissions?.[`level-${mission.level}`] === true;
+
+      const previousCompleted =
+        mission.level === 1 ||
+        completedMissions?.[`level-${mission.level - 1}`] === true;
+
+      const isCurrent = !isCompleted && previousCompleted;
+      const isLocked = !isCompleted && !isCurrent;
+
+      return {
+        isCompleted,
+        isCurrent,
+        isLocked,
+      };
+    },
+    [completedMissions]
+  );
 
   /*
    * ---------------------------------------------------------
    * NAVIGATION
    * ---------------------------------------------------------
-   *
-   * All mission navigation goes through this function.
-   * This prevents accidentally navigating to locked missions.
    */
+
   const openMission = (mission) => {
-    if (mission.status === 'locked') {
+    const { isLocked } = getMissionStatus(mission);
+
+    if (isLocked) {
       return;
     }
-    navigation.navigate('ClimateDefence', {
+
+    navigation.navigate(mission.game, {
+      mission: mission.id,
       level: mission.level,
-      difficulty: mission.difficulty,
-      reward: mission.reward,
+      difficulty: mission.difficultyKey
+                  .split('.')
+                  .pop()
+                  .toUpperCase(),
+      xpreward: mission.xpreward,
+      coinreward: mission.coinreward,
     });
-    //navigation.navigate(mission.id);
   };
 
   return (
@@ -300,26 +259,27 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           USER STATS HEADER
           ===================================================== */}
+
       <View style={styles.topProfileBar}>
         <View style={styles.avatarContainer}>
           <Ionicons name="person" size={22} color="#38BDF8" />
         </View>
 
         <View style={styles.profileMeta}>
-          <Text style={styles.profileName}>First Responder</Text>
+          <Text style={styles.profileName}>
+            {t('missions.profile.firstResponder')}
+          </Text>
 
           <View style={styles.statsRow}>
             <View style={styles.statItem}>
-              <Ionicons name="flash" size={12} color="#F59E0B" />
-              <Text style={styles.pointsText}>
-                {displayedPoints} XP
-              </Text>
-            </View>
+              <Ionicons
+                name="shield-checkmark"
+                size={12}
+                color="#34D399"
+              />
 
-            <View style={styles.statItem}>
-              <Ionicons name="ellipse" size={9} color="#FBBF24" />
               <Text style={styles.coinsText}>
-                {Number(coins || 0)} Coins
+                {currentUserCoins} {t('missions.profile.prepCoins')}
               </Text>
             </View>
           </View>
@@ -337,6 +297,7 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           MAIN HEADER
           ===================================================== */}
+
       <View style={styles.header}>
         <View style={styles.badgeRow}>
           <Ionicons
@@ -346,27 +307,27 @@ export default function MissionsScreen({ navigation, route }) {
           />
 
           <Text style={styles.sectionLabel}>
-            CAMPAIGN WORLD MAP
+            {t('missions.header.campaignWorldMap')}
           </Text>
         </View>
 
         <Text style={styles.mainHeading}>
-          Missions Hub
+          {t('missions.header.missionsHub')}
         </Text>
 
         <Text style={styles.subHeading}>
-          Singapore Resilience Drills
+          {t('missions.header.singaporeResilienceDrills')}
         </Text>
 
         <Text style={styles.description}>
-          Progress through tactical sectors, complete crisis
-          simulations and build your First Responder certification.
+          {t('missions.header.description')}
         </Text>
       </View>
 
       {/* =====================================================
           HOW MISSIONS WORK
           ===================================================== */}
+
       <View style={styles.instructionCard}>
         <View style={styles.instructionHeader}>
           <Ionicons
@@ -376,7 +337,7 @@ export default function MissionsScreen({ navigation, route }) {
           />
 
           <Text style={styles.instructionTitle}>
-            How Missions Work
+            {t('missions.howMissionsWork.title')}
           </Text>
         </View>
 
@@ -388,12 +349,10 @@ export default function MissionsScreen({ navigation, route }) {
           />
 
           <Text style={styles.instructionText}>
-            Complete crisis simulations and rapid-response drills
-            to earn{' '}
+            {t('missions.howMissionsWork.completeDrills')}{' '}
             <Text style={styles.highlightXp}>
-              PrepPoints (XP)
+              {t('missions.howMissionsWork.andRaiseRank')}
             </Text>{' '}
-            and raise your rank.
           </Text>
         </View>
 
@@ -405,8 +364,7 @@ export default function MissionsScreen({ navigation, route }) {
           />
 
           <Text style={styles.instructionText}>
-            Complete harder drills and demonstrate strong
-            performance to progress through the campaign.
+            {t('missions.howMissionsWork.harderDrills')}
           </Text>
         </View>
 
@@ -418,8 +376,7 @@ export default function MissionsScreen({ navigation, route }) {
           />
 
           <Text style={styles.instructionText}>
-            Completing a previous campaign level unlocks the
-            next mission.
+            {t('missions.howMissionsWork.unlockNext')}
           </Text>
         </View>
       </View>
@@ -427,6 +384,7 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           REWARDS HUB
           ===================================================== */}
+
       <TouchableOpacity
         style={styles.rewardsLinkBanner}
         onPress={() => navigation.navigate('VoucherStore')}
@@ -443,11 +401,11 @@ export default function MissionsScreen({ navigation, route }) {
 
           <View style={styles.bannerTextContainer}>
             <Text style={styles.bannerHeaderTitle}>
-              Preparedness Rewards Hub
+              {t('missions.rewards.title')}
             </Text>
 
             <Text style={styles.bannerHeaderSub}>
-              Redeem preparedness rewards with your points.
+              {t('missions.rewards.description')}
             </Text>
           </View>
         </View>
@@ -462,14 +420,18 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           CAMPAIGN MAP
           ===================================================== */}
+
       <View style={styles.mapSectionHeader}>
         <View>
           <Text style={styles.mapSectionTitle}>
-            Survival Journey
+            {t('missions.journey.title')}
           </Text>
 
           <Text style={styles.mapSectionSubtitle}>
-            {completedMissions} of {totalMissions} missions complete
+            {t('missions.journey.missionsComplete', {
+              completed: completedMissionCount,
+              total: totalMissions,
+            })}
           </Text>
         </View>
 
@@ -481,14 +443,16 @@ export default function MissionsScreen({ navigation, route }) {
       </View>
 
       <View style={styles.mapContainer}>
-        {/* Decorative vertical path */}
         <View style={styles.windingLineBackground} />
 
         {MAP_MISSIONS.map((mission, index) => {
           const isEven = index % 2 === 0;
-          const isLocked = mission.status === 'locked';
-          const isCurrent = mission.status === 'current';
-          const isCompleted = mission.status === 'completed';
+
+          const {
+            isCompleted,
+            isCurrent,
+            isLocked,
+          } = getMissionStatus(mission);
 
           return (
             <View
@@ -500,9 +464,8 @@ export default function MissionsScreen({ navigation, route }) {
                   : styles.rowRight,
               ]}
             >
-              {/* ---------------------------------------------
-                  MISSION NODE
-                  --------------------------------------------- */}
+              {/* MISSION NODE */}
+
               <TouchableOpacity
                 activeOpacity={isLocked ? 1 : 0.8}
                 disabled={isLocked}
@@ -554,13 +517,12 @@ export default function MissionsScreen({ navigation, route }) {
                     isLocked && styles.nodeLevelLocked,
                   ]}
                 >
-                  LVL {mission.level}
+                  {t('missions.level',{level: mission.level})}
                 </Text>
               </TouchableOpacity>
 
-              {/* ---------------------------------------------
-                  MISSION INFORMATION CARD
-                  --------------------------------------------- */}
+              {/* MISSION INFORMATION CARD */}
+
               <View
                 style={[
                   styles.nodeCard,
@@ -583,12 +545,11 @@ export default function MissionsScreen({ navigation, route }) {
                       style={[
                         styles.diffTagText,
                         {
-                          color:
-                            mission.diffColor,
+                          color: mission.diffColor,
                         },
                       ]}
                     >
-                      {mission.difficulty}
+                      {t(mission.difficultyKey)}
                     </Text>
                   </View>
 
@@ -600,13 +561,13 @@ export default function MissionsScreen({ navigation, route }) {
                     />
 
                     <Text style={styles.rewardText}>
-                      {mission.reward} XP
+                      {t('missions.xp', { amount: mission.xpreward })}
                     </Text>
                   </View>
                 </View>
 
                 <Text style={styles.missionTag}>
-                  {mission.tag}
+                  {t(mission.tagKey)}
                 </Text>
 
                 <Text
@@ -615,7 +576,7 @@ export default function MissionsScreen({ navigation, route }) {
                     isLocked && styles.lockedTitle,
                   ]}
                 >
-                  {mission.title}
+                  {t(mission.titleKey)}
                 </Text>
 
                 <Text
@@ -624,10 +585,11 @@ export default function MissionsScreen({ navigation, route }) {
                     isLocked && styles.lockedDescription,
                   ]}
                 >
-                  {mission.desc}
+                  {t(mission.descKey)}
                 </Text>
 
                 {/* Mission action */}
+
                 {!isLocked ? (
                   <TouchableOpacity
                     style={styles.playButton}
@@ -636,8 +598,8 @@ export default function MissionsScreen({ navigation, route }) {
                   >
                     <Text style={styles.playButtonText}>
                       {isCurrent
-                        ? 'Play Mission'
-                        : 'Replay Mission'}
+                        ? t('missions.actions.playMission')
+                        : t('missions.actions.replayMission')}
                     </Text>
 
                     <Ionicons
@@ -655,7 +617,7 @@ export default function MissionsScreen({ navigation, route }) {
                     />
 
                     <Text style={styles.lockedNotice}>
-                      Complete previous level to unlock
+                      {t('missions.actions.unlockPrevious')}
                     </Text>
                   </View>
                 )}
@@ -668,6 +630,7 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           CERTIFICATION PROGRESS
           ===================================================== */}
+
       <View style={styles.campaignCard}>
         <View style={styles.campIconContainer}>
           <Ionicons
@@ -679,12 +642,15 @@ export default function MissionsScreen({ navigation, route }) {
 
         <View style={styles.campaignContent}>
           <Text style={styles.campTitle}>
-            First Responder Certificate
+            {t('missions.progress.title')}
           </Text>
 
           <Text style={styles.campSub}>
-            Level {completedMissions} of {totalMissions}{' '}
-            Complete ({progressPercentage}%)
+            {t('missions.progress.level', {
+              completed: completedMissionCount,
+              total: totalMissions,
+              percentage: progressPercentage,
+            })}
           </Text>
 
           <View style={styles.progressBar}>
@@ -703,7 +669,8 @@ export default function MissionsScreen({ navigation, route }) {
       {/* =====================================================
           COMPLETION MESSAGE
           ===================================================== */}
-      {completedMissions === totalMissions && (
+
+      {completedMissionCount === totalMissions && (
         <View style={styles.completeCard}>
           <Ionicons
             name="checkmark-circle"
@@ -713,12 +680,11 @@ export default function MissionsScreen({ navigation, route }) {
 
           <View style={styles.completeTextContainer}>
             <Text style={styles.completeTitle}>
-              Campaign Complete
+              {t('missions.completion.title')}
             </Text>
 
             <Text style={styles.completeSubtitle}>
-              You have completed all available resilience
-              missions.
+              {t('missions.completion.subtitle')}
             </Text>
           </View>
         </View>
@@ -737,10 +703,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingBottom: 60,
   },
-
-  /* =========================================================
-     PROFILE
-     ========================================================= */
 
   topProfileBar: {
     flexDirection: 'row',
@@ -810,10 +772,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 
-  /* =========================================================
-     HEADER
-     ========================================================= */
-
   header: {
     paddingTop: 4,
     marginBottom: 18,
@@ -861,10 +819,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 18,
   },
 
-  /* =========================================================
-     HOW MISSIONS WORK
-     ========================================================= */
-
   instructionCard: {
     backgroundColor: '#0F172A',
     borderWidth: 1,
@@ -905,10 +859,6 @@ const styles = StyleSheet.create({
     color: '#38BDF8',
     fontWeight: '800',
   },
-
-  /* =========================================================
-     REWARDS
-     ========================================================= */
 
   rewardsLinkBanner: {
     flexDirection: 'row',
@@ -954,10 +904,6 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
 
-  /* =========================================================
-     MAP HEADER
-     ========================================================= */
-
   mapSectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -991,10 +937,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '900',
   },
-
-  /* =========================================================
-     MAP
-     ========================================================= */
 
   mapContainer: {
     position: 'relative',
@@ -1099,10 +1041,6 @@ const styles = StyleSheet.create({
     borderColor: '#020617',
     zIndex: 5,
   },
-
-  /* =========================================================
-     MISSION CARDS
-     ========================================================= */
 
   nodeCard: {
     flex: 1,
@@ -1209,10 +1147,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  /* =========================================================
-     CERTIFICATE
-     ========================================================= */
-
   campaignCard: {
     backgroundColor: '#0F172A',
     borderWidth: 1,
@@ -1263,10 +1197,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#A855F7',
     borderRadius: 3,
   },
-
-  /* =========================================================
-     COMPLETION
-     ========================================================= */
 
   completeCard: {
     flexDirection: 'row',

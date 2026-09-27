@@ -18,12 +18,20 @@ import { Card } from 'react-native-paper';
 import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
+import { useTranslation } from 'react-i18next';
+
 
 export default function SettingsScreen() {
   const { theme, setTheme, user, name, updateProfile } = useUser();
   const navigation = useNavigation();
 
   const isDark = theme === 'dark';
+  const { t, i18n } = useTranslation();
+  const currentLanguage = i18n.language?.split('-')[0] || 'en';
+  const changeLanguage = async (language) => {
+    await i18n.changeLanguage(language);
+  };
+
 
   const colors = {
     bg: isDark ? '#0F172A' : '#F8FAFC',
@@ -131,13 +139,103 @@ export default function SettingsScreen() {
         </View>
 
         <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: colors.accent }]} 
+          style={[styles.actionButton, 
+                { backgroundColor:'#D97706'}]} 
           activeOpacity={0.8}
           onPress={handleUpdateParticulars}
         >
           <Text style={styles.actionButtonText}>Update Particulars</Text>
         </TouchableOpacity>
       </Card>
+      {/* LANGUAGE CONFIG */}
+      <Text style={[styles.sectionHeader, { color: colors.sub }]}>
+        {t('settings.sections.language')}
+      </Text>
+
+      <Card style={[styles.card, { backgroundColor: colors.card, marginBottom: 20 }]}>
+        <View style={styles.languageHeader}>
+          <View style={{ flex: 1 }}>
+            <Text style={[styles.settingTitle, { color: colors.text }]}>
+              {t('settings.language.title')}
+            </Text>
+            <Text style={[styles.settingSub, { color: colors.sub }]}>
+              {t('settings.language.description')}
+            </Text>
+          </View>
+
+          <Ionicons
+            name="language-outline"
+            size={22}
+            color={colors.accent}
+          />
+        </View>
+
+        <View style={styles.languageOptions}>
+          {[
+            { code: 'en', label: 'English', native: 'English' },
+            { code: 'zh', label: 'Chinese', native: '中文' },
+            { code: 'ms', label: 'Malay', native: 'Bahasa Melayu' },
+            { code: 'ta', label: 'Tamil', native: 'தமிழ்' },
+          ].map(language => (
+            <TouchableOpacity
+              key={language.code}
+              style={[
+                styles.languageOption,
+                {
+                  backgroundColor:
+                    currentLanguage === language.code
+                      ? '#D97706'
+                      : colors.inputBg,
+                  borderColor:
+                    currentLanguage === language.code
+                      ? colors.accent
+                      : colors.border,
+                },
+              ]}
+              activeOpacity={0.8}
+              onPress={() => changeLanguage(language.code)}
+            >
+              <Text
+                style={[
+                  styles.languageOptionText,
+                  {
+                    color:
+                      currentLanguage === language.code
+                        ? '#FFFFFF'
+                        : colors.text,
+                  },
+                ]}
+              >
+                {language.native}
+              </Text>
+
+              <Text
+                style={[
+                  styles.languageOptionSub,
+                  {
+                    color:
+                      currentLanguage === language.code
+                        ? 'rgba(255,255,255,0.8)'
+                        : colors.sub,
+                  },
+                ]}
+              >
+                {language.label}
+              </Text>
+
+              {currentLanguage === language.code && (
+                <Ionicons
+                  name="checkmark-circle"
+                  size={20}
+                  color="#FFFFFF"
+                  style={styles.languageCheck}
+                />
+              )}
+            </TouchableOpacity>
+          ))}
+        </View>
+      </Card>
+
 
       {/* SECURITY / PASSWORD RESET */}
       <Text style={[styles.sectionHeader, { color: colors.sub }]}>ACCOUNT SECURITY</Text>
@@ -179,7 +277,8 @@ export default function SettingsScreen() {
         </View>
 
         <TouchableOpacity 
-          style={[styles.actionButton, { backgroundColor: '#4F46E5' }]} 
+          style={[styles.actionButton, 
+                { backgroundColor: '#4F46E5 ' }]} 
           activeOpacity={0.8}
           onPress={handleUpdatePassword}
         >
@@ -253,4 +352,40 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 13,
   },
+  languageHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+
+  languageOptions: {
+    gap: 8,
+  },
+
+  languageOption: {
+    minHeight: 58,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    justifyContent: 'center',
+    position: 'relative',
+  },
+
+  languageOptionText: {
+    fontSize: 14,
+    fontWeight: '800',
+  },
+
+  languageOptionSub: {
+    fontSize: 11,
+    marginTop: 2,
+  },
+
+  languageCheck: {
+    position: 'absolute',
+    right: 14,
+    top: '50%',
+    marginTop: -10,
+  }
 });

@@ -9,6 +9,7 @@ import React, {
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { updateLeaderboardUser } from '../services/firestoreService';
+import { changeLanguage, loadSavedLanguage } from '../localisation';
 
 /*
 |--------------------------------------------------------------------------
@@ -28,24 +29,17 @@ const GUEST_STORAGE_KEY = '@prepwisesg_guest';
 
 const initialState = {
   user: null,
-
   // Registered account
   isAuthenticated: false,
-
   // Guest session
   isGuest: false,
-
   isLoading: true,
-
   theme: 'dark',
-
+  language: 'en',
   points: 0,
   level: 1,
-
   name: '',
-
   badges: [],
-
   registeredUsers: [],
 };
 
@@ -70,6 +64,8 @@ const ACTIONS = {
   ADD_BADGE: 'ADD_BADGE',
 
   SET_THEME: 'SET_THEME',
+  SET_LANGUAGE: 'SET_LANGUAGE',
+
 
   REGISTER_USER: 'REGISTER_USER',
 
@@ -129,45 +125,31 @@ const createDefaultUserData = ({
     : `user-${Date.now()}`,
 
   email,
-
   name,
-
   isGuest,
-
   password: isGuest ? undefined : '',
-
   points: 0,
-
   level: 1,
-
   onboardingCompleted: false,
-
   streakType: null,
-
   streak: 0,
-
   badges: [],
-
+  readinessGoal: null,
+  streakInterval: null,
+  experienceLevel: null,
+  notificationsAllowed: true,
   completedQuizzes: [],
-
   completedMissions: {},
-
   goBagItems: [],
-
   inventory: [],
-
   familyMembers: [],
-
   familyEmergencyPlanRegistered: false,
-
   healthData: {
     bloodType: '',
     allergies: '',
     qrCodeGenerated: false,
   },
-
   prepCoins: 0,
-
   createdAt: new Date().toISOString(),
 });
 
@@ -225,33 +207,75 @@ const normaliseUser = (user = {}) => {
         ? user.familyMembers
         : [],
 
-    familyEmergencyPlanRegistered:
-      Boolean(user.familyEmergencyPlanRegistered),
+    familyEmergencyPlanRegistered: Boolean(user.familyEmergencyPlanRegistered),
 
     healthData: {
-      bloodType:
-        user.healthData?.bloodType || '',
-
-      allergies:
-        user.healthData?.allergies || '',
-
-      qrCodeGenerated:
-        Boolean(user.healthData?.qrCodeGenerated),
+      bloodType: user.healthData?.bloodType || '',
+      allergies: user.healthData?.allergies || '',
+      qrCodeGenerated: Boolean(user.healthData?.qrCodeGenerated),
     },
-
-    prepCoins:
-      Number(user.prepCoins) || 0,
-
-    streak:
-      Number(user.streak) || 0,
-
-    streakType:
-      user.streakType || null,
-
-    onboardingCompleted:
-      Boolean(user.onboardingCompleted),
+    prepCoins: Number(user.prepCoins) || 0,
+    streak: Number(user.streak) || 0,
+    streakType: user.streakType || null,
+    readinessGoal: user.readinessGoal || null,
+    streakInterval: Number(user.streakInterval) || null,
+    experienceLevel: user.experienceLevel || null,
+    notificationsAllowed: user.notificationsAllowed !== false,
+    onboardingCompleted: Boolean(user.onboardingCompleted),
   };
 };
+
+//Mission Completion and Unlocking logic
+const isMissionCompleted = (
+  completedMissions,
+  missionId
+) => {
+  return Boolean(
+    completedMissions?.[missionId]
+  );
+};
+
+const isMissionUnlocked = (
+  completedMissions,
+  level
+) => {
+  // Level 1 is always available
+  if (level === 1) {
+    return true;
+  }
+
+  // Previous campaign level must be completed
+  const previousMissionId =
+    `level-${level - 1}`;
+
+  return isMissionCompleted(
+    completedMissions,
+    previousMissionId
+  );
+};
+
+// const isMissionCompleted = (completedMissions, missionId) => {
+//   return Boolean(completedMissions?.[missionId]);
+// };
+
+// const isMissionUnlocked = (
+//   completedMissions,
+//   gameId,
+//   level
+// ) => {
+//   if (level === 1) {
+//     return true;
+//   }
+
+//   const previousMissionId =
+//     `${gameId}_level${level - 1}`;
+
+//   return isMissionCompleted(
+//     completedMissions,
+//     previousMissionId
+//   );
+// };
+
 
 /*
 |--------------------------------------------------------------------------
@@ -485,6 +509,17 @@ const userReducer = (state, action) => {
         ...state,
         theme: action.payload,
       };
+    /*
+    |--------------------------------------------------------------------------
+    | LANGUAGE
+    |--------------------------------------------------------------------------
+    */
+
+    case ACTIONS.SET_LANGUAGE:
+      return {
+        ...state,
+        language: action.payload,
+      };
 
     /*
     |--------------------------------------------------------------------------
@@ -511,6 +546,45 @@ const userReducer = (state, action) => {
     |--------------------------------------------------------------------------
     */
 
+    // case ACTIONS.COMPLETE_ONBOARDING: {
+    //   const onboardingPoints =
+    //     state.user?.onboardingCompleted
+    //       ? state.points
+    //       : state.points + 50;
+
+    //   const updatedUser = state.user
+    //     ? {
+    //         ...state.user,
+
+    //         onboardingCompleted: true,
+
+    //         streakType:
+    //           action.payload?.streakType ||
+    //           state.user.streakType,
+
+    //         streak: Math.max(
+    //           state.user.streak || 0,
+    //           1
+    //         ),
+
+    //         points: onboardingPoints,
+
+    //         level:
+    //           calculateLevel(onboardingPoints),
+    //       }
+    //     : null;
+
+    //   return {
+    //     ...state,
+
+    //     points: onboardingPoints,
+
+    //     level:
+    //       calculateLevel(onboardingPoints),
+
+    //     user: updatedUser,
+    //   };
+    // }
     case ACTIONS.COMPLETE_ONBOARDING: {
       const onboardingPoints =
         state.user?.onboardingCompleted
@@ -523,9 +597,30 @@ const userReducer = (state, action) => {
 
             onboardingCompleted: true,
 
+            readinessGoal:
+              action.payload?.goal ??
+              state.user.readinessGoal ??
+              null,
+
+            streakInterval:
+              Number(action.payload?.streakInterval) ||
+              state.user.streakInterval ||
+              null,
+
+            experienceLevel:
+              action.payload?.experienceLevel ??
+              state.user.experienceLevel ??
+              null,
+
+            notificationsAllowed:
+              action.payload?.notificationsAllowed ??
+              state.user.notificationsAllowed ??
+              true,
+
             streakType:
-              action.payload?.streakType ||
-              state.user.streakType,
+              action.payload?.goal ??
+              state.user.streakType ??
+              null,
 
             streak: Math.max(
               state.user.streak || 0,
@@ -550,6 +645,7 @@ const userReducer = (state, action) => {
         user: updatedUser,
       };
     }
+
 
     /*
     |--------------------------------------------------------------------------
@@ -875,6 +971,20 @@ export const UserProvider = ({ children }) => {
     try {
       /*
       |--------------------------------------------------------------------------
+      | Load saved language
+      |--------------------------------------------------------------------------
+      */
+
+      const savedLanguage =
+        await loadSavedLanguage();
+
+      dispatch({
+        type: ACTIONS.SET_LANGUAGE,
+        payload: savedLanguage,
+      });
+
+      /*
+      |--------------------------------------------------------------------------
       | Load global app data
       |--------------------------------------------------------------------------
       */
@@ -1069,6 +1179,8 @@ export const UserProvider = ({ children }) => {
           registeredUsers:
             state.registeredUsers,
           theme: state.theme,
+          language: state.language,
+
         };
 
         await AsyncStorage.setItem(
@@ -1120,6 +1232,7 @@ export const UserProvider = ({ children }) => {
     state.user,
     state.registeredUsers,
     state.theme,
+    state.language
   ]);
 
   /*
@@ -1943,23 +2056,58 @@ export const UserProvider = ({ children }) => {
     []
   );
 
+  const setLanguage = useCallback(async (language) => {
+    const success = await changeLanguage(language);
+    if (!success) {
+      return false;
+    }
+    dispatch({
+      type: ACTIONS.SET_LANGUAGE,
+      payload: language,
+    });
+
+    return true;
+  },[]);
+
+
   /*
   |--------------------------------------------------------------------------
   | ONBOARDING
   |--------------------------------------------------------------------------
   */
-
-  const completeOnboarding =
-    useCallback((streakType) => {
+  const completeOnboarding = useCallback(
+    ({
+      goal,
+      streakInterval,
+      experienceLevel,
+      notificationsAllowed,
+    }) => {
       dispatch({
-        type:
-          ACTIONS.COMPLETE_ONBOARDING,
+        type: ACTIONS.COMPLETE_ONBOARDING,
 
         payload: {
-          streakType,
+          goal,
+          streakInterval,
+          experienceLevel,
+          notificationsAllowed,
         },
       });
-    }, []);
+    },
+    []
+  );
+
+
+  // const completeOnboarding =
+  //   useCallback((streakType) => {
+  //     dispatch({
+  //       type:
+  //         ACTIONS.COMPLETE_ONBOARDING,
+
+  //       payload: {
+  //         streakType,
+  //       },
+  //     });
+  //   }, []);
 
   /*
   |--------------------------------------------------------------------------
@@ -2026,30 +2174,69 @@ export const UserProvider = ({ children }) => {
     }, []);
 
   /*
-  |--------------------------------------------------------------------------
-  | MISSIONS
-  |--------------------------------------------------------------------------
-  */
+|--------------------------------------------------------------------------
+| MISSIONS
+|--------------------------------------------------------------------------
+*/
 
-  const updateCompletedMissions =
-    useCallback((missions) => {
+const updateCompletedMissions =
+  useCallback((missions) => {
+    dispatch({
+      type: ACTIONS.UPDATE_COMPLETED_MISSIONS,
+      payload: missions,
+    });
+  }, []);
+
+const addCompletedMission =
+  useCallback((missionId) => {
+    dispatch({
+      type: ACTIONS.ADD_COMPLETED_MISSION,
+      payload: missionId,
+    });
+  }, []);
+
+/*
+|--------------------------------------------------------------------------
+| COMPLETE MISSION
+|--------------------------------------------------------------------------
+|
+| Marks the mission as completed and awards:
+| - XP
+| - PrepCoins
+|
+*/
+
+const completeMission =
+  useCallback(
+    (missionId, xpReward = 0, coinReward = 0) => {
+      if (!missionId) {
+        return;
+      }
+
+      // Mark mission/level as completed
       dispatch({
-        type:
-          ACTIONS.UPDATE_COMPLETED_MISSIONS,
-
-        payload: missions,
-      });
-    }, []);
-
-  const addCompletedMission =
-    useCallback((missionId) => {
-      dispatch({
-        type:
-          ACTIONS.ADD_COMPLETED_MISSION,
-
+        type: ACTIONS.ADD_COMPLETED_MISSION,
         payload: missionId,
       });
-    }, []);
+
+      // Award XP
+      if (xpReward > 0) {
+        dispatch({
+          type: ACTIONS.UPDATE_POINTS,
+          payload: xpReward,
+        });
+      }
+
+      // Award PrepCoins
+      if (coinReward > 0) {
+        dispatch({
+          type: ACTIONS.ADD_PREP_COINS,
+          payload: coinReward,
+        });
+      }
+    },
+    []
+  );
 
   /*
   |--------------------------------------------------------------------------
@@ -2074,95 +2261,68 @@ export const UserProvider = ({ children }) => {
 
   const contextValue = {
     ...state,
-
     /*
     | Authentication
     */
-
     login,
-
     signup,
-
     logout,
-
     guestMode,
-
     /*
     | User
     */
-
     updateUser,
-
     /*
     | Progress
     */
-
     updatePoints,
-
     addBadge,
-
     completeOnboarding,
-
     updateStreak,
-
     /*
     | Coins
     */
-
     spendPrepCoins,
-
     addPrepCoins,
-
     /*
     | Inventory
     */
-
     addInventoryItem,
-
     removeInventoryItem,
-
     /*
     | Health
     */
-
     updateHealthData,
-
     /*
     | Family
     */
-
     updateFamilyMembers,
-
     updateFamilyEmergencyPlanStatus,
-
     /*
     | Quizzes
     */
-
     updateCompletedQuizzes,
-
     /*
     | Missions
     */
-
     updateCompletedMissions,
-
     addCompletedMission,
-
+    completeMission,
+    isMissionCompleted,
+    isMissionUnlocked,
     /*
     | Theme
     */
-
     setTheme,
-
+    /*
+    | Language
+    */
+    setLanguage,
     /*
     | Validation
     */
-
     validateEmail,
-
     validatePassword,
-
     validateName,
   };
 

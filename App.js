@@ -41,14 +41,15 @@ import React from 'react';
 import { StatusBar } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-
 import { UserProvider } from './contexts/UserContext';
 import { GameProvider } from './contexts/GameContext';
 import { AlertContextProvider } from './contexts/AlertContext';
-
 import AppNavigator from './navigation/AppNavigator';
 import * as Notifications from "expo-notifications";
 
+// --------------------------------------------------
+// Notification handler
+// --------------------------------------------------
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -56,9 +57,32 @@ Notifications.setNotificationHandler({
     shouldSetBadge: true,
   }),
 });
-
 const ROOT_STYLE = { flex: 1 };
 
+// --------------------------------------------------
+// App content
+// --------------------------------------------------
+
+function AppContent() {
+  const { theme } = useUser();
+
+  const isDark = theme === 'dark';
+
+  return (
+    <>
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={isDark ? '#020617' : '#F8FAFC'}
+      />
+
+      <AppNavigator />
+    </>
+  );
+}
+
+// --------------------------------------------------
+// Root App
+// --------------------------------------------------
 export default function App() {
   return (
     <GestureHandlerRootView style={ROOT_STYLE}>

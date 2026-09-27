@@ -1,32 +1,89 @@
+// import {
+//   collection,
+//   query,
+//   orderBy,
+//   limit,
+//   onSnapshot
+// } from 'firebase/firestore';
+
+// import { db } from '../firebase/config';
+
+// export const subscribeToLeaderboard = (callback) => {
+//   const leaderboardQuery = query(
+//     collection(db, 'users'),
+//     orderBy('points', 'desc'),
+//     limit(10)
+//   );
+
+//   const unsubscribe = onSnapshot(
+//     leaderboardQuery,
+//     (snapshot) => {
+//       const leaderboard = snapshot.docs.map((doc) => ({
+//         id: doc.id,
+//         ...doc.data()
+//       }));
+
+//       callback(leaderboard);
+//     },
+//     (error) => {
+//       console.error('Leaderboard Firestore error:', error);
+//     }
+//   );
+
+//   return unsubscribe;
+// };
 import {
   collection,
   query,
   orderBy,
-  limit,
   onSnapshot
 } from 'firebase/firestore';
 
 import { db } from '../firebase/config';
 
-export const subscribeToLeaderboard = (callback) => {
+export const subscribeToLeaderboard = (currentUserId, callback) => {
   const leaderboardQuery = query(
     collection(db, 'users'),
-    orderBy('points', 'desc'),
-    limit(10)
+    orderBy('points', 'desc')
   );
 
   const unsubscribe = onSnapshot(
     leaderboardQuery,
     (snapshot) => {
-      const leaderboard = snapshot.docs.map((doc) => ({
+      const allUsers = snapshot.docs.map((doc, index) => ({
         id: doc.id,
-        ...doc.data()
+        ...doc.data(),
+        rank: index + 1
       }));
 
-      callback(leaderboard);
+      // Top 5 users
+      const topUsers = allUsers.slice(0, 5);
+
+      // Find current user
+      const currentUser = allUsers.find(
+        (item) => item.id === currentUserId
+      );
+
+      // If current user is already in top 5,
+      // don't add them a second time.
+      const isCurrentUserInTopFive = topUsers.some(
+        (item) => item.id === currentUserId
+      );
+
+      const displayUsers = isCurrentUserInTopFive
+        ? topUsers
+        : [
+            ...topUsers,
+            ...(currentUser ? [currentUser] : [])
+          ];
+
+      callback(displayUsers);
     },
     (error) => {
-      console.error('Leaderboard Firestore error:', error);
+      console.error(
+        'Leaderboard Firestore error:',
+        error
+      );
     }
   );
 

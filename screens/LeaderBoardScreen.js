@@ -35,17 +35,18 @@ export default function LeaderboardScreen() {
 
   useEffect(() => {
 
-    const unsubscribe = subscribeToLeaderboard((data) => {
-      setLeaderboard(data);
-    });
-
+    const unsubscribe = subscribeToLeaderboard(
+      user?.id,
+      (data) => {
+        setLeaderboard(data);
+      }
+    );
     return unsubscribe;
-
   }, []);
 
   const renderItem = ({ item, index }) => {
 
-    const rank = index + 1;
+    const rank = item.rank;
 
     const isCurrentUser =
       item.id === user?.id;
@@ -106,9 +107,16 @@ export default function LeaderboardScreen() {
               ]}
             >
               {item.name || 'Unknown User'}
-              {isCurrentUser && ' (You)'}
+              {isCurrentUser && (
+                <Text
+                  style={[
+                    styles.yourPositionLabel,
+                    { color: colors.highlightBorder }
+                  ]}>
+                  Your Position
+                </Text>
+              )}
             </Text>
-
             <Text
               style={[
                 styles.streak,
@@ -160,7 +168,7 @@ export default function LeaderboardScreen() {
         keyExtractor={(item) => item.id}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          paddingBottom: 20
+          paddingBottom: 30
         }}
       />
 
