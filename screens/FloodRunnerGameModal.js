@@ -1,170 +1,3854 @@
-// // // // // // // components/FloodRunnerGameModal.js
-// // // // // // import React, { useState, useEffect } from 'react';
-// // // // // // import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
+// // // // // // // // // // components/FloodRunnerGameModal.js
+// // // // // // // // // import React, { useState, useEffect } from 'react';
+// // // // // // // // // import { View, Text, StyleSheet, TouchableOpacity, Modal, Dimensions } from 'react-native';
+// // // // // // // // // import { Ionicons } from '@expo/vector-icons';
+// // // // // // // // // import * as Haptics from 'expo-haptics';
+// // // // // // // // // import { Accelerometer } from 'expo-sensors';
+
+// // // // // // // // // const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// // // // // // // // // export default function FloodRunnerGameModal({ visible, onClose, onWin }) {
+// // // // // // // // //   const GAME_WIDTH = SCREEN_WIDTH - 64;
+// // // // // // // // //   const PLAYER_SIZE = 30;
+  
+// // // // // // // // //   const [playerPositionX, setPlayerPositionX] = useState(GAME_WIDTH / 2 - PLAYER_SIZE / 2);
+// // // // // // // // //   const [debrisY, setDebrisY] = useState(0);
+// // // // // // // // //   const [debrisX, setDebrisX] = useState(Math.random() * (GAME_WIDTH - 20));
+// // // // // // // // //   const [score, setScore] = useState(0);
+// // // // // // // // //   const [gameOver, setGameOver] = useState(false);
+// // // // // // // // //   const [hasWon, setHasWon] = useState(false);
+
+// // // // // // // // //   useEffect(() => {
+// // // // // // // // //     let subscription;
+// // // // // // // // //     if (visible && !gameOver && !hasWon) {
+// // // // // // // // //       Accelerometer.setUpdateInterval(30);
+// // // // // // // // //       subscription = Accelerometer.addListener(data => {
+// // // // // // // // //         setPlayerPositionX(prevX => {
+// // // // // // // // //           let nextX = prevX + data.x * 18;
+// // // // // // // // //           if (nextX < 0) return 0;
+// // // // // // // // //           if (nextX > GAME_WIDTH - PLAYER_SIZE) return GAME_WIDTH - PLAYER_SIZE;
+// // // // // // // // //           return nextX;
+// // // // // // // // //         });
+// // // // // // // // //       });
+// // // // // // // // //     }
+// // // // // // // // //     return () => subscription && subscription.remove();
+// // // // // // // // //   }, [visible, gameOver, hasWon]);
+
+// // // // // // // // //   useEffect(() => {
+// // // // // // // // //     let gameInterval;
+// // // // // // // // //     if (visible && !gameOver && !hasWon) {
+// // // // // // // // //       gameInterval = setInterval(() => {
+// // // // // // // // //         setDebrisY(prevY => {
+// // // // // // // // //           if (prevY > 260) {
+// // // // // // // // //             setScore(s => {
+// // // // // // // // //               const newScore = s + 10;
+// // // // // // // // //               if (newScore >= 50) {
+// // // // // // // // //                 setHasWon(true);
+// // // // // // // // //                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+// // // // // // // // //               }
+// // // // // // // // //               return newScore;
+// // // // // // // // //             });
+// // // // // // // // //             setDebrisX(Math.random() * (GAME_WIDTH - 20));
+// // // // // // // // //             return 0;
+// // // // // // // // //           }
+// // // // // // // // //           return prevY + 12;
+// // // // // // // // //         });
+// // // // // // // // //       }, 30);
+// // // // // // // // //     }
+// // // // // // // // //     return () => clearInterval(gameInterval);
+// // // // // // // // //   }, [visible, gameOver, hasWon, debrisX]);
+
+// // // // // // // // //   useEffect(() => {
+// // // // // // // // //     if (debrisY > 210 && debrisY < 250) {
+// // // // // // // // //       const playerCenter = playerPositionX + PLAYER_SIZE / 2;
+// // // // // // // // //       const debrisCenter = debrisX + 10;
+// // // // // // // // //       if (Math.abs(playerCenter - debrisCenter) < 22) {
+// // // // // // // // //         setGameOver(true);
+// // // // // // // // //         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+// // // // // // // // //       }
+// // // // // // // // //     }
+// // // // // // // // //   }, [debrisY, playerPositionX, debrisX]);
+
+// // // // // // // // //   const restartGame = () => {
+// // // // // // // // //     setScore(0);
+// // // // // // // // //     setDebrisY(0);
+// // // // // // // // //     setGameOver(false);
+// // // // // // // // //     setHasWon(false);
+// // // // // // // // //     setPlayerPositionX(GAME_WIDTH / 2 - PLAYER_SIZE / 2);
+// // // // // // // // //   };
+
+// // // // // // // // //   return (
+// // // // // // // // //     <Modal visible={visible} animationType="slide" transparent={true}>
+// // // // // // // // //       <View style={styles.modalOverlay}>
+// // // // // // // // //         <View style={[styles.modalContentCard, { height: 480 }]}>
+// // // // // // // // //           <View style={styles.modalHeader}>
+// // // // // // // // //             <Text style={styles.modalTitle}>Flash Flood Evacuation Drill</Text>
+// // // // // // // // //             <TouchableOpacity onPress={onClose}>
+// // // // // // // // //               <Ionicons name="close-circle" size={26} color="#64748B" />
+// // // // // // // // //             </TouchableOpacity>
+// // // // // // // // //           </View>
+// // // // // // // // //           <Text style={{ color: '#94A3B8', fontSize: 12, marginBottom: 12 }}>
+// // // // // // // // //             Tilt your phone physically left/right to steer your responder to safety!
+// // // // // // // // //           </Text>
+
+// // // // // // // // //           <View style={[styles.gameCanvas, { width: GAME_WIDTH }]}>
+// // // // // // // // //             <View style={[styles.playerNode, { left: playerPositionX }]}>
+// // // // // // // // //               <Ionicons name="walk" size={24} color="black" />
+// // // // // // // // //               <Ionicons name="walk-outline" size={24} color="black" />
+// // // // // // // // //               <Ionicons name="fitness-outline" size={24} color="black" />
+// // // // // // // // //             </View>
+
+// // // // // // // // //             {!gameOver && !hasWon && (
+// // // // // // // // //               <View style={[styles.debrisNode, { left: debrisX, top: debrisY }]}>
+// // // // // // // // //                 <Ionicons name="warning" size={20} color="#EF4444" />
+// // // // // // // // //               </View>
+// // // // // // // // //             )}
+
+// // // // // // // // //             <View style={styles.shelterLine}>
+// // // // // // // // //               <Text style={styles.shelterLineText}>SCDF SAFE ELEVATED SHELTER AREA</Text>
+// // // // // // // // //             </View>
+// // // // // // // // //           </View>
+
+// // // // // // // // //           <View style={styles.gameHud}>
+// // // // // // // // //             <Text style={{ color: '#FFF', fontWeight: '800' }}>Evacuation Score: {score} / 50</Text>
+// // // // // // // // //           </View>
+
+// // // // // // // // //           {gameOver && (
+// // // // // // // // //             <View style={styles.endGameOverlay}>
+// // // // // // // // //               <Text style={{ color: '#EF4444', fontWeight: '900', fontSize: 18 }}>Trapped by Water!</Text>
+// // // // // // // // //               <TouchableOpacity style={styles.retryBtn} onPress={restartGame}>
+// // // // // // // // //                 <Text style={{ color: '#FFF', fontWeight: '800' }}>Retry Drill</Text>
+// // // // // // // // //               </TouchableOpacity>
+// // // // // // // // //             </View>
+// // // // // // // // //           )}
+
+// // // // // // // // //           {hasWon && (
+// // // // // // // // //             <View style={styles.endGameOverlay}>
+// // // // // // // // //               <Text style={{ color: '#10B981', fontWeight: '900', fontSize: 18 }}>Reached High Ground!</Text>
+// // // // // // // // //               <TouchableOpacity 
+// // // // // // // // //                 style={styles.claimRewardBtn} 
+// // // // // // // // //                 onPress={() => {
+// // // // // // // // //                   onWin({ xp: 100, coins: 25 });
+// // // // // // // // //                   onClose();
+// // // // // // // // //                 }}
+// // // // // // // // //               >
+// // // // // // // // //                 <Text style={styles.claimRewardText}>Claim +100 XP & +25 Coins</Text>
+// // // // // // // // //               </TouchableOpacity>
+// // // // // // // // //             </View>
+// // // // // // // // //           )}
+// // // // // // // // //         </View>
+// // // // // // // // //       </View>
+// // // // // // // // //     </Modal>
+// // // // // // // // //   );
+// // // // // // // // // }
+
+// // // // // // // // // const styles = StyleSheet.create({
+// // // // // // // // //   modalOverlay: { flex: 1, backgroundColor: 'rgba(2, 6, 23, 0.85)', justifyContent: 'center', alignItems: 'center', padding: 16 },
+// // // // // // // // //   modalContentCard: { backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E293B', borderRadius: 20, padding: 20, width: '100%' },
+// // // // // // // // //   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+// // // // // // // // //   modalTitle: { color: '#FFF', fontSize: 16, fontWeight: '800' },
+// // // // // // // // //   gameCanvas: { height: 260, backgroundColor: '#020617', borderRadius: 12, borderWidth: 1, borderColor: '#1E293B', position: 'relative', overflow: 'hidden' },
+// // // // // // // // //   playerNode: { position: 'absolute', bottom: 10 },
+// // // // // // // // //   debrisNode: { position: 'absolute' },
+// // // // // // // // //   shelterLine: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: '#10B98120', paddingVertical: 4, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#10B981' },
+// // // // // // // // //   shelterLineText: { color: '#10B981', fontSize: 8, fontWeight: '900' },
+// // // // // // // // //   gameHud: { marginTop: 12, alignItems: 'center' },
+// // // // // // // // //   endGameOverlay: { position: 'absolute', top: 120, left: 20, right: 20, backgroundColor: '#0F172ACC', padding: 20, borderRadius: 16, alignItems: 'center' },
+// // // // // // // // //   retryBtn: { backgroundColor: '#EF4444', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8, marginTop: 10 },
+// // // // // // // // //   claimRewardBtn: { backgroundColor: '#10B981', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center', marginTop: 10 },
+// // // // // // // // //   claimRewardText: { color: '#FFF', fontWeight: '900', fontSize: 13 }
+// // // // // // // // // });
+
+
+
+
+// // // // // // // // // components/FloodRunnerGameModal.js
+
+// // // // // // // // import React, { useEffect, useState } from 'react';
+// // // // // // // // import {
+// // // // // // // //   View,
+// // // // // // // //   Text,
+// // // // // // // //   StyleSheet,
+// // // // // // // //   TouchableOpacity,
+// // // // // // // //   Modal,
+// // // // // // // //   Dimensions,
+// // // // // // // // } from 'react-native';
+// // // // // // // // import { Ionicons } from '@expo/vector-icons';
+// // // // // // // // import * as Haptics from 'expo-haptics';
+// // // // // // // // import { Accelerometer } from 'expo-sensors';
+
+// // // // // // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+
+// // // // // // // // export default function FloodRunnerGameModal({
+// // // // // // // //   visible,
+// // // // // // // //   onClose,
+// // // // // // // //   onWin,
+// // // // // // // // }) {
+// // // // // // // //   // Keep the game safely inside the modal.
+// // // // // // // //   const GAME_WIDTH = Math.min(SCREEN_WIDTH - 72, 420);
+// // // // // // // //   const GAME_HEIGHT = Math.min(SCREEN_HEIGHT * 0.42, 320);
+
+// // // // // // // //   const PLAYER_SIZE = 34;
+// // // // // // // //   const DEBRIS_SIZE = 28;
+
+// // // // // // // //   const [playerPositionX, setPlayerPositionX] = useState(
+// // // // // // // //     GAME_WIDTH / 2 - PLAYER_SIZE / 2
+// // // // // // // //   );
+
+// // // // // // // //   const [debrisY, setDebrisY] = useState(0);
+
+// // // // // // // //   const [debrisX, setDebrisX] = useState(
+// // // // // // // //     Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // // //   );
+
+// // // // // // // //   const [score, setScore] = useState(0);
+// // // // // // // //   const [gameOver, setGameOver] = useState(false);
+// // // // // // // //   const [hasWon, setHasWon] = useState(false);
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * RESET WHEN OPENING
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   useEffect(() => {
+// // // // // // // //     if (visible) {
+// // // // // // // //       setScore(0);
+// // // // // // // //       setDebrisY(0);
+// // // // // // // //       setDebrisX(
+// // // // // // // //         Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // // //       );
+// // // // // // // //       setPlayerPositionX(
+// // // // // // // //         GAME_WIDTH / 2 - PLAYER_SIZE / 2
+// // // // // // // //       );
+// // // // // // // //       setGameOver(false);
+// // // // // // // //       setHasWon(false);
+// // // // // // // //     }
+// // // // // // // //   }, [visible]);
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * ACCELEROMETER
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   useEffect(() => {
+// // // // // // // //     let subscription;
+
+// // // // // // // //     if (visible && !gameOver && !hasWon) {
+// // // // // // // //       Accelerometer.setUpdateInterval(30);
+
+// // // // // // // //       subscription = Accelerometer.addListener((data) => {
+// // // // // // // //         setPlayerPositionX((prevX) => {
+// // // // // // // //           // Tilt left/right.
+// // // // // // // //           //
+// // // // // // // //           // Depending on phone orientation, you may need
+// // // // // // // //           // to change data.x to -data.x.
+
+// // // // // // // //           let nextX = prevX + data.x * 18;
+
+// // // // // // // //           if (nextX < 0) {
+// // // // // // // //             nextX = 0;
+// // // // // // // //           }
+
+// // // // // // // //           if (nextX > GAME_WIDTH - PLAYER_SIZE) {
+// // // // // // // //             nextX = GAME_WIDTH - PLAYER_SIZE;
+// // // // // // // //           }
+
+// // // // // // // //           return nextX;
+// // // // // // // //         });
+// // // // // // // //       });
+// // // // // // // //     }
+
+// // // // // // // //     return () => {
+// // // // // // // //       if (subscription) {
+// // // // // // // //         subscription.remove();
+// // // // // // // //       }
+// // // // // // // //     };
+// // // // // // // //   }, [visible, gameOver, hasWon]);
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * DEBRIS MOVEMENT
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   useEffect(() => {
+// // // // // // // //     if (!visible || gameOver || hasWon) {
+// // // // // // // //       return;
+// // // // // // // //     }
+
+// // // // // // // //     const gameInterval = setInterval(() => {
+// // // // // // // //       setDebrisY((previousY) => {
+// // // // // // // //         const nextY = previousY + 8;
+
+// // // // // // // //         // Debris reached bottom.
+// // // // // // // //         if (nextY > GAME_HEIGHT - 40) {
+// // // // // // // //           setScore((previousScore) => {
+// // // // // // // //             const newScore = previousScore + 10;
+
+// // // // // // // //             if (newScore >= 50) {
+// // // // // // // //               setHasWon(true);
+
+// // // // // // // //               Haptics.notificationAsync(
+// // // // // // // //                 Haptics.NotificationFeedbackType.Success
+// // // // // // // //               );
+// // // // // // // //             }
+
+// // // // // // // //             return newScore;
+// // // // // // // //           });
+
+// // // // // // // //           setDebrisX(
+// // // // // // // //             Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // // //           );
+
+// // // // // // // //           return 0;
+// // // // // // // //         }
+
+// // // // // // // //         return nextY;
+// // // // // // // //       });
+// // // // // // // //     }, 40);
+
+// // // // // // // //     return () => clearInterval(gameInterval);
+// // // // // // // //   }, [visible, gameOver, hasWon, GAME_WIDTH, GAME_HEIGHT]);
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * COLLISION
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   useEffect(() => {
+// // // // // // // //     if (gameOver || hasWon) {
+// // // // // // // //       return;
+// // // // // // // //     }
+
+// // // // // // // //     const playerCenter =
+// // // // // // // //       playerPositionX + PLAYER_SIZE / 2;
+
+// // // // // // // //     const debrisCenter =
+// // // // // // // //       debrisX + DEBRIS_SIZE / 2;
+
+// // // // // // // //     const horizontalDistance =
+// // // // // // // //       Math.abs(playerCenter - debrisCenter);
+
+// // // // // // // //     const playerBottom = GAME_HEIGHT - 10;
+
+// // // // // // // //     const debrisBottom =
+// // // // // // // //       debrisY + DEBRIS_SIZE;
+
+// // // // // // // //     // Collision zone near the player.
+// // // // // // // //     if (
+// // // // // // // //       debrisBottom >= playerBottom - PLAYER_SIZE &&
+// // // // // // // //       debrisY <= playerBottom &&
+// // // // // // // //       horizontalDistance < 28
+// // // // // // // //     ) {
+// // // // // // // //       setGameOver(true);
+
+// // // // // // // //       Haptics.impactAsync(
+// // // // // // // //         Haptics.ImpactFeedbackStyle.Heavy
+// // // // // // // //       );
+// // // // // // // //     }
+// // // // // // // //   }, [
+// // // // // // // //     debrisY,
+// // // // // // // //     debrisX,
+// // // // // // // //     playerPositionX,
+// // // // // // // //     gameOver,
+// // // // // // // //     hasWon,
+// // // // // // // //     GAME_HEIGHT,
+// // // // // // // //   ]);
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * RESTART
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   const restartGame = () => {
+// // // // // // // //     setScore(0);
+// // // // // // // //     setDebrisY(0);
+
+// // // // // // // //     setDebrisX(
+// // // // // // // //       Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // // //     );
+
+// // // // // // // //     setPlayerPositionX(
+// // // // // // // //       GAME_WIDTH / 2 - PLAYER_SIZE / 2
+// // // // // // // //     );
+
+// // // // // // // //     setGameOver(false);
+// // // // // // // //     setHasWon(false);
+// // // // // // // //   };
+
+// // // // // // // //   /*
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    * RENDER
+// // // // // // // //    * ---------------------------------------------------------
+// // // // // // // //    */
+
+// // // // // // // //   return (
+// // // // // // // //     <Modal
+// // // // // // // //       visible={visible}
+// // // // // // // //       animationType="slide"
+// // // // // // // //       transparent
+// // // // // // // //       onRequestClose={onClose}
+// // // // // // // //     >
+// // // // // // // //       <View style={styles.modalOverlay}>
+
+// // // // // // // //         <View
+// // // // // // // //           style={[
+// // // // // // // //             styles.modalContentCard,
+// // // // // // // //             {
+// // // // // // // //               width: Math.min(SCREEN_WIDTH - 24, 480),
+// // // // // // // //             },
+// // // // // // // //           ]}
+// // // // // // // //         >
+
+// // // // // // // //           {/* HEADER */}
+
+// // // // // // // //           <View style={styles.modalHeader}>
+// // // // // // // //             <View style={{ flex: 1 }}>
+// // // // // // // //               <Text style={styles.modalTitle}>
+// // // // // // // //                 Flash Flood Evacuation Drill
+// // // // // // // //               </Text>
+
+// // // // // // // //               <Text style={styles.modalSubtitle}>
+// // // // // // // //                 Reach high ground while avoiding flood debris.
+// // // // // // // //               </Text>
+// // // // // // // //             </View>
+
+// // // // // // // //             <TouchableOpacity
+// // // // // // // //               onPress={onClose}
+// // // // // // // //               style={styles.closeButton}
+// // // // // // // //             >
+// // // // // // // //               <Ionicons
+// // // // // // // //                 name="close-circle"
+// // // // // // // //                 size={28}
+// // // // // // // //                 color="#64748B"
+// // // // // // // //               />
+// // // // // // // //             </TouchableOpacity>
+// // // // // // // //           </View>
+
+// // // // // // // //           {/* INSTRUCTIONS */}
+
+// // // // // // // //           <View style={styles.instructionBox}>
+// // // // // // // //             <Ionicons
+// // // // // // // //               name="phone-portrait-outline"
+// // // // // // // //               size={18}
+// // // // // // // //               color="#38BDF8"
+// // // // // // // //             />
+
+// // // // // // // //             <Text style={styles.instructionText}>
+// // // // // // // //               Tilt your phone left and right to move the responder.
+// // // // // // // //               Avoid falling debris and reach 50 points.
+// // // // // // // //             </Text>
+// // // // // // // //           </View>
+
+// // // // // // // //           {/* GAME */}
+
+// // // // // // // //           <View
+// // // // // // // //             style={[
+// // // // // // // //               styles.gameCanvas,
+// // // // // // // //               {
+// // // // // // // //                 width: GAME_WIDTH,
+// // // // // // // //                 height: GAME_HEIGHT,
+// // // // // // // //               },
+// // // // // // // //             ]}
+// // // // // // // //           >
+
+// // // // // // // //             {/* WATER */}
+
+// // // // // // // //             <View style={styles.waterLayer} />
+
+// // // // // // // //             {/* SHELTER */}
+
+// // // // // // // //             <View style={styles.shelterLine}>
+// // // // // // // //               <Ionicons
+// // // // // // // //                 name="shield-checkmark"
+// // // // // // // //                 size={14}
+// // // // // // // //                 color="#34D399"
+// // // // // // // //               />
+
+// // // // // // // //               <Text style={styles.shelterLineText}>
+// // // // // // // //                 SAFE ELEVATED SHELTER
+// // // // // // // //               </Text>
+// // // // // // // //             </View>
+
+// // // // // // // //             {/* DEBRIS */}
+
+// // // // // // // //             {!gameOver && !hasWon && (
+// // // // // // // //               <View
+// // // // // // // //                 style={[
+// // // // // // // //                   styles.debrisNode,
+// // // // // // // //                   {
+// // // // // // // //                     left: debrisX,
+// // // // // // // //                     top: debrisY,
+// // // // // // // //                     width: DEBRIS_SIZE,
+// // // // // // // //                     height: DEBRIS_SIZE,
+// // // // // // // //                   },
+// // // // // // // //                 ]}
+// // // // // // // //               >
+// // // // // // // //                 <View style={styles.debrisCircle}>
+// // // // // // // //                   <Ionicons
+// // // // // // // //                     name="warning"
+// // // // // // // //                     size={18}
+// // // // // // // //                     color="#FFFFFF"
+// // // // // // // //                   />
+// // // // // // // //                 </View>
+// // // // // // // //               </View>
+// // // // // // // //             )}
+
+// // // // // // // //             {/* PLAYER */}
+
+// // // // // // // //             <View
+// // // // // // // //               style={[
+// // // // // // // //                 styles.playerNode,
+// // // // // // // //                 {
+// // // // // // // //                   left: playerPositionX,
+// // // // // // // //                   bottom: 12,
+// // // // // // // //                   width: PLAYER_SIZE,
+// // // // // // // //                   height: PLAYER_SIZE,
+// // // // // // // //                 },
+// // // // // // // //               ]}
+// // // // // // // //             >
+// // // // // // // //               <View style={styles.playerCircle}>
+// // // // // // // //                 <Ionicons
+// // // // // // // //                   name="person"
+// // // // // // // //                   size={21}
+// // // // // // // //                   color="#020617"
+// // // // // // // //                 />
+// // // // // // // //               </View>
+// // // // // // // //             </View>
+
+// // // // // // // //             {/* GAME OVER */}
+
+// // // // // // // //             {gameOver && (
+// // // // // // // //               <View style={styles.endGameOverlay}>
+
+// // // // // // // //                 <Ionicons
+// // // // // // // //                   name="warning"
+// // // // // // // //                   size={38}
+// // // // // // // //                   color="#EF4444"
+// // // // // // // //                 />
+
+// // // // // // // //                 <Text style={styles.gameOverTitle}>
+// // // // // // // //                   Trapped by Water!
+// // // // // // // //                 </Text>
+
+// // // // // // // //                 <Text style={styles.gameOverText}>
+// // // // // // // //                   Avoid the debris and try again.
+// // // // // // // //                 </Text>
+
+// // // // // // // //                 <TouchableOpacity
+// // // // // // // //                   style={styles.retryBtn}
+// // // // // // // //                   onPress={restartGame}
+// // // // // // // //                 >
+// // // // // // // //                   <Ionicons
+// // // // // // // //                     name="refresh"
+// // // // // // // //                     size={16}
+// // // // // // // //                     color="#FFFFFF"
+// // // // // // // //                   />
+
+// // // // // // // //                   <Text style={styles.retryText}>
+// // // // // // // //                     Retry Drill
+// // // // // // // //                   </Text>
+// // // // // // // //                 </TouchableOpacity>
+
+// // // // // // // //               </View>
+// // // // // // // //             )}
+
+// // // // // // // //             {/* WIN */}
+
+// // // // // // // //             {hasWon && (
+// // // // // // // //               <View style={styles.endGameOverlay}>
+
+// // // // // // // //                 <Ionicons
+// // // // // // // //                   name="checkmark-circle"
+// // // // // // // //                   size={42}
+// // // // // // // //                   color="#34D399"
+// // // // // // // //                 />
+
+// // // // // // // //                 <Text style={styles.winTitle}>
+// // // // // // // //                   Reached High Ground!
+// // // // // // // //                 </Text>
+
+// // // // // // // //                 <Text style={styles.gameOverText}>
+// // // // // // // //                   You successfully completed the evacuation drill.
+// // // // // // // //                 </Text>
+
+// // // // // // // //                 <TouchableOpacity
+// // // // // // // //                   style={styles.claimRewardBtn}
+// // // // // // // //                   onPress={() => {
+// // // // // // // //                     onWin({
+// // // // // // // //                       xp: 100,
+// // // // // // // //                       coins: 25,
+// // // // // // // //                     });
+
+// // // // // // // //                     onClose();
+// // // // // // // //                   }}
+// // // // // // // //                 >
+// // // // // // // //                   <Text style={styles.claimRewardText}>
+// // // // // // // //                     Claim +100 XP & +25 Coins
+// // // // // // // //                   </Text>
+// // // // // // // //                 </TouchableOpacity>
+
+// // // // // // // //               </View>
+// // // // // // // //             )}
+
+// // // // // // // //           </View>
+
+// // // // // // // //           {/* HUD */}
+
+// // // // // // // //           <View style={styles.gameHud}>
+
+// // // // // // // //             <View style={styles.scoreBox}>
+// // // // // // // //               <Ionicons
+// // // // // // // //                 name="trophy"
+// // // // // // // //                 size={16}
+// // // // // // // //                 color="#FBBF24"
+// // // // // // // //               />
+
+// // // // // // // //               <Text style={styles.scoreText}>
+// // // // // // // //                 {score} / 50
+// // // // // // // //               </Text>
+// // // // // // // //             </View>
+
+// // // // // // // //             <Text style={styles.scoreLabel}>
+// // // // // // // //               EVACUATION SCORE
+// // // // // // // //             </Text>
+
+// // // // // // // //           </View>
+
+// // // // // // // //         </View>
+
+// // // // // // // //       </View>
+// // // // // // // //     </Modal>
+// // // // // // // //   );
+// // // // // // // // }
+
+// // // // // // // // const styles = StyleSheet.create({
+
+// // // // // // // //   modalOverlay: {
+// // // // // // // //     flex: 1,
+// // // // // // // //     backgroundColor: 'rgba(2, 6, 23, 0.88)',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     padding: 12,
+// // // // // // // //   },
+
+// // // // // // // //   modalContentCard: {
+// // // // // // // //     backgroundColor: '#0F172A',
+// // // // // // // //     borderWidth: 1,
+// // // // // // // //     borderColor: '#1E293B',
+// // // // // // // //     borderRadius: 20,
+// // // // // // // //     padding: 16,
+// // // // // // // //     maxHeight: '92%',
+// // // // // // // //   },
+
+// // // // // // // //   modalHeader: {
+// // // // // // // //     flexDirection: 'row',
+// // // // // // // //     alignItems: 'flex-start',
+// // // // // // // //     marginBottom: 10,
+// // // // // // // //   },
+
+// // // // // // // //   modalTitle: {
+// // // // // // // //     color: '#FFFFFF',
+// // // // // // // //     fontSize: 17,
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //   },
+
+// // // // // // // //   modalSubtitle: {
+// // // // // // // //     color: '#64748B',
+// // // // // // // //     fontSize: 11,
+// // // // // // // //     marginTop: 3,
+// // // // // // // //   },
+
+// // // // // // // //   closeButton: {
+// // // // // // // //     marginLeft: 10,
+// // // // // // // //   },
+
+// // // // // // // //   instructionBox: {
+// // // // // // // //     flexDirection: 'row',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     backgroundColor: '#082F49',
+// // // // // // // //     borderWidth: 1,
+// // // // // // // //     borderColor: '#075985',
+// // // // // // // //     borderRadius: 10,
+// // // // // // // //     padding: 9,
+// // // // // // // //     marginBottom: 12,
+// // // // // // // //     gap: 8,
+// // // // // // // //   },
+
+// // // // // // // //   instructionText: {
+// // // // // // // //     flex: 1,
+// // // // // // // //     color: '#BAE6FD',
+// // // // // // // //     fontSize: 10,
+// // // // // // // //     lineHeight: 15,
+// // // // // // // //   },
+
+// // // // // // // //   gameCanvas: {
+// // // // // // // //     backgroundColor: '#020617',
+// // // // // // // //     borderRadius: 14,
+// // // // // // // //     borderWidth: 1,
+// // // // // // // //     borderColor: '#1E293B',
+// // // // // // // //     position: 'relative',
+// // // // // // // //     overflow: 'hidden',
+// // // // // // // //   },
+
+// // // // // // // //   waterLayer: {
+// // // // // // // //     position: 'absolute',
+// // // // // // // //     left: 0,
+// // // // // // // //     right: 0,
+// // // // // // // //     bottom: 0,
+// // // // // // // //     height: '32%',
+// // // // // // // //     backgroundColor: '#082F49',
+// // // // // // // //     opacity: 0.75,
+// // // // // // // //   },
+
+// // // // // // // //   shelterLine: {
+// // // // // // // //     position: 'absolute',
+// // // // // // // //     top: 0,
+// // // // // // // //     left: 0,
+// // // // // // // //     right: 0,
+// // // // // // // //     backgroundColor: '#064E3B',
+// // // // // // // //     paddingVertical: 7,
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     flexDirection: 'row',
+// // // // // // // //     gap: 6,
+// // // // // // // //     borderBottomWidth: 1,
+// // // // // // // //     borderBottomColor: '#10B981',
+// // // // // // // //   },
+
+// // // // // // // //   shelterLineText: {
+// // // // // // // //     color: '#34D399',
+// // // // // // // //     fontSize: 9,
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //     letterSpacing: 0.5,
+// // // // // // // //   },
+
+// // // // // // // //   playerNode: {
+// // // // // // // //     position: 'absolute',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //   },
+
+// // // // // // // //   playerCircle: {
+// // // // // // // //     width: 34,
+// // // // // // // //     height: 34,
+// // // // // // // //     borderRadius: 17,
+// // // // // // // //     backgroundColor: '#38BDF8',
+// // // // // // // //     borderWidth: 2,
+// // // // // // // //     borderColor: '#FFFFFF',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //   },
+
+// // // // // // // //   debrisNode: {
+// // // // // // // //     position: 'absolute',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //   },
+
+// // // // // // // //   debrisCircle: {
+// // // // // // // //     width: 28,
+// // // // // // // //     height: 28,
+// // // // // // // //     borderRadius: 14,
+// // // // // // // //     backgroundColor: '#EF4444',
+// // // // // // // //     borderWidth: 2,
+// // // // // // // //     borderColor: '#FCA5A5',
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //   },
+
+// // // // // // // //   gameHud: {
+// // // // // // // //     marginTop: 10,
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //   },
+
+// // // // // // // //   scoreBox: {
+// // // // // // // //     flexDirection: 'row',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     gap: 6,
+// // // // // // // //   },
+
+// // // // // // // //   scoreText: {
+// // // // // // // //     color: '#FFFFFF',
+// // // // // // // //     fontSize: 20,
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //   },
+
+// // // // // // // //   scoreLabel: {
+// // // // // // // //     color: '#64748B',
+// // // // // // // //     fontSize: 8,
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //     letterSpacing: 1,
+// // // // // // // //     marginTop: 2,
+// // // // // // // //   },
+
+// // // // // // // //   endGameOverlay: {
+// // // // // // // //     position: 'absolute',
+// // // // // // // //     top: 50,
+// // // // // // // //     bottom: 20,
+// // // // // // // //     left: 16,
+// // // // // // // //     right: 16,
+// // // // // // // //     backgroundColor: 'rgba(15, 23, 42, 0.96)',
+// // // // // // // //     borderWidth: 1,
+// // // // // // // //     borderColor: '#334155',
+// // // // // // // //     borderRadius: 18,
+// // // // // // // //     justifyContent: 'center',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     padding: 20,
+// // // // // // // //   },
+
+// // // // // // // //   gameOverTitle: {
+// // // // // // // //     color: '#EF4444',
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //     fontSize: 19,
+// // // // // // // //     marginTop: 8,
+// // // // // // // //   },
+
+// // // // // // // //   winTitle: {
+// // // // // // // //     color: '#34D399',
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //     fontSize: 19,
+// // // // // // // //     marginTop: 8,
+// // // // // // // //   },
+
+// // // // // // // //   gameOverText: {
+// // // // // // // //     color: '#94A3B8',
+// // // // // // // //     fontSize: 11,
+// // // // // // // //     textAlign: 'center',
+// // // // // // // //     marginTop: 5,
+// // // // // // // //   },
+
+// // // // // // // //   retryBtn: {
+// // // // // // // //     backgroundColor: '#EF4444',
+// // // // // // // //     paddingVertical: 10,
+// // // // // // // //     paddingHorizontal: 18,
+// // // // // // // //     borderRadius: 10,
+// // // // // // // //     marginTop: 14,
+// // // // // // // //     flexDirection: 'row',
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     gap: 6,
+// // // // // // // //   },
+
+// // // // // // // //   retryText: {
+// // // // // // // //     color: '#FFFFFF',
+// // // // // // // //     fontWeight: '800',
+// // // // // // // //     fontSize: 12,
+// // // // // // // //   },
+
+// // // // // // // //   claimRewardBtn: {
+// // // // // // // //     backgroundColor: '#10B981',
+// // // // // // // //     paddingVertical: 12,
+// // // // // // // //     paddingHorizontal: 20,
+// // // // // // // //     borderRadius: 12,
+// // // // // // // //     alignItems: 'center',
+// // // // // // // //     marginTop: 14,
+// // // // // // // //   },
+
+// // // // // // // //   claimRewardText: {
+// // // // // // // //     color: '#FFFFFF',
+// // // // // // // //     fontWeight: '900',
+// // // // // // // //     fontSize: 13,
+// // // // // // // //   },
+// // // // // // // // });
+
+
+
+// // // // // // // // components/FloodRunnerGameModal.js
+// // // // // // // import React, { useState, useEffect, useRef } from 'react';
+// // // // // // // import {
+// // // // // // //   View,
+// // // // // // //   Text,
+// // // // // // //   StyleSheet,
+// // // // // // //   TouchableOpacity,
+// // // // // // //   Modal,
+// // // // // // //   Dimensions,
+// // // // // // // } from 'react-native';
+// // // // // // // import { Ionicons } from '@expo/vector-icons';
+// // // // // // // import * as Haptics from 'expo-haptics';
+// // // // // // // import { Accelerometer } from 'expo-sensors';
+
+// // // // // // // const { width: SCREEN_WIDTH } = Dimensions.get('window');
+
+// // // // // // // export default function FloodRunnerGameModal({
+// // // // // // //   visible,
+// // // // // // //   onClose,
+// // // // // // //   onWin,
+// // // // // // // }) {
+// // // // // // //   const GAME_WIDTH = Math.min(SCREEN_WIDTH - 64, 360);
+// // // // // // //   const GAME_HEIGHT = 300;
+
+// // // // // // //   const PLAYER_SIZE = 36;
+// // // // // // //   const DEBRIS_SIZE = 28;
+
+// // // // // // //   const [playerPositionX, setPlayerPositionX] = useState(
+// // // // // // //     GAME_WIDTH / 2 - PLAYER_SIZE / 2
+// // // // // // //   );
+
+// // // // // // //   const [debrisY, setDebrisY] = useState(-30);
+// // // // // // //   const [debrisX, setDebrisX] = useState(
+// // // // // // //     Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // //   );
+
+// // // // // // //   const [score, setScore] = useState(0);
+// // // // // // //   const [gameOver, setGameOver] = useState(false);
+// // // // // // //   const [hasWon, setHasWon] = useState(false);
+// // // // // // //   const [sensorAvailable, setSensorAvailable] = useState(false);
+
+// // // // // // //   const movementRef = useRef(0);
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * ACCELEROMETER
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   useEffect(() => {
+// // // // // // //     let subscription;
+
+// // // // // // //     const setupAccelerometer = async () => {
+// // // // // // //       if (!visible || gameOver || hasWon) {
+// // // // // // //         return;
+// // // // // // //       }
+
+// // // // // // //       try {
+// // // // // // //         const available = await Accelerometer.isAvailableAsync();
+
+// // // // // // //         if (!available) {
+// // // // // // //           setSensorAvailable(false);
+// // // // // // //           return;
+// // // // // // //         }
+
+// // // // // // //         setSensorAvailable(true);
+
+// // // // // // //         Accelerometer.setUpdateInterval(50);
+
+// // // // // // //         subscription = Accelerometer.addListener((data) => {
+// // // // // // //           /*
+// // // // // // //            * data.x normally changes when the phone is tilted
+// // // // // // //            * left/right.
+// // // // // // //            *
+// // // // // // //            * Increase this value if movement feels too slow.
+// // // // // // //            */
+// // // // // // //           movementRef.current = data.x;
+// // // // // // //         });
+// // // // // // //       } catch (error) {
+// // // // // // //         console.log('Accelerometer error:', error);
+// // // // // // //         setSensorAvailable(false);
+// // // // // // //       }
+// // // // // // //     };
+
+// // // // // // //     setupAccelerometer();
+
+// // // // // // //     return () => {
+// // // // // // //       if (subscription) {
+// // // // // // //         subscription.remove();
+// // // // // // //       }
+// // // // // // //     };
+// // // // // // //   }, [visible, gameOver, hasWon]);
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * PLAYER MOVEMENT
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   useEffect(() => {
+// // // // // // //     if (!visible || gameOver || hasWon) {
+// // // // // // //       return;
+// // // // // // //     }
+
+// // // // // // //     const movementInterval = setInterval(() => {
+// // // // // // //       const tilt = movementRef.current;
+
+// // // // // // //       if (Math.abs(tilt) < 0.05) {
+// // // // // // //         return;
+// // // // // // //       }
+
+// // // // // // //       setPlayerPositionX((prevX) => {
+// // // // // // //         const speed = 12;
+
+// // // // // // //         let nextX = prevX + tilt * speed;
+
+// // // // // // //         nextX = Math.max(
+// // // // // // //           0,
+// // // // // // //           Math.min(
+// // // // // // //             GAME_WIDTH - PLAYER_SIZE,
+// // // // // // //             nextX
+// // // // // // //           )
+// // // // // // //         );
+
+// // // // // // //         return nextX;
+// // // // // // //       });
+// // // // // // //     }, 50);
+
+// // // // // // //     return () => clearInterval(movementInterval);
+// // // // // // //   }, [visible, gameOver, hasWon]);
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * TOUCH MOVEMENT
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   const movePlayer = (direction) => {
+// // // // // // //     if (gameOver || hasWon) {
+// // // // // // //       return;
+// // // // // // //     }
+
+// // // // // // //     setPlayerPositionX((prevX) => {
+// // // // // // //       const amount = 35;
+
+// // // // // // //       let nextX =
+// // // // // // //         direction === 'left'
+// // // // // // //           ? prevX - amount
+// // // // // // //           : prevX + amount;
+
+// // // // // // //       nextX = Math.max(
+// // // // // // //         0,
+// // // // // // //         Math.min(
+// // // // // // //           GAME_WIDTH - PLAYER_SIZE,
+// // // // // // //           nextX
+// // // // // // //         )
+// // // // // // //       );
+
+// // // // // // //       return nextX;
+// // // // // // //     });
+
+// // // // // // //     Haptics.impactAsync(
+// // // // // // //       Haptics.ImpactFeedbackStyle.Light
+// // // // // // //     );
+// // // // // // //   };
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * DEBRIS / GAME LOOP
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   useEffect(() => {
+// // // // // // //     if (!visible || gameOver || hasWon) {
+// // // // // // //       return;
+// // // // // // //     }
+
+// // // // // // //     const gameInterval = setInterval(() => {
+// // // // // // //       setDebrisY((prevY) => {
+// // // // // // //         const nextY = prevY + 6;
+
+// // // // // // //         /*
+// // // // // // //          * Debris reached bottom.
+// // // // // // //          */
+// // // // // // //         if (nextY > GAME_HEIGHT) {
+// // // // // // //           setScore((previousScore) => {
+// // // // // // //             const newScore = previousScore + 10;
+
+// // // // // // //             if (newScore >= 50) {
+// // // // // // //               setHasWon(true);
+
+// // // // // // //               Haptics.notificationAsync(
+// // // // // // //                 Haptics.NotificationFeedbackType.Success
+// // // // // // //               );
+// // // // // // //             }
+
+// // // // // // //             return newScore;
+// // // // // // //           });
+
+// // // // // // //           setDebrisX(
+// // // // // // //             Math.random() *
+// // // // // // //               (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // //           );
+
+// // // // // // //           return -30;
+// // // // // // //         }
+
+// // // // // // //         return nextY;
+// // // // // // //       });
+// // // // // // //     }, 40);
+
+// // // // // // //     return () => clearInterval(gameInterval);
+// // // // // // //   }, [
+// // // // // // //     visible,
+// // // // // // //     gameOver,
+// // // // // // //     hasWon,
+// // // // // // //     GAME_WIDTH,
+// // // // // // //   ]);
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * COLLISION
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   useEffect(() => {
+// // // // // // //     if (gameOver || hasWon) {
+// // // // // // //       return;
+// // // // // // //     }
+
+// // // // // // //     const playerLeft = playerPositionX;
+// // // // // // //     const playerRight =
+// // // // // // //       playerPositionX + PLAYER_SIZE;
+
+// // // // // // //     const playerTop =
+// // // // // // //       GAME_HEIGHT - PLAYER_SIZE - 10;
+
+// // // // // // //     const playerBottom =
+// // // // // // //       playerTop + PLAYER_SIZE;
+
+// // // // // // //     const debrisLeft = debrisX;
+// // // // // // //     const debrisRight =
+// // // // // // //       debrisX + DEBRIS_SIZE;
+
+// // // // // // //     const debrisTop = debrisY;
+// // // // // // //     const debrisBottom =
+// // // // // // //       debrisY + DEBRIS_SIZE;
+
+// // // // // // //     const collision =
+// // // // // // //       playerLeft < debrisRight &&
+// // // // // // //       playerRight > debrisLeft &&
+// // // // // // //       playerTop < debrisBottom &&
+// // // // // // //       playerBottom > debrisTop;
+
+// // // // // // //     if (collision) {
+// // // // // // //       setGameOver(true);
+
+// // // // // // //       Haptics.impactAsync(
+// // // // // // //         Haptics.ImpactFeedbackStyle.Heavy
+// // // // // // //       );
+// // // // // // //     }
+// // // // // // //   }, [
+// // // // // // //     debrisY,
+// // // // // // //     debrisX,
+// // // // // // //     playerPositionX,
+// // // // // // //     gameOver,
+// // // // // // //     hasWon,
+// // // // // // //   ]);
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * RESTART
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   const restartGame = () => {
+// // // // // // //     setScore(0);
+// // // // // // //     setDebrisY(-30);
+// // // // // // //     setDebrisX(
+// // // // // // //       Math.random() *
+// // // // // // //         (GAME_WIDTH - DEBRIS_SIZE)
+// // // // // // //     );
+// // // // // // //     setGameOver(false);
+// // // // // // //     setHasWon(false);
+// // // // // // //     setPlayerPositionX(
+// // // // // // //       GAME_WIDTH / 2 -
+// // // // // // //         PLAYER_SIZE / 2
+// // // // // // //     );
+// // // // // // //     movementRef.current = 0;
+// // // // // // //   };
+
+// // // // // // //   /*
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    * RENDER
+// // // // // // //    * ---------------------------------------------------------
+// // // // // // //    */
+
+// // // // // // //   return (
+// // // // // // //     <Modal
+// // // // // // //       visible={visible}
+// // // // // // //       animationType="slide"
+// // // // // // //       transparent
+// // // // // // //       onRequestClose={onClose}
+// // // // // // //     >
+// // // // // // //       <View style={styles.modalOverlay}>
+// // // // // // //         <View
+// // // // // // //           style={[
+// // // // // // //             styles.modalContentCard,
+// // // // // // //             {
+// // // // // // //               width: GAME_WIDTH + 40,
+// // // // // // //             },
+// // // // // // //           ]}
+// // // // // // //         >
+// // // // // // //           {/* HEADER */}
+
+// // // // // // //           <View style={styles.modalHeader}>
+// // // // // // //             <Text style={styles.modalTitle}>
+// // // // // // //               Flash Flood Evacuation Drill
+// // // // // // //             </Text>
+
+// // // // // // //             <TouchableOpacity onPress={onClose}>
+// // // // // // //               <Ionicons
+// // // // // // //                 name="close-circle"
+// // // // // // //                 size={28}
+// // // // // // //                 color="#64748B"
+// // // // // // //               />
+// // // // // // //             </TouchableOpacity>
+// // // // // // //           </View>
+
+// // // // // // //           <Text style={styles.instructions}>
+// // // // // // //             Tilt your phone left/right or use the
+// // // // // // //             buttons below to move your responder.
+// // // // // // //           </Text>
+
+// // // // // // //           {/* SENSOR STATUS */}
+
+// // // // // // //           <View style={styles.sensorStatus}>
+// // // // // // //             <Ionicons
+// // // // // // //               name={
+// // // // // // //                 sensorAvailable
+// // // // // // //                   ? 'phone-portrait-outline'
+// // // // // // //                   : 'hand-left-outline'
+// // // // // // //               }
+// // // // // // //               size={14}
+// // // // // // //               color={
+// // // // // // //                 sensorAvailable
+// // // // // // //                   ? '#34D399'
+// // // // // // //                   : '#FBBF24'
+// // // // // // //               }
+// // // // // // //             />
+
+// // // // // // //             <Text
+// // // // // // //               style={[
+// // // // // // //                 styles.sensorText,
+// // // // // // //                 {
+// // // // // // //                   color: sensorAvailable
+// // // // // // //                     ? '#34D399'
+// // // // // // //                     : '#FBBF24',
+// // // // // // //                 },
+// // // // // // //               ]}
+// // // // // // //             >
+// // // // // // //               {sensorAvailable
+// // // // // // //                 ? 'Tilt controls active'
+// // // // // // //                 : 'Use touch controls'}
+// // // // // // //             </Text>
+// // // // // // //           </View>
+
+// // // // // // //           {/* GAME */}
+
+// // // // // // //           <View
+// // // // // // //             style={[
+// // // // // // //               styles.gameCanvas,
+// // // // // // //               {
+// // // // // // //                 width: GAME_WIDTH,
+// // // // // // //                 height: GAME_HEIGHT,
+// // // // // // //               },
+// // // // // // //             ]}
+// // // // // // //           >
+// // // // // // //             {/* SHELTER */}
+
+// // // // // // //             <View style={styles.shelterLine}>
+// // // // // // //               <Ionicons
+// // // // // // //                 name="shield-checkmark"
+// // // // // // //                 size={14}
+// // // // // // //                 color="#34D399"
+// // // // // // //               />
+
+// // // // // // //               <Text style={styles.shelterLineText}>
+// // // // // // //                 SAFE ELEVATED SHELTER
+// // // // // // //               </Text>
+// // // // // // //             </View>
+
+// // // // // // //             {/* WATER */}
+
+// // // // // // //             <View style={styles.waterLayer}>
+// // // // // // //               <Text style={styles.waterText}>
+// // // // // // //                 FLOOD ZONE
+// // // // // // //               </Text>
+// // // // // // //             </View>
+
+// // // // // // //             {/* DEBRIS */}
+
+// // // // // // //             {!gameOver && !hasWon && (
+// // // // // // //               <View
+// // // // // // //                 style={[
+// // // // // // //                   styles.debrisNode,
+// // // // // // //                   {
+// // // // // // //                     left: debrisX,
+// // // // // // //                     top: debrisY,
+// // // // // // //                   },
+// // // // // // //                 ]}
+// // // // // // //               >
+// // // // // // //                 <Ionicons
+// // // // // // //                   name="warning"
+// // // // // // //                   size={22}
+// // // // // // //                   color="#EF4444"
+// // // // // // //                 />
+// // // // // // //               </View>
+// // // // // // //             )}
+
+// // // // // // //             {/* PLAYER */}
+
+// // // // // // //             {!gameOver && !hasWon && (
+// // // // // // //               <View
+// // // // // // //                 style={[
+// // // // // // //                   styles.playerNode,
+// // // // // // //                   {
+// // // // // // //                     left: playerPositionX,
+// // // // // // //                     bottom: 10,
+// // // // // // //                   },
+// // // // // // //                 ]}
+// // // // // // //               >
+// // // // // // //                 <Ionicons
+// // // // // // //                   name="person"
+// // // // // // //                   size={25}
+// // // // // // //                   color="#FFFFFF"
+// // // // // // //                 />
+// // // // // // //               </View>
+// // // // // // //             )}
+
+// // // // // // //             {/* END SCREEN */}
+
+// // // // // // //             {(gameOver || hasWon) && (
+// // // // // // //               <View style={styles.endGameOverlay}>
+// // // // // // //                 {gameOver && (
+// // // // // // //                   <>
+// // // // // // //                     <Ionicons
+// // // // // // //                       name="water"
+// // // // // // //                       size={36}
+// // // // // // //                       color="#EF4444"
+// // // // // // //                     />
+
+// // // // // // //                     <Text style={styles.gameOverTitle}>
+// // // // // // //                       Trapped by Water!
+// // // // // // //                     </Text>
+
+// // // // // // //                     <Text style={styles.gameOverText}>
+// // // // // // //                       Avoid the falling debris and
+// // // // // // //                       reach the safe area.
+// // // // // // //                     </Text>
+
+// // // // // // //                     <TouchableOpacity
+// // // // // // //                       style={styles.retryBtn}
+// // // // // // //                       onPress={restartGame}
+// // // // // // //                     >
+// // // // // // //                       <Text style={styles.buttonText}>
+// // // // // // //                         Retry Drill
+// // // // // // //                       </Text>
+// // // // // // //                     </TouchableOpacity>
+// // // // // // //                   </>
+// // // // // // //                 )}
+
+// // // // // // //                 {hasWon && (
+// // // // // // //                   <>
+// // // // // // //                     <Ionicons
+// // // // // // //                       name="shield-checkmark"
+// // // // // // //                       size={40}
+// // // // // // //                       color="#10B981"
+// // // // // // //                     />
+
+// // // // // // //                     <Text
+// // // // // // //                       style={styles.successTitle}
+// // // // // // //                     >
+// // // // // // //                       Reached High Ground!
+// // // // // // //                     </Text>
+
+// // // // // // //                     <Text
+// // // // // // //                       style={styles.gameOverText}
+// // // // // // //                     >
+// // // // // // //                       Excellent evacuation response.
+// // // // // // //                     </Text>
+
+// // // // // // //                     <TouchableOpacity
+// // // // // // //                       style={styles.claimRewardBtn}
+// // // // // // //                       onPress={() => {
+// // // // // // //                         onWin({
+// // // // // // //                           xp: 100,
+// // // // // // //                           coins: 25,
+// // // // // // //                         });
+
+// // // // // // //                         onClose();
+// // // // // // //                       }}
+// // // // // // //                     >
+// // // // // // //                       <Text
+// // // // // // //                         style={styles.buttonText}
+// // // // // // //                       >
+// // // // // // //                         Claim +100 XP & +25 Coins
+// // // // // // //                       </Text>
+// // // // // // //                     </TouchableOpacity>
+// // // // // // //                   </>
+// // // // // // //                 )}
+// // // // // // //               </View>
+// // // // // // //             )}
+// // // // // // //           </View>
+
+// // // // // // //           {/* SCORE */}
+
+// // // // // // //           <View style={styles.gameHud}>
+// // // // // // //             <Text style={styles.scoreText}>
+// // // // // // //               EVACUATION SCORE
+// // // // // // //             </Text>
+
+// // // // // // //             <Text style={styles.scoreValue}>
+// // // // // // //               {score} / 50
+// // // // // // //             </Text>
+// // // // // // //           </View>
+
+// // // // // // //           {/* CONTROLS */}
+
+// // // // // // //           {!gameOver && !hasWon && (
+// // // // // // //             <View style={styles.controls}>
+// // // // // // //               <TouchableOpacity
+// // // // // // //                 style={styles.controlButton}
+// // // // // // //                 onPress={() =>
+// // // // // // //                   movePlayer('left')
+// // // // // // //                 }
+// // // // // // //                 activeOpacity={0.7}
+// // // // // // //               >
+// // // // // // //                 <Ionicons
+// // // // // // //                   name="arrow-back"
+// // // // // // //                   size={28}
+// // // // // // //                   color="#FFFFFF"
+// // // // // // //                 />
+
+// // // // // // //                 <Text style={styles.controlText}>
+// // // // // // //                   LEFT
+// // // // // // //                 </Text>
+// // // // // // //               </TouchableOpacity>
+
+// // // // // // //               <View style={styles.controlHint}>
+// // // // // // //                 <Ionicons
+// // // // // // //                   name="phone-portrait-outline"
+// // // // // // //                   size={20}
+// // // // // // //                   color="#38BDF8"
+// // // // // // //                 />
+
+// // // // // // //                 <Text style={styles.controlHintText}>
+// // // // // // //                   TILT
+// // // // // // //                 </Text>
+// // // // // // //               </View>
+
+// // // // // // //               <TouchableOpacity
+// // // // // // //                 style={styles.controlButton}
+// // // // // // //                 onPress={() =>
+// // // // // // //                   movePlayer('right')
+// // // // // // //                 }
+// // // // // // //                 activeOpacity={0.7}
+// // // // // // //               >
+// // // // // // //                 <Ionicons
+// // // // // // //                   name="arrow-forward"
+// // // // // // //                   size={28}
+// // // // // // //                   color="#FFFFFF"
+// // // // // // //                 />
+
+// // // // // // //                 <Text style={styles.controlText}>
+// // // // // // //                   RIGHT
+// // // // // // //                 </Text>
+// // // // // // //               </TouchableOpacity>
+// // // // // // //             </View>
+// // // // // // //           )}
+// // // // // // //         </View>
+// // // // // // //       </View>
+// // // // // // //     </Modal>
+// // // // // // //   );
+// // // // // // // }
+
+// // // // // // // const styles = StyleSheet.create({
+// // // // // // //   modalOverlay: {
+// // // // // // //     flex: 1,
+// // // // // // //     backgroundColor: 'rgba(2, 6, 23, 0.9)',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     padding: 16,
+// // // // // // //   },
+
+// // // // // // //   modalContentCard: {
+// // // // // // //     backgroundColor: '#0F172A',
+// // // // // // //     borderWidth: 1,
+// // // // // // //     borderColor: '#1E293B',
+// // // // // // //     borderRadius: 20,
+// // // // // // //     padding: 20,
+// // // // // // //     maxWidth: 400,
+// // // // // // //   },
+
+// // // // // // //   modalHeader: {
+// // // // // // //     flexDirection: 'row',
+// // // // // // //     justifyContent: 'space-between',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     marginBottom: 8,
+// // // // // // //   },
+
+// // // // // // //   modalTitle: {
+// // // // // // //     color: '#FFFFFF',
+// // // // // // //     fontSize: 17,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     flex: 1,
+// // // // // // //     marginRight: 10,
+// // // // // // //   },
+
+// // // // // // //   instructions: {
+// // // // // // //     color: '#94A3B8',
+// // // // // // //     fontSize: 12,
+// // // // // // //     lineHeight: 18,
+// // // // // // //     marginBottom: 10,
+// // // // // // //   },
+
+// // // // // // //   sensorStatus: {
+// // // // // // //     flexDirection: 'row',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     alignSelf: 'flex-start',
+// // // // // // //     gap: 6,
+// // // // // // //     marginBottom: 10,
+// // // // // // //     backgroundColor: '#020617',
+// // // // // // //     paddingHorizontal: 9,
+// // // // // // //     paddingVertical: 5,
+// // // // // // //     borderRadius: 8,
+// // // // // // //   },
+
+// // // // // // //   sensorText: {
+// // // // // // //     fontSize: 10,
+// // // // // // //     fontWeight: '800',
+// // // // // // //   },
+
+// // // // // // //   gameCanvas: {
+// // // // // // //     backgroundColor: '#020617',
+// // // // // // //     borderRadius: 14,
+// // // // // // //     borderWidth: 1,
+// // // // // // //     borderColor: '#1E293B',
+// // // // // // //     position: 'relative',
+// // // // // // //     overflow: 'hidden',
+// // // // // // //   },
+
+// // // // // // //   waterLayer: {
+// // // // // // //     position: 'absolute',
+// // // // // // //     bottom: 0,
+// // // // // // //     left: 0,
+// // // // // // //     right: 0,
+// // // // // // //     height: 55,
+// // // // // // //     backgroundColor: '#0C4A6E',
+// // // // // // //     opacity: 0.35,
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     alignItems: 'center',
+// // // // // // //   },
+
+// // // // // // //   waterText: {
+// // // // // // //     color: '#38BDF8',
+// // // // // // //     fontSize: 9,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     letterSpacing: 2,
+// // // // // // //   },
+
+// // // // // // //   shelterLine: {
+// // // // // // //     position: 'absolute',
+// // // // // // //     top: 0,
+// // // // // // //     left: 0,
+// // // // // // //     right: 0,
+// // // // // // //     height: 38,
+// // // // // // //     backgroundColor: '#064E3B',
+// // // // // // //     borderBottomWidth: 1,
+// // // // // // //     borderBottomColor: '#10B981',
+// // // // // // //     flexDirection: 'row',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     gap: 6,
+// // // // // // //     zIndex: 2,
+// // // // // // //   },
+
+// // // // // // //   shelterLineText: {
+// // // // // // //     color: '#34D399',
+// // // // // // //     fontSize: 9,
+// // // // // // //     fontWeight: '900',
+// // // // // // //   },
+
+// // // // // // //   playerNode: {
+// // // // // // //     position: 'absolute',
+// // // // // // //     width: 36,
+// // // // // // //     height: 36,
+// // // // // // //     borderRadius: 18,
+// // // // // // //     backgroundColor: '#2563EB',
+// // // // // // //     borderWidth: 2,
+// // // // // // //     borderColor: '#60A5FA',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     zIndex: 3,
+// // // // // // //   },
+
+// // // // // // //   debrisNode: {
+// // // // // // //     position: 'absolute',
+// // // // // // //     width: 28,
+// // // // // // //     height: 28,
+// // // // // // //     borderRadius: 14,
+// // // // // // //     backgroundColor: '#450A0A',
+// // // // // // //     borderWidth: 1,
+// // // // // // //     borderColor: '#EF4444',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     zIndex: 3,
+// // // // // // //   },
+
+// // // // // // //   gameHud: {
+// // // // // // //     marginTop: 12,
+// // // // // // //     alignItems: 'center',
+// // // // // // //   },
+
+// // // // // // //   scoreText: {
+// // // // // // //     color: '#64748B',
+// // // // // // //     fontSize: 9,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     letterSpacing: 1,
+// // // // // // //   },
+
+// // // // // // //   scoreValue: {
+// // // // // // //     color: '#FFFFFF',
+// // // // // // //     fontSize: 22,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     marginTop: 2,
+// // // // // // //   },
+
+// // // // // // //   controls: {
+// // // // // // //     flexDirection: 'row',
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'space-between',
+// // // // // // //     marginTop: 14,
+// // // // // // //     gap: 10,
+// // // // // // //   },
+
+// // // // // // //   controlButton: {
+// // // // // // //     width: 90,
+// // // // // // //     height: 58,
+// // // // // // //     backgroundColor: '#1E3A8A',
+// // // // // // //     borderWidth: 1,
+// // // // // // //     borderColor: '#3B82F6',
+// // // // // // //     borderRadius: 14,
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //   },
+
+// // // // // // //   controlText: {
+// // // // // // //     color: '#BFDBFE',
+// // // // // // //     fontSize: 8,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     marginTop: 2,
+// // // // // // //   },
+
+// // // // // // //   controlHint: {
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     opacity: 0.8,
+// // // // // // //   },
+
+// // // // // // //   controlHintText: {
+// // // // // // //     color: '#38BDF8',
+// // // // // // //     fontSize: 8,
+// // // // // // //     fontWeight: '900',
+// // // // // // //     marginTop: 2,
+// // // // // // //   },
+
+// // // // // // //   endGameOverlay: {
+// // // // // // //     position: 'absolute',
+// // // // // // //     top: 55,
+// // // // // // //     bottom: 20,
+// // // // // // //     left: 20,
+// // // // // // //     right: 20,
+// // // // // // //     backgroundColor: 'rgba(15, 23, 42, 0.96)',
+// // // // // // //     borderWidth: 1,
+// // // // // // //     borderColor: '#334155',
+// // // // // // //     borderRadius: 18,
+// // // // // // //     alignItems: 'center',
+// // // // // // //     justifyContent: 'center',
+// // // // // // //     padding: 20,
+// // // // // // //     zIndex: 10,
+// // // // // // //   },
+
+// // // // // // //   gameOverTitle: {
+// // // // // // //     color: '#EF4444',
+// // // // // // //     fontWeight: '900',
+// // // // // // //     fontSize: 19,
+// // // // // // //     marginTop: 8,
+// // // // // // //   },
+
+// // // // // // //   successTitle: {
+// // // // // // //     color: '#10B981',
+// // // // // // //     fontWeight: '900',
+// // // // // // //     fontSize: 19,
+// // // // // // //     marginTop: 8,
+// // // // // // //   },
+
+// // // // // // //   gameOverText: {
+// // // // // // //     color: '#94A3B8',
+// // // // // // //     fontSize: 11,
+// // // // // // //     textAlign: 'center',
+// // // // // // //     lineHeight: 17,
+// // // // // // //     marginTop: 5,
+// // // // // // //   },
+
+// // // // // // //   retryBtn: {
+// // // // // // //     backgroundColor: '#EF4444',
+// // // // // // //     paddingVertical: 11,
+// // // // // // //     paddingHorizontal: 20,
+// // // // // // //     borderRadius: 10,
+// // // // // // //     marginTop: 14,
+// // // // // // //   },
+
+// // // // // // //   claimRewardBtn: {
+// // // // // // //     backgroundColor: '#10B981',
+// // // // // // //     paddingVertical: 12,
+// // // // // // //     paddingHorizontal: 20,
+// // // // // // //     borderRadius: 12,
+// // // // // // //     marginTop: 14,
+// // // // // // //   },
+
+// // // // // // //   buttonText: {
+// // // // // // //     color: '#FFFFFF',
+// // // // // // //     fontWeight: '900',
+// // // // // // //     fontSize: 12,
+// // // // // // //   },
+// // // // // // // });
+
+// // // // // // // /**
+// // // // // // //  * ┌─────────────────────────┐
+// // // // // // // │ 🏢  ELEVATED SHELTER    │
+// // // // // // // │     🟢 SAFE ZONE        │
+// // // // // // // ├─────────────────────────┤
+// // // // // // // │ ~~~~~~~ 🌊 ~~~~~~~~~~~~ │
+// // // // // // // │   🚗       ⚡           │
+// // // // // // // │ ~~~~~~  ⚠️  ~~~~~~~~~~ │
+// // // // // // // │        🧍               │
+// // // // // // // │ 🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊 │
+// // // // // // // │     FLOOD ZONE          │
+// // // // // // // └─────────────────────────┘
+
+// // // // // // //  */
+
+
+
+// // // // // // import React, { useEffect, useMemo, useRef, useState } from 'react';
+// // // // // // import {
+// // // // // //   View,
+// // // // // //   Text,
+// // // // // //   StyleSheet,
+// // // // // //   TouchableOpacity,
+// // // // // //   Modal,
+// // // // // //   Dimensions,
+// // // // // //   ScrollView,
+// // // // // // } from 'react-native';
+
 // // // // // // import { Ionicons } from '@expo/vector-icons';
 // // // // // // import * as Haptics from 'expo-haptics';
 // // // // // // import { Accelerometer } from 'expo-sensors';
 
-// // // // // // const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// // // // // // // Replace this import with the location of your translation hook.
+// // // // // // // Example if you use react-i18next:
+// // // // // // // import { useTranslation } from 'react-i18next';
+// // // // // // import { useTranslation } from 'react-i18next';
 
-// // // // // // export default function FloodRunnerGameModal({ visible, onClose, onWin }) {
-// // // // // //   const GAME_WIDTH = SCREEN_WIDTH - 64;
-// // // // // //   const PLAYER_SIZE = 30;
-  
-// // // // // //   const [playerPositionX, setPlayerPositionX] = useState(GAME_WIDTH / 2 - PLAYER_SIZE / 2);
-// // // // // //   const [debrisY, setDebrisY] = useState(0);
-// // // // // //   const [debrisX, setDebrisX] = useState(Math.random() * (GAME_WIDTH - 20));
-// // // // // //   const [score, setScore] = useState(0);
-// // // // // //   const [gameOver, setGameOver] = useState(false);
-// // // // // //   const [hasWon, setHasWon] = useState(false);
+// // // // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
+// // // // // //   Dimensions.get('window');
+
+// // // // // // /*
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // | LEVEL CONFIGURATION
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // |
+// // // // // // | Three levels:
+// // // // // // |
+// // // // // // | Level 1 = Easy
+// // // // // // | Level 2 = Moderate
+// // // // // // | Level 3 = Advanced
+// // // // // // |
+// // // // // // | The core game logic remains the same.
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // */
+
+// // // // // // const LEVEL_CONFIG = {
+// // // // // //   1: {
+// // // // // //     nameKey: 'games.floodRunner.levels.easy',
+// // // // // //     targetScore: 50,
+
+// // // // // //     debrisSpeed: 6,
+// // // // // //     gameTick: 45,
+
+// // // // // //     spawnCount: 1,
+
+// // // // // //     playerSpeed: 35,
+
+// // // // // //     reward: {
+// // // // // //       xp: 100,
+// // // // // //       coins: 25,
+// // // // // //     },
+// // // // // //   },
+
+// // // // // //   2: {
+// // // // // //     nameKey: 'games.floodRunner.levels.moderate',
+// // // // // //     targetScore: 75,
+
+// // // // // //     debrisSpeed: 8,
+// // // // // //     gameTick: 40,
+
+// // // // // //     spawnCount: 2,
+
+// // // // // //     playerSpeed: 38,
+
+// // // // // //     reward: {
+// // // // // //       xp: 150,
+// // // // // //       coins: 40,
+// // // // // //     },
+// // // // // //   },
+
+// // // // // //   3: {
+// // // // // //     nameKey: 'games.floodRunner.levels.advanced',
+// // // // // //     targetScore: 100,
+
+// // // // // //     debrisSpeed: 10,
+// // // // // //     gameTick: 35,
+
+// // // // // //     spawnCount: 3,
+
+// // // // // //     playerSpeed: 42,
+
+// // // // // //     reward: {
+// // // // // //       xp: 200,
+// // // // // //       coins: 60,
+// // // // // //     },
+// // // // // //   },
+// // // // // // };
+
+// // // // // // const PLAYER_SIZE = 36;
+// // // // // // const DEBRIS_SIZE = 28;
+
+// // // // // // const STARTING_DEBRIS_Y = -40;
+
+// // // // // // export default function FloodRunnerGameModal({
+// // // // // //   visible,
+// // // // // //   onClose,
+// // // // // //   onWin,
+// // // // // //   level = 1,
+// // // // // // }) {
+// // // // // //   const { t } = useTranslation();
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | SAFE LEVEL
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const selectedLevel = Math.min(
+// // // // // //     3,
+// // // // // //     Math.max(1, Number(level) || 1)
+// // // // // //   );
+
+// // // // // //   const config = LEVEL_CONFIG[selectedLevel];
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | GAME DIMENSIONS
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const GAME_WIDTH = Math.min(
+// // // // // //     SCREEN_WIDTH - 48,
+// // // // // //     360
+// // // // // //   );
+
+// // // // // //   const GAME_HEIGHT = Math.min(
+// // // // // //     SCREEN_HEIGHT * 0.43,
+// // // // // //     330
+// // // // // //   );
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | GAME STATE
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const [gameStarted, setGameStarted] =
+// // // // // //     useState(false);
+
+// // // // // //   const [countdown, setCountdown] =
+// // // // // //     useState(null);
+
+// // // // // //   const [playerPositionX, setPlayerPositionX] =
+// // // // // //     useState(
+// // // // // //       GAME_WIDTH / 2 -
+// // // // // //         PLAYER_SIZE / 2
+// // // // // //     );
+
+// // // // // //   /*
+// // // // // //    * Multiple debris objects.
+// // // // // //    *
+// // // // // //    * Level 1 = 1
+// // // // // //    * Level 2 = 2
+// // // // // //    * Level 3 = 3
+// // // // // //    */
+// // // // // //   const [debris, setDebris] =
+// // // // // //     useState([]);
+
+// // // // // //   const [score, setScore] =
+// // // // // //     useState(0);
+
+// // // // // //   const [gameOver, setGameOver] =
+// // // // // //     useState(false);
+
+// // // // // //   const [hasWon, setHasWon] =
+// // // // // //     useState(false);
+
+// // // // // //   const [sensorAvailable, setSensorAvailable] =
+// // // // // //     useState(false);
+
+// // // // // //   const movementRef =
+// // // // // //     useRef(0);
+
+// // // // // //   const countdownTimerRef =
+// // // // // //     useRef(null);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | CREATE DEBRIS
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const createDebris = () => {
+// // // // // //     return Array.from(
+// // // // // //       {
+// // // // // //         length: config.spawnCount,
+// // // // // //       },
+// // // // // //       (_, index) => ({
+// // // // // //         id: `${Date.now()}-${index}-${Math.random()}`,
+
+// // // // // //         x:
+// // // // // //           Math.random() *
+// // // // // //           (GAME_WIDTH - DEBRIS_SIZE),
+
+// // // // // //         y:
+// // // // // //           STARTING_DEBRIS_Y -
+// // // // // //           index * 100 -
+// // // // // //           Math.random() * 80,
+// // // // // //       })
+// // // // // //     );
+// // // // // //   };
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | RESET GAME
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const resetGame = () => {
+// // // // // //     setScore(0);
+
+// // // // // //     setGameOver(false);
+
+// // // // // //     setHasWon(false);
+
+// // // // // //     setGameStarted(false);
+
+// // // // // //     setCountdown(null);
+
+// // // // // //     setPlayerPositionX(
+// // // // // //       GAME_WIDTH / 2 -
+// // // // // //         PLAYER_SIZE / 2
+// // // // // //     );
+
+// // // // // //     setDebris([]);
+
+// // // // // //     movementRef.current = 0;
+// // // // // //   };
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | START GAME
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const startGame = () => {
+// // // // // //     if (gameStarted || countdown !== null) {
+// // // // // //       return;
+// // // // // //     }
+
+// // // // // //     setCountdown(3);
+
+// // // // // //     let count = 3;
+
+// // // // // //     countdownTimerRef.current =
+// // // // // //       setInterval(() => {
+// // // // // //         count -= 1;
+
+// // // // // //         if (count <= 0) {
+// // // // // //           clearInterval(
+// // // // // //             countdownTimerRef.current
+// // // // // //           );
+
+// // // // // //           countdownTimerRef.current = null;
+
+// // // // // //           setCountdown(null);
+
+// // // // // //           setGameStarted(true);
+
+// // // // // //           setScore(0);
+
+// // // // // //           setGameOver(false);
+
+// // // // // //           setHasWon(false);
+
+// // // // // //           setPlayerPositionX(
+// // // // // //             GAME_WIDTH / 2 -
+// // // // // //               PLAYER_SIZE / 2
+// // // // // //           );
+
+// // // // // //           setDebris(createDebris());
+
+// // // // // //           Haptics.notificationAsync(
+// // // // // //             Haptics.NotificationFeedbackType.Success
+// // // // // //           );
+
+// // // // // //           return;
+// // // // // //         }
+
+// // // // // //         setCountdown(count);
+// // // // // //       }, 700);
+// // // // // //   };
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | CLEAN COUNTDOWN
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   useEffect(() => {
+// // // // // //     return () => {
+// // // // // //       if (countdownTimerRef.current) {
+// // // // // //         clearInterval(
+// // // // // //           countdownTimerRef.current
+// // // // // //         );
+// // // // // //       }
+// // // // // //     };
+// // // // // //   }, []);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | ACCELEROMETER
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
 
 // // // // // //   useEffect(() => {
 // // // // // //     let subscription;
-// // // // // //     if (visible && !gameOver && !hasWon) {
-// // // // // //       Accelerometer.setUpdateInterval(30);
-// // // // // //       subscription = Accelerometer.addListener(data => {
-// // // // // //         setPlayerPositionX(prevX => {
-// // // // // //           let nextX = prevX + data.x * 18;
-// // // // // //           if (nextX < 0) return 0;
-// // // // // //           if (nextX > GAME_WIDTH - PLAYER_SIZE) return GAME_WIDTH - PLAYER_SIZE;
-// // // // // //           return nextX;
-// // // // // //         });
-// // // // // //       });
-// // // // // //     }
-// // // // // //     return () => subscription && subscription.remove();
-// // // // // //   }, [visible, gameOver, hasWon]);
 
-// // // // // //   useEffect(() => {
-// // // // // //     let gameInterval;
-// // // // // //     if (visible && !gameOver && !hasWon) {
-// // // // // //       gameInterval = setInterval(() => {
-// // // // // //         setDebrisY(prevY => {
-// // // // // //           if (prevY > 260) {
-// // // // // //             setScore(s => {
-// // // // // //               const newScore = s + 10;
-// // // // // //               if (newScore >= 50) {
-// // // // // //                 setHasWon(true);
-// // // // // //                 Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-// // // // // //               }
-// // // // // //               return newScore;
-// // // // // //             });
-// // // // // //             setDebrisX(Math.random() * (GAME_WIDTH - 20));
-// // // // // //             return 0;
-// // // // // //           }
-// // // // // //           return prevY + 12;
-// // // // // //         });
-// // // // // //       }, 30);
-// // // // // //     }
-// // // // // //     return () => clearInterval(gameInterval);
-// // // // // //   }, [visible, gameOver, hasWon, debrisX]);
-
-// // // // // //   useEffect(() => {
-// // // // // //     if (debrisY > 210 && debrisY < 250) {
-// // // // // //       const playerCenter = playerPositionX + PLAYER_SIZE / 2;
-// // // // // //       const debrisCenter = debrisX + 10;
-// // // // // //       if (Math.abs(playerCenter - debrisCenter) < 22) {
-// // // // // //         setGameOver(true);
-// // // // // //         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
+// // // // // //     const setupAccelerometer = async () => {
+// // // // // //       if (
+// // // // // //         !visible ||
+// // // // // //         !gameStarted ||
+// // // // // //         gameOver ||
+// // // // // //         hasWon
+// // // // // //       ) {
+// // // // // //         return;
 // // // // // //       }
-// // // // // //     }
-// // // // // //   }, [debrisY, playerPositionX, debrisX]);
 
-// // // // // //   const restartGame = () => {
-// // // // // //     setScore(0);
-// // // // // //     setDebrisY(0);
-// // // // // //     setGameOver(false);
-// // // // // //     setHasWon(false);
-// // // // // //     setPlayerPositionX(GAME_WIDTH / 2 - PLAYER_SIZE / 2);
+// // // // // //       try {
+// // // // // //         const available =
+// // // // // //           await Accelerometer.isAvailableAsync();
+
+// // // // // //         if (!available) {
+// // // // // //           setSensorAvailable(false);
+// // // // // //           return;
+// // // // // //         }
+
+// // // // // //         setSensorAvailable(true);
+
+// // // // // //         Accelerometer.setUpdateInterval(50);
+
+// // // // // //         subscription =
+// // // // // //           Accelerometer.addListener(
+// // // // // //             (data) => {
+// // // // // //               movementRef.current =
+// // // // // //                 data.x;
+// // // // // //             }
+// // // // // //           );
+// // // // // //       } catch (error) {
+// // // // // //         console.log(
+// // // // // //           'Accelerometer error:',
+// // // // // //           error
+// // // // // //         );
+
+// // // // // //         setSensorAvailable(false);
+// // // // // //       }
+// // // // // //     };
+
+// // // // // //     setupAccelerometer();
+
+// // // // // //     return () => {
+// // // // // //       if (subscription) {
+// // // // // //         subscription.remove();
+// // // // // //       }
+// // // // // //     };
+// // // // // //   }, [
+// // // // // //     visible,
+// // // // // //     gameStarted,
+// // // // // //     gameOver,
+// // // // // //     hasWon,
+// // // // // //   ]);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | ACCELEROMETER MOVEMENT
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   useEffect(() => {
+// // // // // //     if (
+// // // // // //       !visible ||
+// // // // // //       !gameStarted ||
+// // // // // //       gameOver ||
+// // // // // //       hasWon
+// // // // // //     ) {
+// // // // // //       return;
+// // // // // //     }
+
+// // // // // //     const movementInterval =
+// // // // // //       setInterval(() => {
+// // // // // //         const tilt =
+// // // // // //           movementRef.current;
+
+// // // // // //         if (Math.abs(tilt) < 0.05) {
+// // // // // //           return;
+// // // // // //         }
+
+// // // // // //         setPlayerPositionX(
+// // // // // //           (previousX) => {
+// // // // // //             let nextX =
+// // // // // //               previousX +
+// // // // // //               tilt * 12;
+
+// // // // // //             nextX = Math.max(
+// // // // // //               0,
+// // // // // //               Math.min(
+// // // // // //                 GAME_WIDTH -
+// // // // // //                   PLAYER_SIZE,
+// // // // // //                 nextX
+// // // // // //               )
+// // // // // //             );
+
+// // // // // //             return nextX;
+// // // // // //           }
+// // // // // //         );
+// // // // // //       }, 50);
+
+// // // // // //     return () =>
+// // // // // //       clearInterval(
+// // // // // //         movementInterval
+// // // // // //       );
+// // // // // //   }, [
+// // // // // //     visible,
+// // // // // //     gameStarted,
+// // // // // //     gameOver,
+// // // // // //     hasWon,
+// // // // // //     GAME_WIDTH,
+// // // // // //   ]);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | TOUCH MOVEMENT
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const movePlayer = (direction) => {
+// // // // // //     if (
+// // // // // //       !gameStarted ||
+// // // // // //       gameOver ||
+// // // // // //       hasWon
+// // // // // //     ) {
+// // // // // //       return;
+// // // // // //     }
+
+// // // // // //     setPlayerPositionX(
+// // // // // //       (previousX) => {
+// // // // // //         const amount =
+// // // // // //           config.playerSpeed;
+
+// // // // // //         let nextX =
+// // // // // //           direction === 'left'
+// // // // // //             ? previousX - amount
+// // // // // //             : previousX + amount;
+
+// // // // // //         nextX = Math.max(
+// // // // // //           0,
+// // // // // //           Math.min(
+// // // // // //             GAME_WIDTH -
+// // // // // //               PLAYER_SIZE,
+// // // // // //             nextX
+// // // // // //           )
+// // // // // //         );
+
+// // // // // //         return nextX;
+// // // // // //       }
+// // // // // //     );
+
+// // // // // //     Haptics.impactAsync(
+// // // // // //       Haptics.ImpactFeedbackStyle.Light
+// // // // // //     );
 // // // // // //   };
 
-// // // // // //   return (
-// // // // // //     <Modal visible={visible} animationType="slide" transparent={true}>
-// // // // // //       <View style={styles.modalOverlay}>
-// // // // // //         <View style={[styles.modalContentCard, { height: 480 }]}>
-// // // // // //           <View style={styles.modalHeader}>
-// // // // // //             <Text style={styles.modalTitle}>Flash Flood Evacuation Drill</Text>
-// // // // // //             <TouchableOpacity onPress={onClose}>
-// // // // // //               <Ionicons name="close-circle" size={26} color="#64748B" />
-// // // // // //             </TouchableOpacity>
-// // // // // //           </View>
-// // // // // //           <Text style={{ color: '#94A3B8', fontSize: 12, marginBottom: 12 }}>
-// // // // // //             Tilt your phone physically left/right to steer your responder to safety!
-// // // // // //           </Text>
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | GAME LOOP
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
 
-// // // // // //           <View style={[styles.gameCanvas, { width: GAME_WIDTH }]}>
-// // // // // //             <View style={[styles.playerNode, { left: playerPositionX }]}>
-// // // // // //               <Ionicons name="walk" size={24} color="black" />
-// // // // // //               <Ionicons name="walk-outline" size={24} color="black" />
-// // // // // //               <Ionicons name="fitness-outline" size={24} color="black" />
+// // // // // //   useEffect(() => {
+// // // // // //     if (
+// // // // // //       !visible ||
+// // // // // //       !gameStarted ||
+// // // // // //       gameOver ||
+// // // // // //       hasWon
+// // // // // //     ) {
+// // // // // //       return;
+// // // // // //     }
+
+// // // // // //     const gameInterval =
+// // // // // //       setInterval(() => {
+// // // // // //         setDebris(
+// // // // // //           (previousDebris) => {
+// // // // // //             let pointsEarned = 0;
+
+// // // // // //             const updatedDebris =
+// // // // // //               previousDebris.map(
+// // // // // //                 (item) => ({
+// // // // // //                   ...item,
+// // // // // //                   y:
+// // // // // //                     item.y +
+// // // // // //                     config.debrisSpeed,
+// // // // // //                 })
+// // // // // //               );
+
+// // // // // //             const activeDebris =
+// // // // // //               updatedDebris.filter(
+// // // // // //                 (item) => {
+// // // // // //                   if (
+// // // // // //                     item.y >
+// // // // // //                     GAME_HEIGHT
+// // // // // //                   ) {
+// // // // // //                     pointsEarned += 10;
+
+// // // // // //                     return false;
+// // // // // //                   }
+
+// // // // // //                   return true;
+// // // // // //                 }
+// // // // // //               );
+
+// // // // // //             /*
+// // // // // //              * A debris object reached the bottom.
+// // // // // //              * Give the player points and respawn it.
+// // // // // //              */
+// // // // // //             if (pointsEarned > 0) {
+// // // // // //               setScore(
+// // // // // //                 (previousScore) => {
+// // // // // //                   const newScore =
+// // // // // //                     Math.min(
+// // // // // //                       config.targetScore,
+// // // // // //                       previousScore +
+// // // // // //                         pointsEarned
+// // // // // //                     );
+
+// // // // // //                   if (
+// // // // // //                     newScore >=
+// // // // // //                     config.targetScore
+// // // // // //                   ) {
+// // // // // //                     setHasWon(true);
+
+// // // // // //                     Haptics.notificationAsync(
+// // // // // //                       Haptics.NotificationFeedbackType
+// // // // // //                         .Success
+// // // // // //                     );
+// // // // // //                   }
+
+// // // // // //                   return newScore;
+// // // // // //                 }
+// // // // // //               );
+
+// // // // // //               /*
+// // // // // //                * Keep the correct number
+// // // // // //                * of hazards on screen.
+// // // // // //                */
+// // // // // //               while (
+// // // // // //                 activeDebris.length <
+// // // // // //                 config.spawnCount
+// // // // // //               ) {
+// // // // // //                 activeDebris.push({
+// // // // // //                   id: `${Date.now()}-${Math.random()}`,
+
+// // // // // //                   x:
+// // // // // //                     Math.random() *
+// // // // // //                     (GAME_WIDTH -
+// // // // // //                       DEBRIS_SIZE),
+
+// // // // // //                   y:
+// // // // // //                     STARTING_DEBRIS_Y -
+// // // // // //                     Math.random() * 80,
+// // // // // //                 });
+// // // // // //               }
+// // // // // //             }
+
+// // // // // //             return activeDebris;
+// // // // // //           }
+// // // // // //         );
+// // // // // //       }, config.gameTick);
+
+// // // // // //     return () =>
+// // // // // //       clearInterval(
+// // // // // //         gameInterval
+// // // // // //       );
+// // // // // //   }, [
+// // // // // //     visible,
+// // // // // //     gameStarted,
+// // // // // //     gameOver,
+// // // // // //     hasWon,
+// // // // // //     GAME_WIDTH,
+// // // // // //     GAME_HEIGHT,
+// // // // // //     config,
+// // // // // //   ]);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | COLLISION
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   useEffect(() => {
+// // // // // //     if (
+// // // // // //       !gameStarted ||
+// // // // // //       gameOver ||
+// // // // // //       hasWon
+// // // // // //     ) {
+// // // // // //       return;
+// // // // // //     }
+
+// // // // // //     const playerLeft =
+// // // // // //       playerPositionX;
+
+// // // // // //     const playerRight =
+// // // // // //       playerPositionX +
+// // // // // //       PLAYER_SIZE;
+
+// // // // // //     const playerTop =
+// // // // // //       GAME_HEIGHT -
+// // // // // //       PLAYER_SIZE -
+// // // // // //       14;
+
+// // // // // //     const playerBottom =
+// // // // // //       playerTop +
+// // // // // //       PLAYER_SIZE;
+
+// // // // // //     const collision =
+// // // // // //       debris.some((item) => {
+// // // // // //         const debrisLeft =
+// // // // // //           item.x;
+
+// // // // // //         const debrisRight =
+// // // // // //           item.x +
+// // // // // //           DEBRIS_SIZE;
+
+// // // // // //         const debrisTop =
+// // // // // //           item.y;
+
+// // // // // //         const debrisBottom =
+// // // // // //           item.y +
+// // // // // //           DEBRIS_SIZE;
+
+// // // // // //         return (
+// // // // // //           playerLeft <
+// // // // // //             debrisRight &&
+// // // // // //           playerRight >
+// // // // // //             debrisLeft &&
+// // // // // //           playerTop <
+// // // // // //             debrisBottom &&
+// // // // // //           playerBottom >
+// // // // // //             debrisTop
+// // // // // //         );
+// // // // // //       });
+
+// // // // // //     if (collision) {
+// // // // // //       setGameOver(true);
+
+// // // // // //       Haptics.impactAsync(
+// // // // // //         Haptics.ImpactFeedbackStyle.Heavy
+// // // // // //       );
+// // // // // //     }
+// // // // // //   }, [
+// // // // // //     debris,
+// // // // // //     playerPositionX,
+// // // // // //     gameStarted,
+// // // // // //     gameOver,
+// // // // // //     hasWon,
+// // // // // //     GAME_HEIGHT,
+// // // // // //   ]);
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | CLOSE / RESET
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const handleClose = () => {
+// // // // // //     resetGame();
+// // // // // //     onClose();
+// // // // // //   };
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | CLAIM REWARD
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const handleClaimReward = () => {
+// // // // // //     onWin({
+// // // // // //       xp: config.reward.xp,
+// // // // // //       coins: config.reward.coins,
+// // // // // //     });
+
+// // // // // //     handleClose();
+// // // // // //   };
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | GAME PROGRESS
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   const progressPercentage =
+// // // // // //     Math.min(
+// // // // // //       100,
+// // // // // //       (score /
+// // // // // //         config.targetScore) *
+// // // // // //         100
+// // // // // //     );
+
+// // // // // //   /*
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   | RENDER
+// // // // // //   |--------------------------------------------------------------------------
+// // // // // //   */
+
+// // // // // //   return (
+// // // // // //     <Modal
+// // // // // //       visible={visible}
+// // // // // //       animationType="slide"
+// // // // // //       transparent
+// // // // // //       onRequestClose={handleClose}
+// // // // // //     >
+// // // // // //       <View style={styles.modalOverlay}>
+// // // // // //         <View
+// // // // // //           style={[
+// // // // // //             styles.modalContentCard,
+// // // // // //             {
+// // // // // //               width:
+// // // // // //                 GAME_WIDTH + 32,
+// // // // // //             },
+// // // // // //           ]}
+// // // // // //         >
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               HEADER
+// // // // // //           -------------------------------------------------------- */}
+
+// // // // // //           <View style={styles.modalHeader}>
+// // // // // //             <View style={styles.headerTitleArea}>
+// // // // // //               <View style={styles.headerIcon}>
+// // // // // //                 <Ionicons
+// // // // // //                   name="water"
+// // // // // //                   size={20}
+// // // // // //                   color="#38BDF8"
+// // // // // //                 />
+// // // // // //               </View>
+
+// // // // // //               <View style={styles.headerTextArea}>
+// // // // // //                 <Text
+// // // // // //                   style={styles.modalTitle}
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.title'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={styles.levelLabel}
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.level',
+// // // // // //                     {
+// // // // // //                       level:
+// // // // // //                         selectedLevel,
+// // // // // //                     }
+// // // // // //                   )}{' '}
+// // // // // //                   •{' '}
+// // // // // //                   {t(
+// // // // // //                     config.nameKey
+// // // // // //                   )}
+// // // // // //                 </Text>
+// // // // // //               </View>
 // // // // // //             </View>
 
-// // // // // //             {!gameOver && !hasWon && (
-// // // // // //               <View style={[styles.debrisNode, { left: debrisX, top: debrisY }]}>
-// // // // // //                 <Ionicons name="warning" size={20} color="#EF4444" />
+// // // // // //             <TouchableOpacity
+// // // // // //               onPress={handleClose}
+// // // // // //               accessibilityRole="button"
+// // // // // //               accessibilityLabel={t(
+// // // // // //                 'common.close'
+// // // // // //               )}
+// // // // // //             >
+// // // // // //               <Ionicons
+// // // // // //                 name="close-circle"
+// // // // // //                 size={30}
+// // // // // //                 color="#64748B"
+// // // // // //               />
+// // // // // //             </TouchableOpacity>
+// // // // // //           </View>
+
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               OBJECTIVE
+// // // // // //           -------------------------------------------------------- */}
+
+// // // // // //           <View style={styles.objectiveCard}>
+// // // // // //             <View style={styles.objectiveIcon}>
+// // // // // //               <Ionicons
+// // // // // //                 name="flag"
+// // // // // //                 size={18}
+// // // // // //                 color="#34D399"
+// // // // // //               />
+// // // // // //             </View>
+
+// // // // // //             <View style={styles.objectiveTextArea}>
+// // // // // //               <Text
+// // // // // //                 style={styles.objectiveTitle}
+// // // // // //               >
+// // // // // //                 {t(
+// // // // // //                   'games.floodRunner.objective'
+// // // // // //                 )}
+// // // // // //               </Text>
+
+// // // // // //               <Text
+// // // // // //                 style={styles.objectiveText}
+// // // // // //               >
+// // // // // //                 {t(
+// // // // // //                   'games.floodRunner.objectiveDescription'
+// // // // // //                 )}
+// // // // // //               </Text>
+// // // // // //             </View>
+// // // // // //           </View>
+
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               HOW TO PLAY
+// // // // // //           -------------------------------------------------------- */}
+
+// // // // // //           {!gameStarted &&
+// // // // // //             !gameOver &&
+// // // // // //             !hasWon && (
+// // // // // //               <View
+// // // // // //                 style={
+// // // // // //                   styles.instructionsCard
+// // // // // //                 }
+// // // // // //               >
+// // // // // //                 <View
+// // // // // //                   style={
+// // // // // //                     styles.instructionsHeader
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="help-circle"
+// // // // // //                     size={20}
+// // // // // //                     color="#FBBF24"
+// // // // // //                   />
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.instructionsTitle
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.howToPlay'
+// // // // // //                     )}
+// // // // // //                   </Text>
+// // // // // //                 </View>
+
+// // // // // //                 <InstructionRow
+// // // // // //                   icon="swap-horizontal"
+// // // // // //                   text={t(
+// // // // // //                     'games.floodRunner.instructions.move'
+// // // // // //                   )}
+// // // // // //                 />
+
+// // // // // //                 <InstructionRow
+// // // // // //                   icon="warning"
+// // // // // //                   text={t(
+// // // // // //                     'games.floodRunner.instructions.avoid'
+// // // // // //                   )}
+// // // // // //                 />
+
+// // // // // //                 <InstructionRow
+// // // // // //                   icon="water"
+// // // // // //                   text={t(
+// // // // // //                     'games.floodRunner.instructions.flood'
+// // // // // //                   )}
+// // // // // //                 />
+
+// // // // // //                 <InstructionRow
+// // // // // //                   icon="flag"
+// // // // // //                   text={t(
+// // // // // //                     'games.floodRunner.instructions.finish',
+// // // // // //                     {
+// // // // // //                       score:
+// // // // // //                         config.targetScore,
+// // // // // //                     }
+// // // // // //                   )}
+// // // // // //                 />
 // // // // // //               </View>
 // // // // // //             )}
 
-// // // // // //             <View style={styles.shelterLine}>
-// // // // // //               <Text style={styles.shelterLineText}>SCDF SAFE ELEVATED SHELTER AREA</Text>
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               SENSOR STATUS
+// // // // // //           -------------------------------------------------------- */}
+
+// // // // // //           {gameStarted &&
+// // // // // //             !gameOver &&
+// // // // // //             !hasWon && (
+// // // // // //               <View
+// // // // // //                 style={styles.sensorStatus}
+// // // // // //               >
+// // // // // //                 <Ionicons
+// // // // // //                   name={
+// // // // // //                     sensorAvailable
+// // // // // //                       ? 'phone-portrait-outline'
+// // // // // //                       : 'hand-left-outline'
+// // // // // //                   }
+// // // // // //                   size={15}
+// // // // // //                   color={
+// // // // // //                     sensorAvailable
+// // // // // //                       ? '#34D399'
+// // // // // //                       : '#FBBF24'
+// // // // // //                   }
+// // // // // //                 />
+
+// // // // // //                 <Text
+// // // // // //                   style={[
+// // // // // //                     styles.sensorText,
+// // // // // //                     {
+// // // // // //                       color:
+// // // // // //                         sensorAvailable
+// // // // // //                           ? '#34D399'
+// // // // // //                           : '#FBBF24',
+// // // // // //                     },
+// // // // // //                   ]}
+// // // // // //                 >
+// // // // // //                   {sensorAvailable
+// // // // // //                     ? t(
+// // // // // //                         'games.floodRunner.tiltActive'
+// // // // // //                       )
+// // // // // //                     : t(
+// // // // // //                         'games.floodRunner.touchActive'
+// // // // // //                       )}
+// // // // // //                 </Text>
+// // // // // //               </View>
+// // // // // //             )}
+
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               GAME CANVAS
+// // // // // //           -------------------------------------------------------- */}
+
+// // // // // //           <View
+// // // // // //             style={[
+// // // // // //               styles.gameCanvas,
+// // // // // //               {
+// // // // // //                 width: GAME_WIDTH,
+// // // // // //                 height: GAME_HEIGHT,
+// // // // // //               },
+// // // // // //             ]}
+// // // // // //           >
+// // // // // //             {/* SAFE ZONE */}
+
+// // // // // //             <View
+// // // // // //               style={styles.safeZone}
+// // // // // //             >
+// // // // // //               <View
+// // // // // //                 style={styles.safeZoneIcon}
+// // // // // //               >
+// // // // // //                 <Ionicons
+// // // // // //                   name="shield-checkmark"
+// // // // // //                   size={18}
+// // // // // //                   color="#34D399"
+// // // // // //                 />
+// // // // // //               </View>
+
+// // // // // //               <View>
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.safeZoneTitle
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.safeShelter'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.safeZoneSub
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.highGround'
+// // // // // //                   )}
+// // // // // //                 </Text>
+// // // // // //               </View>
 // // // // // //             </View>
+
+// // // // // //             {/* DANGER FIELD */}
+
+// // // // // //             <View
+// // // // // //               style={styles.dangerField}
+// // // // // //             >
+// // // // // //               <View
+// // // // // //                 style={styles.routeLine}
+// // // // // //               />
+
+// // // // // //               <Text
+// // // // // //                 style={styles.dangerText}
+// // // // // //               >
+// // // // // //                 {t(
+// // // // // //                   'games.floodRunner.evacuationRoute'
+// // // // // //                 )}
+// // // // // //               </Text>
+// // // // // //             </View>
+
+// // // // // //             {/* DEBRIS */}
+
+// // // // // //             {gameStarted &&
+// // // // // //               !gameOver &&
+// // // // // //               !hasWon &&
+// // // // // //               debris.map((item) => (
+// // // // // //                 <View
+// // // // // //                   key={item.id}
+// // // // // //                   style={[
+// // // // // //                     styles.debrisNode,
+// // // // // //                     {
+// // // // // //                       left: item.x,
+// // // // // //                       top: item.y,
+// // // // // //                     },
+// // // // // //                   ]}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="warning"
+// // // // // //                     size={20}
+// // // // // //                     color="#FCA5A5"
+// // // // // //                   />
+// // // // // //                 </View>
+// // // // // //               ))}
+
+// // // // // //             {/* PLAYER */}
+
+// // // // // //             {gameStarted &&
+// // // // // //               !gameOver &&
+// // // // // //               !hasWon && (
+// // // // // //                 <View
+// // // // // //                   style={[
+// // // // // //                     styles.playerNode,
+// // // // // //                     {
+// // // // // //                       left:
+// // // // // //                         playerPositionX,
+// // // // // //                       bottom: 72,
+// // // // // //                     },
+// // // // // //                   ]}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="person"
+// // // // // //                     size={25}
+// // // // // //                     color="#FFFFFF"
+// // // // // //                   />
+// // // // // //                 </View>
+// // // // // //               )}
+
+// // // // // //             {/* FLOOD */}
+
+// // // // // //             <View
+// // // // // //               style={styles.floodLayer}
+// // // // // //             >
+// // // // // //               <View
+// // // // // //                 style={
+// // // // // //                   styles.waveContainer
+// // // // // //                 }
+// // // // // //               >
+// // // // // //                 {Array.from({
+// // // // // //                   length: 12,
+// // // // // //                 }).map((_, index) => (
+// // // // // //                   <Text
+// // // // // //                     key={index}
+// // // // // //                     style={
+// // // // // //                       styles.wave
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     ~
+// // // // // //                   </Text>
+// // // // // //                 ))}
+// // // // // //               </View>
+
+// // // // // //               <Text
+// // // // // //                 style={styles.floodLabel}
+// // // // // //               >
+// // // // // //                 {t(
+// // // // // //                   'games.floodRunner.floodZone'
+// // // // // //                 )}
+// // // // // //               </Text>
+// // // // // //             </View>
+
+// // // // // //             {/* COUNTDOWN */}
+
+// // // // // //             {countdown !== null && (
+// // // // // //               <View
+// // // // // //                 style={
+// // // // // //                   styles.countdownOverlay
+// // // // // //                 }
+// // // // // //               >
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.countdownNumber
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {countdown}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.countdownText
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.getReady'
+// // // // // //                   )}
+// // // // // //                 </Text>
+// // // // // //               </View>
+// // // // // //             )}
+
+// // // // // //             {/* START SCREEN */}
+
+// // // // // //             {!gameStarted &&
+// // // // // //               countdown === null &&
+// // // // // //               !gameOver &&
+// // // // // //               !hasWon && (
+// // // // // //                 <View
+// // // // // //                   style={
+// // // // // //                     styles.startOverlay
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <View
+// // // // // //                     style={
+// // // // // //                       styles.startIcon
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     <Ionicons
+// // // // // //                       name="walk"
+// // // // // //                       size={34}
+// // // // // //                       color="#38BDF8"
+// // // // // //                     />
+// // // // // //                   </View>
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.startTitle
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.ready'
+// // // // // //                     )}
+// // // // // //                   </Text>
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.startDescription
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.startDescription'
+// // // // // //                     )}
+// // // // // //                   </Text>
+
+// // // // // //                   <TouchableOpacity
+// // // // // //                     style={
+// // // // // //                       styles.startButton
+// // // // // //                     }
+// // // // // //                     onPress={startGame}
+// // // // // //                     activeOpacity={0.8}
+// // // // // //                   >
+// // // // // //                     <Ionicons
+// // // // // //                       name="play"
+// // // // // //                       size={18}
+// // // // // //                       color="#FFFFFF"
+// // // // // //                     />
+
+// // // // // //                     <Text
+// // // // // //                       style={
+// // // // // //                         styles.startButtonText
+// // // // // //                       }
+// // // // // //                     >
+// // // // // //                       {t(
+// // // // // //                         'games.floodRunner.start'
+// // // // // //                       )}
+// // // // // //                     </Text>
+// // // // // //                   </TouchableOpacity>
+// // // // // //                 </View>
+// // // // // //               )}
+
+// // // // // //             {/* GAME OVER */}
+
+// // // // // //             {gameOver && (
+// // // // // //               <View
+// // // // // //                 style={
+// // // // // //                   styles.endGameOverlay
+// // // // // //                 }
+// // // // // //               >
+// // // // // //                 <View
+// // // // // //                   style={[
+// // // // // //                     styles.resultIcon,
+// // // // // //                     {
+// // // // // //                       backgroundColor:
+// // // // // //                         '#450A0A',
+// // // // // //                     },
+// // // // // //                   ]}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="warning"
+// // // // // //                     size={34}
+// // // // // //                     color="#EF4444"
+// // // // // //                   />
+// // // // // //                 </View>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.gameOverTitle
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.failed'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.gameOverText
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.failedDescription'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.finalScore
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {score} /{' '}
+// // // // // //                   {config.targetScore}
+// // // // // //                 </Text>
+
+// // // // // //                 <TouchableOpacity
+// // // // // //                   style={
+// // // // // //                     styles.retryButton
+// // // // // //                   }
+// // // // // //                   onPress={startGame}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="refresh"
+// // // // // //                     size={18}
+// // // // // //                     color="#FFFFFF"
+// // // // // //                   />
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.buttonText
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.retry'
+// // // // // //                     )}
+// // // // // //                   </Text>
+// // // // // //                 </TouchableOpacity>
+// // // // // //               </View>
+// // // // // //             )}
+
+// // // // // //             {/* WIN */}
+
+// // // // // //             {hasWon && (
+// // // // // //               <View
+// // // // // //                 style={
+// // // // // //                   styles.endGameOverlay
+// // // // // //                 }
+// // // // // //               >
+// // // // // //                 <View
+// // // // // //                   style={[
+// // // // // //                     styles.resultIcon,
+// // // // // //                     {
+// // // // // //                       backgroundColor:
+// // // // // //                         '#064E3B',
+// // // // // //                     },
+// // // // // //                   ]}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="shield-checkmark"
+// // // // // //                     size={36}
+// // // // // //                     color="#10B981"
+// // // // // //                   />
+// // // // // //                 </View>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.successTitle
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.success'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <Text
+// // // // // //                   style={
+// // // // // //                     styles.gameOverText
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   {t(
+// // // // // //                     'games.floodRunner.successDescription'
+// // // // // //                   )}
+// // // // // //                 </Text>
+
+// // // // // //                 <View
+// // // // // //                   style={
+// // // // // //                     styles.rewardRow
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <Reward
+// // // // // //                     icon="flash"
+// // // // // //                     value={`+${config.reward.xp}`}
+// // // // // //                     label={t(
+// // // // // //                       'games.floodRunner.xp'
+// // // // // //                     )}
+// // // // // //                   />
+
+// // // // // //                   <Reward
+// // // // // //                     icon="cash"
+// // // // // //                     value={`+${config.reward.coins}`}
+// // // // // //                     label={t(
+// // // // // //                       'games.floodRunner.coins'
+// // // // // //                     )}
+// // // // // //                   />
+// // // // // //                 </View>
+
+// // // // // //                 <TouchableOpacity
+// // // // // //                   style={
+// // // // // //                     styles.claimRewardButton
+// // // // // //                   }
+// // // // // //                   onPress={
+// // // // // //                     handleClaimReward
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.buttonText
+// // // // // //                     }
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.claimReward'
+// // // // // //                     )}
+// // // // // //                   </Text>
+// // // // // //                 </TouchableOpacity>
+// // // // // //               </View>
+// // // // // //             )}
 // // // // // //           </View>
+
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               SCORE
+// // // // // //           -------------------------------------------------------- */}
 
 // // // // // //           <View style={styles.gameHud}>
-// // // // // //             <Text style={{ color: '#FFF', fontWeight: '800' }}>Evacuation Score: {score} / 50</Text>
+// // // // // //             <View
+// // // // // //               style={styles.scoreHeader}
+// // // // // //             >
+// // // // // //               <Text
+// // // // // //                 style={styles.scoreLabel}
+// // // // // //               >
+// // // // // //                 {t(
+// // // // // //                   'games.floodRunner.score'
+// // // // // //                 )}
+// // // // // //               </Text>
+
+// // // // // //               <Text
+// // // // // //                 style={styles.scoreValue}
+// // // // // //               >
+// // // // // //                 {score} /{' '}
+// // // // // //                 {config.targetScore}
+// // // // // //               </Text>
+// // // // // //             </View>
+
+// // // // // //             <View
+// // // // // //               style={styles.progressBackground}
+// // // // // //             >
+// // // // // //               <View
+// // // // // //                 style={[
+// // // // // //                   styles.progressFill,
+// // // // // //                   {
+// // // // // //                     width: `${progressPercentage}%`,
+// // // // // //                   },
+// // // // // //                 ]}
+// // // // // //               />
+// // // // // //             </View>
 // // // // // //           </View>
 
-// // // // // //           {gameOver && (
-// // // // // //             <View style={styles.endGameOverlay}>
-// // // // // //               <Text style={{ color: '#EF4444', fontWeight: '900', fontSize: 18 }}>Trapped by Water!</Text>
-// // // // // //               <TouchableOpacity style={styles.retryBtn} onPress={restartGame}>
-// // // // // //                 <Text style={{ color: '#FFF', fontWeight: '800' }}>Retry Drill</Text>
-// // // // // //               </TouchableOpacity>
-// // // // // //             </View>
-// // // // // //           )}
+// // // // // //           {/* -------------------------------------------------------
+// // // // // //               CONTROLS
+// // // // // //           -------------------------------------------------------- */}
 
-// // // // // //           {hasWon && (
-// // // // // //             <View style={styles.endGameOverlay}>
-// // // // // //               <Text style={{ color: '#10B981', fontWeight: '900', fontSize: 18 }}>Reached High Ground!</Text>
-// // // // // //               <TouchableOpacity 
-// // // // // //                 style={styles.claimRewardBtn} 
-// // // // // //                 onPress={() => {
-// // // // // //                   onWin({ xp: 100, coins: 25 });
-// // // // // //                   onClose();
-// // // // // //                 }}
+// // // // // //           {gameStarted &&
+// // // // // //             !gameOver &&
+// // // // // //             !hasWon && (
+// // // // // //               <View
+// // // // // //                 style={styles.controls}
 // // // // // //               >
-// // // // // //                 <Text style={styles.claimRewardText}>Claim +100 XP & +25 Coins</Text>
-// // // // // //               </TouchableOpacity>
-// // // // // //             </View>
-// // // // // //           )}
+// // // // // //                 <TouchableOpacity
+// // // // // //                   style={
+// // // // // //                     styles.controlButton
+// // // // // //                   }
+// // // // // //                   onPress={() =>
+// // // // // //                     movePlayer('left')
+// // // // // //                   }
+// // // // // //                   activeOpacity={0.7}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="arrow-back"
+// // // // // //                     size={24}
+// // // // // //                     color="#FFFFFF"
+// // // // // //                   />
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.controlText
+// // // // // //                     }
+// // // // // //                     numberOfLines={2}
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.left'
+// // // // // //                     )}
+// // // // // //                   </Text>
+// // // // // //                 </TouchableOpacity>
+
+// // // // // //                 <View
+// // // // // //                   style={
+// // // // // //                     styles.controlHint
+// // // // // //                   }
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name={
+// // // // // //                       sensorAvailable
+// // // // // //                         ? 'phone-portrait-outline'
+// // // // // //                         : 'hand-left-outline'
+// // // // // //                     }
+// // // // // //                     size={21}
+// // // // // //                     color="#38BDF8"
+// // // // // //                   />
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.controlHintText
+// // // // // //                     }
+// // // // // //                     numberOfLines={2}
+// // // // // //                   >
+// // // // // //                     {sensorAvailable
+// // // // // //                       ? t(
+// // // // // //                           'games.floodRunner.tilt'
+// // // // // //                         )
+// // // // // //                       : t(
+// // // // // //                           'games.floodRunner.touch'
+// // // // // //                         )}
+// // // // // //                   </Text>
+// // // // // //                 </View>
+
+// // // // // //                 <TouchableOpacity
+// // // // // //                   style={
+// // // // // //                     styles.controlButton
+// // // // // //                   }
+// // // // // //                   onPress={() =>
+// // // // // //                     movePlayer('right')
+// // // // // //                   }
+// // // // // //                   activeOpacity={0.7}
+// // // // // //                 >
+// // // // // //                   <Ionicons
+// // // // // //                     name="arrow-forward"
+// // // // // //                     size={24}
+// // // // // //                     color="#FFFFFF"
+// // // // // //                   />
+
+// // // // // //                   <Text
+// // // // // //                     style={
+// // // // // //                       styles.controlText
+// // // // // //                     }
+// // // // // //                     numberOfLines={2}
+// // // // // //                   >
+// // // // // //                     {t(
+// // // // // //                       'games.floodRunner.right'
+// // // // // //                     )}
+// // // // // //                   </Text>
+// // // // // //                 </TouchableOpacity>
+// // // // // //               </View>
+// // // // // //             )}
 // // // // // //         </View>
 // // // // // //       </View>
 // // // // // //     </Modal>
 // // // // // //   );
 // // // // // // }
 
+// // // // // // /*
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // | INSTRUCTION ROW
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // */
+
+// // // // // // function InstructionRow({
+// // // // // //   icon,
+// // // // // //   text,
+// // // // // // }) {
+// // // // // //   return (
+// // // // // //     <View style={styles.instructionRow}>
+// // // // // //       <View style={styles.instructionIcon}>
+// // // // // //         <Ionicons
+// // // // // //           name={icon}
+// // // // // //           size={16}
+// // // // // //           color="#38BDF8"
+// // // // // //         />
+// // // // // //       </View>
+
+// // // // // //       <Text
+// // // // // //         style={styles.instructionText}
+// // // // // //       >
+// // // // // //         {text}
+// // // // // //       </Text>
+// // // // // //     </View>
+// // // // // //   );
+// // // // // // }
+
+// // // // // // /*
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // | REWARD
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // */
+
+// // // // // // function Reward({
+// // // // // //   icon,
+// // // // // //   value,
+// // // // // //   label,
+// // // // // // }) {
+// // // // // //   return (
+// // // // // //     <View style={styles.reward}>
+// // // // // //       <Ionicons
+// // // // // //         name={icon}
+// // // // // //         size={18}
+// // // // // //         color="#FBBF24"
+// // // // // //       />
+
+// // // // // //       <Text style={styles.rewardValue}>
+// // // // // //         {value}
+// // // // // //       </Text>
+
+// // // // // //       <Text style={styles.rewardLabel}>
+// // // // // //         {label}
+// // // // // //       </Text>
+// // // // // //     </View>
+// // // // // //   );
+// // // // // // }
+
+// // // // // // /*
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // | STYLES
+// // // // // // |--------------------------------------------------------------------------
+// // // // // // */
+
 // // // // // // const styles = StyleSheet.create({
-// // // // // //   modalOverlay: { flex: 1, backgroundColor: 'rgba(2, 6, 23, 0.85)', justifyContent: 'center', alignItems: 'center', padding: 16 },
-// // // // // //   modalContentCard: { backgroundColor: '#0F172A', borderWidth: 1, borderColor: '#1E293B', borderRadius: 20, padding: 20, width: '100%' },
-// // // // // //   modalHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
-// // // // // //   modalTitle: { color: '#FFF', fontSize: 16, fontWeight: '800' },
-// // // // // //   gameCanvas: { height: 260, backgroundColor: '#020617', borderRadius: 12, borderWidth: 1, borderColor: '#1E293B', position: 'relative', overflow: 'hidden' },
-// // // // // //   playerNode: { position: 'absolute', bottom: 10 },
-// // // // // //   debrisNode: { position: 'absolute' },
-// // // // // //   shelterLine: { position: 'absolute', top: 0, left: 0, right: 0, backgroundColor: '#10B98120', paddingVertical: 4, alignItems: 'center', borderBottomWidth: 1, borderBottomColor: '#10B981' },
-// // // // // //   shelterLineText: { color: '#10B981', fontSize: 8, fontWeight: '900' },
-// // // // // //   gameHud: { marginTop: 12, alignItems: 'center' },
-// // // // // //   endGameOverlay: { position: 'absolute', top: 120, left: 20, right: 20, backgroundColor: '#0F172ACC', padding: 20, borderRadius: 16, alignItems: 'center' },
-// // // // // //   retryBtn: { backgroundColor: '#EF4444', paddingVertical: 8, paddingHorizontal: 16, borderRadius: 8, marginTop: 10 },
-// // // // // //   claimRewardBtn: { backgroundColor: '#10B981', paddingVertical: 12, paddingHorizontal: 20, borderRadius: 12, alignItems: 'center', marginTop: 10 },
-// // // // // //   claimRewardText: { color: '#FFF', fontWeight: '900', fontSize: 13 }
+// // // // // //   modalOverlay: {
+// // // // // //     flex: 1,
+// // // // // //     backgroundColor:
+// // // // // //       'rgba(2, 6, 23, 0.94)',
+// // // // // //     justifyContent: 'center',
+// // // // // //     alignItems: 'center',
+// // // // // //     padding: 12,
+// // // // // //   },
+
+// // // // // //   modalContentCard: {
+// // // // // //     backgroundColor: '#0F172A',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#1E293B',
+// // // // // //     borderRadius: 22,
+// // // // // //     padding: 16,
+// // // // // //     maxWidth: 400,
+// // // // // //     maxHeight: '96%',
+// // // // // //   },
+
+// // // // // //   modalHeader: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     justifyContent: 'space-between',
+// // // // // //     alignItems: 'center',
+// // // // // //     marginBottom: 10,
+// // // // // //   },
+
+// // // // // //   headerTitleArea: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     flex: 1,
+// // // // // //     marginRight: 10,
+// // // // // //   },
+
+// // // // // //   headerIcon: {
+// // // // // //     width: 38,
+// // // // // //     height: 38,
+// // // // // //     borderRadius: 12,
+// // // // // //     backgroundColor: '#082F49',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginRight: 10,
+// // // // // //   },
+
+// // // // // //   headerTextArea: {
+// // // // // //     flex: 1,
+// // // // // //   },
+
+// // // // // //   modalTitle: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 17,
+// // // // // //     fontWeight: '900',
+// // // // // //   },
+
+// // // // // //   levelLabel: {
+// // // // // //     color: '#38BDF8',
+// // // // // //     fontSize: 11,
+// // // // // //     fontWeight: '800',
+// // // // // //     marginTop: 3,
+// // // // // //   },
+
+// // // // // //   objectiveCard: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     backgroundColor: '#052E16',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#166534',
+// // // // // //     borderRadius: 13,
+// // // // // //     padding: 11,
+// // // // // //     marginBottom: 10,
+// // // // // //   },
+
+// // // // // //   objectiveIcon: {
+// // // // // //     width: 32,
+// // // // // //     height: 32,
+// // // // // //     borderRadius: 10,
+// // // // // //     backgroundColor: '#064E3B',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginRight: 10,
+// // // // // //   },
+
+// // // // // //   objectiveTextArea: {
+// // // // // //     flex: 1,
+// // // // // //   },
+
+// // // // // //   objectiveTitle: {
+// // // // // //     color: '#34D399',
+// // // // // //     fontSize: 11,
+// // // // // //     fontWeight: '900',
+// // // // // //     textTransform: 'uppercase',
+// // // // // //   },
+
+// // // // // //   objectiveText: {
+// // // // // //     color: '#A7F3D0',
+// // // // // //     fontSize: 11,
+// // // // // //     lineHeight: 16,
+// // // // // //     marginTop: 2,
+// // // // // //   },
+
+// // // // // //   instructionsCard: {
+// // // // // //     backgroundColor: '#111827',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#334155',
+// // // // // //     borderRadius: 14,
+// // // // // //     padding: 13,
+// // // // // //     marginBottom: 10,
+// // // // // //   },
+
+// // // // // //   instructionsHeader: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     marginBottom: 8,
+// // // // // //   },
+
+// // // // // //   instructionsTitle: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 13,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginLeft: 7,
+// // // // // //   },
+
+// // // // // //   instructionRow: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'flex-start',
+// // // // // //     marginTop: 7,
+// // // // // //   },
+
+// // // // // //   instructionIcon: {
+// // // // // //     width: 25,
+// // // // // //     height: 25,
+// // // // // //     borderRadius: 8,
+// // // // // //     backgroundColor: '#082F49',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginRight: 8,
+// // // // // //   },
+
+// // // // // //   instructionText: {
+// // // // // //     flex: 1,
+// // // // // //     color: '#CBD5E1',
+// // // // // //     fontSize: 11,
+// // // // // //     lineHeight: 17,
+// // // // // //     paddingTop: 3,
+// // // // // //   },
+
+// // // // // //   sensorStatus: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     alignSelf: 'flex-start',
+// // // // // //     backgroundColor: '#020617',
+// // // // // //     paddingHorizontal: 9,
+// // // // // //     paddingVertical: 5,
+// // // // // //     borderRadius: 8,
+// // // // // //     marginBottom: 8,
+// // // // // //   },
+
+// // // // // //   sensorText: {
+// // // // // //     fontSize: 10,
+// // // // // //     fontWeight: '800',
+// // // // // //     marginLeft: 6,
+// // // // // //   },
+
+// // // // // //   gameCanvas: {
+// // // // // //     backgroundColor: '#020617',
+// // // // // //     borderRadius: 16,
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#1E293B',
+// // // // // //     position: 'relative',
+// // // // // //     overflow: 'hidden',
+// // // // // //   },
+
+// // // // // //   safeZone: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: 0,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     height: 56,
+// // // // // //     backgroundColor: '#064E3B',
+// // // // // //     borderBottomWidth: 1,
+// // // // // //     borderBottomColor: '#10B981',
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     paddingHorizontal: 14,
+// // // // // //     zIndex: 4,
+// // // // // //   },
+
+// // // // // //   safeZoneIcon: {
+// // // // // //     width: 34,
+// // // // // //     height: 34,
+// // // // // //     borderRadius: 10,
+// // // // // //     backgroundColor: '#065F46',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginRight: 9,
+// // // // // //   },
+
+// // // // // //   safeZoneTitle: {
+// // // // // //     color: '#D1FAE5',
+// // // // // //     fontSize: 11,
+// // // // // //     fontWeight: '900',
+// // // // // //     letterSpacing: 0.5,
+// // // // // //   },
+
+// // // // // //   safeZoneSub: {
+// // // // // //     color: '#6EE7B7',
+// // // // // //     fontSize: 9,
+// // // // // //     fontWeight: '700',
+// // // // // //     marginTop: 2,
+// // // // // //   },
+
+// // // // // //   dangerField: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: 56,
+// // // // // //     bottom: 64,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //   },
+
+// // // // // //   routeLine: {
+// // // // // //     position: 'absolute',
+// // // // // //     width: 2,
+// // // // // //     height: '100%',
+// // // // // //     backgroundColor: '#1E293B',
+// // // // // //     opacity: 0.8,
+// // // // // //   },
+
+// // // // // //   dangerText: {
+// // // // // //     color: '#334155',
+// // // // // //     fontSize: 8,
+// // // // // //     fontWeight: '900',
+// // // // // //     letterSpacing: 1.5,
+// // // // // //     transform: [
+// // // // // //       {
+// // // // // //         rotate: '-90deg',
+// // // // // //       },
+// // // // // //     ],
+// // // // // //   },
+
+// // // // // //   debrisNode: {
+// // // // // //     position: 'absolute',
+// // // // // //     width: DEBRIS_SIZE,
+// // // // // //     height: DEBRIS_SIZE,
+// // // // // //     borderRadius:
+// // // // // //       DEBRIS_SIZE / 2,
+// // // // // //     backgroundColor: '#450A0A',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#EF4444',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     zIndex: 5,
+// // // // // //   },
+
+// // // // // //   playerNode: {
+// // // // // //     position: 'absolute',
+// // // // // //     width: PLAYER_SIZE,
+// // // // // //     height: PLAYER_SIZE,
+// // // // // //     borderRadius:
+// // // // // //       PLAYER_SIZE / 2,
+// // // // // //     backgroundColor: '#2563EB',
+// // // // // //     borderWidth: 2,
+// // // // // //     borderColor: '#60A5FA',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     zIndex: 6,
+// // // // // //   },
+
+// // // // // //   floodLayer: {
+// // // // // //     position: 'absolute',
+// // // // // //     bottom: 0,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     height: 64,
+// // // // // //     backgroundColor: '#075985',
+// // // // // //     borderTopWidth: 1,
+// // // // // //     borderTopColor: '#38BDF8',
+// // // // // //     justifyContent: 'center',
+// // // // // //     alignItems: 'center',
+// // // // // //     zIndex: 3,
+// // // // // //   },
+
+// // // // // //   waveContainer: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: -13,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     flexDirection: 'row',
+// // // // // //     justifyContent: 'space-around',
+// // // // // //   },
+
+// // // // // //   wave: {
+// // // // // //     color: '#38BDF8',
+// // // // // //     fontSize: 24,
+// // // // // //     fontWeight: '900',
+// // // // // //   },
+
+// // // // // //   floodLabel: {
+// // // // // //     color: '#BAE6FD',
+// // // // // //     fontSize: 9,
+// // // // // //     fontWeight: '900',
+// // // // // //     letterSpacing: 2,
+// // // // // //     marginTop: 12,
+// // // // // //   },
+
+// // // // // //   startOverlay: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: 56,
+// // // // // //     bottom: 64,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     backgroundColor:
+// // // // // //       'rgba(2, 6, 23, 0.94)',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     padding: 24,
+// // // // // //     zIndex: 20,
+// // // // // //   },
+
+// // // // // //   startIcon: {
+// // // // // //     width: 62,
+// // // // // //     height: 62,
+// // // // // //     borderRadius: 20,
+// // // // // //     backgroundColor: '#082F49',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#0369A1',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginBottom: 12,
+// // // // // //   },
+
+// // // // // //   startTitle: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 20,
+// // // // // //     fontWeight: '900',
+// // // // // //     textAlign: 'center',
+// // // // // //   },
+
+// // // // // //   startDescription: {
+// // // // // //     color: '#94A3B8',
+// // // // // //     fontSize: 12,
+// // // // // //     lineHeight: 18,
+// // // // // //     textAlign: 'center',
+// // // // // //     marginTop: 6,
+// // // // // //     maxWidth: 250,
+// // // // // //   },
+
+// // // // // //   startButton: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     backgroundColor: '#0284C7',
+// // // // // //     borderRadius: 12,
+// // // // // //     minHeight: 48,
+// // // // // //     paddingHorizontal: 22,
+// // // // // //     marginTop: 16,
+// // // // // //   },
+
+// // // // // //   startButtonText: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 13,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginLeft: 7,
+// // // // // //   },
+
+// // // // // //   countdownOverlay: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: 56,
+// // // // // //     bottom: 64,
+// // // // // //     left: 0,
+// // // // // //     right: 0,
+// // // // // //     backgroundColor:
+// // // // // //       'rgba(2, 6, 23, 0.85)',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     zIndex: 30,
+// // // // // //   },
+
+// // // // // //   countdownNumber: {
+// // // // // //     color: '#38BDF8',
+// // // // // //     fontSize: 64,
+// // // // // //     fontWeight: '900',
+// // // // // //   },
+
+// // // // // //   countdownText: {
+// // // // // //     color: '#CBD5E1',
+// // // // // //     fontSize: 12,
+// // // // // //     fontWeight: '800',
+// // // // // //     marginTop: 2,
+// // // // // //   },
+
+// // // // // //   endGameOverlay: {
+// // // // // //     position: 'absolute',
+// // // // // //     top: 56,
+// // // // // //     bottom: 64,
+// // // // // //     left: 12,
+// // // // // //     right: 12,
+// // // // // //     backgroundColor:
+// // // // // //       'rgba(15, 23, 42, 0.97)',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#334155',
+// // // // // //     borderRadius: 18,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     padding: 20,
+// // // // // //     zIndex: 30,
+// // // // // //   },
+
+// // // // // //   resultIcon: {
+// // // // // //     width: 64,
+// // // // // //     height: 64,
+// // // // // //     borderRadius: 20,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginBottom: 10,
+// // // // // //   },
+
+// // // // // //   gameOverTitle: {
+// // // // // //     color: '#EF4444',
+// // // // // //     fontWeight: '900',
+// // // // // //     fontSize: 20,
+// // // // // //     textAlign: 'center',
+// // // // // //   },
+
+// // // // // //   successTitle: {
+// // // // // //     color: '#10B981',
+// // // // // //     fontWeight: '900',
+// // // // // //     fontSize: 20,
+// // // // // //     textAlign: 'center',
+// // // // // //   },
+
+// // // // // //   gameOverText: {
+// // // // // //     color: '#94A3B8',
+// // // // // //     fontSize: 11,
+// // // // // //     textAlign: 'center',
+// // // // // //     lineHeight: 17,
+// // // // // //     marginTop: 7,
+// // // // // //     maxWidth: 250,
+// // // // // //   },
+
+// // // // // //   finalScore: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 24,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginTop: 12,
+// // // // // //   },
+
+// // // // // //   retryButton: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     backgroundColor: '#DC2626',
+// // // // // //     minHeight: 44,
+// // // // // //     paddingHorizontal: 20,
+// // // // // //     borderRadius: 11,
+// // // // // //     marginTop: 14,
+// // // // // //   },
+
+// // // // // //   claimRewardButton: {
+// // // // // //     backgroundColor: '#059669',
+// // // // // //     minHeight: 46,
+// // // // // //     paddingHorizontal: 22,
+// // // // // //     borderRadius: 11,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     marginTop: 14,
+// // // // // //   },
+
+// // // // // //   buttonText: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontWeight: '900',
+// // // // // //     fontSize: 12,
+// // // // // //   },
+
+// // // // // //   rewardRow: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     marginTop: 14,
+// // // // // //     gap: 10,
+// // // // // //   },
+
+// // // // // //   reward: {
+// // // // // //     minWidth: 78,
+// // // // // //     backgroundColor: '#111827',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#334155',
+// // // // // //     borderRadius: 10,
+// // // // // //     paddingVertical: 8,
+// // // // // //     paddingHorizontal: 10,
+// // // // // //     alignItems: 'center',
+// // // // // //   },
+
+// // // // // //   rewardValue: {
+// // // // // //     color: '#FBBF24',
+// // // // // //     fontSize: 16,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginTop: 2,
+// // // // // //   },
+
+// // // // // //   rewardLabel: {
+// // // // // //     color: '#64748B',
+// // // // // //     fontSize: 8,
+// // // // // //     fontWeight: '800',
+// // // // // //     marginTop: 1,
+// // // // // //   },
+
+// // // // // //   gameHud: {
+// // // // // //     marginTop: 10,
+// // // // // //   },
+
+// // // // // //   scoreHeader: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'space-between',
+// // // // // //   },
+
+// // // // // //   scoreLabel: {
+// // // // // //     color: '#64748B',
+// // // // // //     fontSize: 9,
+// // // // // //     fontWeight: '900',
+// // // // // //     letterSpacing: 1,
+// // // // // //   },
+
+// // // // // //   scoreValue: {
+// // // // // //     color: '#FFFFFF',
+// // // // // //     fontSize: 16,
+// // // // // //     fontWeight: '900',
+// // // // // //   },
+
+// // // // // //   progressBackground: {
+// // // // // //     height: 6,
+// // // // // //     width: '100%',
+// // // // // //     backgroundColor: '#1E293B',
+// // // // // //     borderRadius: 3,
+// // // // // //     overflow: 'hidden',
+// // // // // //     marginTop: 5,
+// // // // // //   },
+
+// // // // // //   progressFill: {
+// // // // // //     height: '100%',
+// // // // // //     backgroundColor: '#38BDF8',
+// // // // // //     borderRadius: 3,
+// // // // // //   },
+
+// // // // // //   controls: {
+// // // // // //     flexDirection: 'row',
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'space-between',
+// // // // // //     marginTop: 11,
+// // // // // //     gap: 8,
+// // // // // //   },
+
+// // // // // //   controlButton: {
+// // // // // //     flex: 1,
+// // // // // //     minHeight: 54,
+// // // // // //     backgroundColor: '#1E3A8A',
+// // // // // //     borderWidth: 1,
+// // // // // //     borderColor: '#3B82F6',
+// // // // // //     borderRadius: 13,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //     paddingHorizontal: 5,
+// // // // // //   },
+
+// // // // // //   controlText: {
+// // // // // //     color: '#BFDBFE',
+// // // // // //     fontSize: 8,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginTop: 2,
+// // // // // //     textAlign: 'center',
+// // // // // //   },
+
+// // // // // //   controlHint: {
+// // // // // //     width: 54,
+// // // // // //     alignItems: 'center',
+// // // // // //     justifyContent: 'center',
+// // // // // //   },
+
+// // // // // //   controlHintText: {
+// // // // // //     color: '#38BDF8',
+// // // // // //     fontSize: 7,
+// // // // // //     fontWeight: '900',
+// // // // // //     marginTop: 3,
+// // // // // //     textAlign: 'center',
+// // // // // //   },
 // // // // // // });
 
 
+// // // // // import React, {
+// // // // //   useCallback,
+// // // // //   useEffect,
+// // // // //   useRef,
+// // // // //   useState,
+// // // // // } from 'react';
 
-
-// // // // // // components/FloodRunnerGameModal.js
-
-// // // // // import React, { useEffect, useState } from 'react';
 // // // // // import {
 // // // // //   View,
 // // // // //   Text,
@@ -173,464 +3857,2059 @@
 // // // // //   Modal,
 // // // // //   Dimensions,
 // // // // // } from 'react-native';
+
 // // // // // import { Ionicons } from '@expo/vector-icons';
 // // // // // import * as Haptics from 'expo-haptics';
 // // // // // import { Accelerometer } from 'expo-sensors';
+// // // // // import { useTranslation } from 'react-i18next';
 
-// // // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+// // // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
+// // // // //   Dimensions.get('window');
+
+// // // // // /*
+// // // // // |--------------------------------------------------------------------------
+// // // // // | LEVEL CONFIGURATION
+// // // // // |--------------------------------------------------------------------------
+// // // // // */
+
+// // // // // const LEVEL_CONFIG = {
+// // // // //   1: {
+// // // // //     nameKey: 'games.floodRunner.levels.easy',
+// // // // //     targetScore: 50,
+
+// // // // //     debrisSpeed: 155,
+// // // // //     spawnInterval: 1150,
+
+// // // // //     spawnCount: 1,
+
+// // // // //     playerSpeed: 300,
+
+// // // // //     reward: {
+// // // // //       xp: 100,
+// // // // //       coins: 25,
+// // // // //     },
+// // // // //   },
+
+// // // // //   2: {
+// // // // //     nameKey: 'games.floodRunner.levels.moderate',
+// // // // //     targetScore: 75,
+
+// // // // //     debrisSpeed: 205,
+// // // // //     spawnInterval: 900,
+
+// // // // //     spawnCount: 2,
+
+// // // // //     playerSpeed: 340,
+
+// // // // //     reward: {
+// // // // //       xp: 150,
+// // // // //       coins: 40,
+// // // // //     },
+// // // // //   },
+
+// // // // //   3: {
+// // // // //     nameKey: 'games.floodRunner.levels.advanced',
+// // // // //     targetScore: 100,
+
+// // // // //     debrisSpeed: 255,
+// // // // //     spawnInterval: 750,
+
+// // // // //     spawnCount: 3,
+
+// // // // //     playerSpeed: 380,
+
+// // // // //     reward: {
+// // // // //       xp: 200,
+// // // // //       coins: 60,
+// // // // //     },
+// // // // //   },
+// // // // // };
+
+// // // // // const PLAYER_SIZE = 36;
+// // // // // const DEBRIS_SIZE = 28;
+
+// // // // // const SAFE_ZONE_HEIGHT = 56;
+// // // // // const FLOOD_HEIGHT = 64;
+
+// // // // // const PLAYER_BOTTOM_OFFSET = 14;
+
+// // // // // const COLLISION_PADDING = 4;
+
+// // // // // /*
+// // // // // |--------------------------------------------------------------------------
+// // // // // | COMPONENT
+// // // // // |--------------------------------------------------------------------------
+// // // // // */
 
 // // // // // export default function FloodRunnerGameModal({
 // // // // //   visible,
-// // // // //   onClose,
-// // // // //   onWin,
+// // // // //   onClose =() => {},
+// // // // //   onWin = () => {},
+// // // // //   level = 1,
 // // // // // }) {
-// // // // //   // Keep the game safely inside the modal.
-// // // // //   const GAME_WIDTH = Math.min(SCREEN_WIDTH - 72, 420);
-// // // // //   const GAME_HEIGHT = Math.min(SCREEN_HEIGHT * 0.42, 320);
-
-// // // // //   const PLAYER_SIZE = 34;
-// // // // //   const DEBRIS_SIZE = 28;
-
-// // // // //   const [playerPositionX, setPlayerPositionX] = useState(
-// // // // //     GAME_WIDTH / 2 - PLAYER_SIZE / 2
-// // // // //   );
-
-// // // // //   const [debrisY, setDebrisY] = useState(0);
-
-// // // // //   const [debrisX, setDebrisX] = useState(
-// // // // //     Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
-// // // // //   );
-
-// // // // //   const [score, setScore] = useState(0);
-// // // // //   const [gameOver, setGameOver] = useState(false);
-// // // // //   const [hasWon, setHasWon] = useState(false);
+// // // // //   const { t } = useTranslation();
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * RESET WHEN OPENING
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | SAFE LEVEL
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //   useEffect(() => {
-// // // // //     if (visible) {
-// // // // //       setScore(0);
-// // // // //       setDebrisY(0);
-// // // // //       setDebrisX(
-// // // // //         Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
-// // // // //       );
-// // // // //       setPlayerPositionX(
-// // // // //         GAME_WIDTH / 2 - PLAYER_SIZE / 2
-// // // // //       );
-// // // // //       setGameOver(false);
-// // // // //       setHasWon(false);
-// // // // //     }
-// // // // //   }, [visible]);
+// // // // //   const selectedLevel = Math.min(
+// // // // //     3,
+// // // // //     Math.max(1, Number(level) || 1)
+// // // // //   );
+
+// // // // //   const config = LEVEL_CONFIG[selectedLevel];
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * ACCELEROMETER
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | GAME DIMENSIONS
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //   useEffect(() => {
-// // // // //     let subscription;
+// // // // //   const GAME_WIDTH = Math.min(
+// // // // //     SCREEN_WIDTH - 48,
+// // // // //     360
+// // // // //   );
 
-// // // // //     if (visible && !gameOver && !hasWon) {
-// // // // //       Accelerometer.setUpdateInterval(30);
+// // // // //   const GAME_HEIGHT = Math.min(
+// // // // //     SCREEN_HEIGHT * 0.43,
+// // // // //     330
+// // // // //   );
 
-// // // // //       subscription = Accelerometer.addListener((data) => {
-// // // // //         setPlayerPositionX((prevX) => {
-// // // // //           // Tilt left/right.
-// // // // //           //
-// // // // //           // Depending on phone orientation, you may need
-// // // // //           // to change data.x to -data.x.
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | REACT UI STATE
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //           let nextX = prevX + data.x * 18;
+// // // // //   const [gameStarted, setGameStarted] =
+// // // // //     useState(false);
 
-// // // // //           if (nextX < 0) {
-// // // // //             nextX = 0;
-// // // // //           }
+// // // // //   const [countdown, setCountdown] =
+// // // // //     useState(null);
 
-// // // // //           if (nextX > GAME_WIDTH - PLAYER_SIZE) {
-// // // // //             nextX = GAME_WIDTH - PLAYER_SIZE;
-// // // // //           }
+// // // // //   const [playerPositionX, setPlayerPositionX] =
+// // // // //     useState(
+// // // // //       GAME_WIDTH / 2 -
+// // // // //         PLAYER_SIZE / 2
+// // // // //     );
 
-// // // // //           return nextX;
+// // // // //   const [debris, setDebris] =
+// // // // //     useState([]);
+
+// // // // //   const [score, setScore] =
+// // // // //     useState(0);
+
+// // // // //   const [gameOver, setGameOver] =
+// // // // //     useState(false);
+
+// // // // //   const [hasWon, setHasWon] =
+// // // // //     useState(false);
+
+// // // // //   const [sensorAvailable, setSensorAvailable] =
+// // // // //     useState(false);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | GAME REFS
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   |
+// // // // //   | The actual game state lives in refs.
+// // // // //   |
+// // // // //   | This prevents the game loop from being recreated
+// // // // //   | every time the player moves or debris changes.
+// // // // //   |
+// // // // //   */
+
+// // // // //   const playerXRef = useRef(
+// // // // //     GAME_WIDTH / 2 -
+// // // // //       PLAYER_SIZE / 2
+// // // // //   );
+
+// // // // //   const debrisRef = useRef([]);
+
+// // // // //   const scoreRef = useRef(0);
+
+// // // // //   const gameRunningRef = useRef(false);
+
+// // // // //   const gameOverRef = useRef(false);
+
+// // // // //   const hasWonRef = useRef(false);
+
+// // // // //   const movementRef = useRef(0);
+
+// // // // //   const animationFrameRef =
+// // // // //     useRef(null);
+
+// // // // //   const lastFrameTimeRef =
+// // // // //     useRef(null);
+
+// // // // //   const lastSpawnTimeRef =
+// // // // //     useRef(0);
+
+// // // // //   const countdownTimerRef =
+// // // // //     useRef(null);
+
+// // // // //   const sensorSubscriptionRef =
+// // // // //     useRef(null);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | HELPERS
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const clampPlayerX = useCallback(
+// // // // //     (x) => {
+// // // // //       return Math.max(
+// // // // //         0,
+// // // // //         Math.min(
+// // // // //           GAME_WIDTH - PLAYER_SIZE,
+// // // // //           x
+// // // // //         )
+// // // // //       );
+// // // // //     },
+// // // // //     [GAME_WIDTH]
+// // // // //   );
+
+// // // // //   const createDebrisObject =
+// // // // //     useCallback(
+// // // // //       (y = -DEBRIS_SIZE) => {
+// // // // //         return {
+// // // // //           id: `${Date.now()}-${Math.random()}`,
+
+// // // // //           x:
+// // // // //             Math.random() *
+// // // // //             Math.max(
+// // // // //               1,
+// // // // //               GAME_WIDTH - DEBRIS_SIZE
+// // // // //             ),
+
+// // // // //           y,
+// // // // //         };
+// // // // //       },
+// // // // //       [GAME_WIDTH]
+// // // // //     );
+
+// // // // //   const createInitialDebris =
+// // // // //     useCallback(() => {
+// // // // //       const objects = [];
+
+// // // // //       for (
+// // // // //         let index = 0;
+// // // // //         index < config.spawnCount;
+// // // // //         index += 1
+// // // // //       ) {
+// // // // //         objects.push({
+// // // // //           id: `${Date.now()}-${index}-${Math.random()}`,
+
+// // // // //           x:
+// // // // //             Math.random() *
+// // // // //             Math.max(
+// // // // //               1,
+// // // // //               GAME_WIDTH - DEBRIS_SIZE
+// // // // //             ),
+
+// // // // //           y:
+// // // // //             -DEBRIS_SIZE -
+// // // // //             index * 105 -
+// // // // //             Math.random() * 70,
 // // // // //         });
-// // // // //       });
-// // // // //     }
-
-// // // // //     return () => {
-// // // // //       if (subscription) {
-// // // // //         subscription.remove();
 // // // // //       }
-// // // // //     };
-// // // // //   }, [visible, gameOver, hasWon]);
+
+// // // // //       return objects;
+// // // // //     }, [
+// // // // //       config.spawnCount,
+// // // // //       GAME_WIDTH,
+// // // // //     ]);
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * DEBRIS MOVEMENT
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | RESET GAME
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //   useEffect(() => {
-// // // // //     if (!visible || gameOver || hasWon) {
+// // // // //   const resetGame = useCallback(() => {
+// // // // //     if (countdownTimerRef.current) {
+// // // // //       clearInterval(
+// // // // //         countdownTimerRef.current
+// // // // //       );
+
+// // // // //       countdownTimerRef.current = null;
+// // // // //     }
+
+// // // // //     if (animationFrameRef.current) {
+// // // // //       cancelAnimationFrame(
+// // // // //         animationFrameRef.current
+// // // // //       );
+
+// // // // //       animationFrameRef.current = null;
+// // // // //     }
+
+// // // // //     if (sensorSubscriptionRef.current) {
+// // // // //       sensorSubscriptionRef.current.remove();
+
+// // // // //       sensorSubscriptionRef.current = null;
+// // // // //     }
+
+// // // // //     const initialX =
+// // // // //       GAME_WIDTH / 2 -
+// // // // //       PLAYER_SIZE / 2;
+
+// // // // //     playerXRef.current = initialX;
+
+// // // // //     debrisRef.current = [];
+
+// // // // //     scoreRef.current = 0;
+
+// // // // //     movementRef.current = 0;
+
+// // // // //     gameRunningRef.current = false;
+
+// // // // //     gameOverRef.current = false;
+
+// // // // //     hasWonRef.current = false;
+
+// // // // //     lastFrameTimeRef.current = null;
+
+// // // // //     lastSpawnTimeRef.current = 0;
+
+// // // // //     setScore(0);
+
+// // // // //     setGameOver(false);
+
+// // // // //     setHasWon(false);
+
+// // // // //     setGameStarted(false);
+
+// // // // //     setCountdown(null);
+
+// // // // //     setPlayerPositionX(initialX);
+
+// // // // //     setDebris([]);
+// // // // //   }, [GAME_WIDTH]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | STOP GAME
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const stopGameLoop = useCallback(() => {
+// // // // //     gameRunningRef.current = false;
+
+// // // // //     if (animationFrameRef.current) {
+// // // // //       cancelAnimationFrame(
+// // // // //         animationFrameRef.current
+// // // // //       );
+
+// // // // //       animationFrameRef.current = null;
+// // // // //     }
+
+// // // // //     lastFrameTimeRef.current = null;
+// // // // //   }, []);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | GAME OVER
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const finishGame = useCallback(() => {
+// // // // //     if (
+// // // // //       !gameRunningRef.current ||
+// // // // //       gameOverRef.current ||
+// // // // //       hasWonRef.current
+// // // // //     ) {
 // // // // //       return;
 // // // // //     }
 
-// // // // //     const gameInterval = setInterval(() => {
-// // // // //       setDebrisY((previousY) => {
-// // // // //         const nextY = previousY + 8;
+// // // // //     gameRunningRef.current = false;
 
-// // // // //         // Debris reached bottom.
-// // // // //         if (nextY > GAME_HEIGHT - 40) {
-// // // // //           setScore((previousScore) => {
-// // // // //             const newScore = previousScore + 10;
+// // // // //     gameOverRef.current = true;
 
-// // // // //             if (newScore >= 50) {
-// // // // //               setHasWon(true);
+// // // // //     setGameOver(true);
 
-// // // // //               Haptics.notificationAsync(
-// // // // //                 Haptics.NotificationFeedbackType.Success
-// // // // //               );
+// // // // //     if (animationFrameRef.current) {
+// // // // //       cancelAnimationFrame(
+// // // // //         animationFrameRef.current
+// // // // //       );
+
+// // // // //       animationFrameRef.current = null;
+// // // // //     }
+
+// // // // //     Haptics.impactAsync(
+// // // // //       Haptics.ImpactFeedbackStyle.Heavy
+// // // // //     );
+// // // // //   }, []);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | WIN GAME
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const winGame = useCallback(() => {
+// // // // //     if (
+// // // // //       hasWonRef.current ||
+// // // // //       gameOverRef.current
+// // // // //     ) {
+// // // // //       return;
+// // // // //     }
+
+// // // // //     gameRunningRef.current = false;
+
+// // // // //     hasWonRef.current = true;
+
+// // // // //     scoreRef.current =
+// // // // //       config.targetScore;
+
+// // // // //     setScore(config.targetScore);
+
+// // // // //     setHasWon(true);
+
+// // // // //     if (animationFrameRef.current) {
+// // // // //       cancelAnimationFrame(
+// // // // //         animationFrameRef.current
+// // // // //       );
+
+// // // // //       animationFrameRef.current = null;
+// // // // //     }
+
+// // // // //     Haptics.notificationAsync(
+// // // // //       Haptics.NotificationFeedbackType
+// // // // //         .Success
+// // // // //     );
+// // // // //   }, [config.targetScore]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | COLLISION DETECTION
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const checkCollision = useCallback(
+// // // // //     (playerX, debrisItem) => {
+// // // // //       const playerLeft =
+// // // // //         playerX +
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const playerRight =
+// // // // //         playerX +
+// // // // //         PLAYER_SIZE -
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const playerTop =
+// // // // //         GAME_HEIGHT -
+// // // // //         PLAYER_SIZE -
+// // // // //         PLAYER_BOTTOM_OFFSET +
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const playerBottom =
+// // // // //         playerTop +
+// // // // //         PLAYER_SIZE -
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const debrisLeft =
+// // // // //         debrisItem.x +
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const debrisRight =
+// // // // //         debrisItem.x +
+// // // // //         DEBRIS_SIZE -
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const debrisTop =
+// // // // //         debrisItem.y +
+// // // // //         COLLISION_PADDING;
+
+// // // // //       const debrisBottom =
+// // // // //         debrisItem.y +
+// // // // //         DEBRIS_SIZE -
+// // // // //         COLLISION_PADDING;
+
+// // // // //       return (
+// // // // //         playerLeft <
+// // // // //           debrisRight &&
+// // // // //         playerRight >
+// // // // //           debrisLeft &&
+// // // // //         playerTop <
+// // // // //           debrisBottom &&
+// // // // //         playerBottom >
+// // // // //           debrisTop
+// // // // //       );
+// // // // //     },
+// // // // //     [GAME_HEIGHT]
+// // // // //   );
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | GAME LOOP
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const runGameLoop = useCallback(
+// // // // //     (timestamp) => {
+// // // // //       if (
+// // // // //         !gameRunningRef.current ||
+// // // // //         gameOverRef.current ||
+// // // // //         hasWonRef.current
+// // // // //       ) {
+// // // // //         return;
+// // // // //       }
+
+// // // // //       if (
+// // // // //         lastFrameTimeRef.current ===
+// // // // //         null
+// // // // //       ) {
+// // // // //         lastFrameTimeRef.current =
+// // // // //           timestamp;
+// // // // //       }
+
+// // // // //       const delta =
+// // // // //         Math.min(
+// // // // //           timestamp -
+// // // // //             lastFrameTimeRef.current,
+// // // // //           50
+// // // // //         ) / 1000;
+
+// // // // //       lastFrameTimeRef.current =
+// // // // //         timestamp;
+
+// // // // //       /*
+// // // // //        * ------------------------------------------------------------
+// // // // //        * PLAYER MOVEMENT
+// // // // //        * ------------------------------------------------------------
+// // // // //        */
+
+// // // // //       const tilt =
+// // // // //         movementRef.current;
+
+// // // // //       let nextPlayerX =
+// // // // //         playerXRef.current;
+
+// // // // //       if (Math.abs(tilt) >= 0.04) {
+// // // // //         /*
+// // // // //          * Accelerometer values are normally
+// // // // //          * around -1 to +1.
+// // // // //          *
+// // // // //          * Multiply by speed and delta
+// // // // //          * so movement is frame-rate independent.
+// // // // //          */
+// // // // //         nextPlayerX +=
+// // // // //           tilt *
+// // // // //           config.playerSpeed *
+// // // // //           delta;
+// // // // //       }
+
+// // // // //       nextPlayerX =
+// // // // //         clampPlayerX(nextPlayerX);
+
+// // // // //       playerXRef.current =
+// // // // //         nextPlayerX;
+
+// // // // //       /*
+// // // // //        * Only update React UI when the
+// // // // //        * actual position has changed.
+// // // // //        */
+
+// // // // //       setPlayerPositionX(
+// // // // //         nextPlayerX
+// // // // //       );
+
+// // // // //       /*
+// // // // //        * ------------------------------------------------------------
+// // // // //        * MOVE DEBRIS
+// // // // //        * ------------------------------------------------------------
+// // // // //        */
+
+// // // // //       const previousDebris =
+// // // // //         debrisRef.current;
+
+// // // // //       const movedDebris =
+// // // // //         previousDebris.map(
+// // // // //           (item) => ({
+// // // // //             ...item,
+// // // // //             y:
+// // // // //               item.y +
+// // // // //               config.debrisSpeed *
+// // // // //                 delta,
+// // // // //           })
+// // // // //         );
+
+// // // // //       /*
+// // // // //        * ------------------------------------------------------------
+// // // // //        * COLLISION
+// // // // //        * ------------------------------------------------------------
+// // // // //        */
+
+// // // // //       const collision =
+// // // // //         movedDebris.some(
+// // // // //           (item) =>
+// // // // //             checkCollision(
+// // // // //               nextPlayerX,
+// // // // //               item
+// // // // //             )
+// // // // //         );
+
+// // // // //       if (collision) {
+// // // // //         debrisRef.current =
+// // // // //           movedDebris;
+
+// // // // //         setDebris(
+// // // // //           movedDebris
+// // // // //         );
+
+// // // // //         finishGame();
+
+// // // // //         return;
+// // // // //       }
+
+// // // // //       /*
+// // // // //        * ------------------------------------------------------------
+// // // // //        * SCORE
+// // // // //        * ------------------------------------------------------------
+// // // // //        */
+
+// // // // //       let passedCount = 0;
+
+// // // // //       const survivingDebris =
+// // // // //         movedDebris.filter(
+// // // // //           (item) => {
+// // // // //             if (
+// // // // //               item.y >
+// // // // //               GAME_HEIGHT
+// // // // //             ) {
+// // // // //               passedCount += 1;
+
+// // // // //               return false;
 // // // // //             }
 
-// // // // //             return newScore;
-// // // // //           });
+// // // // //             return true;
+// // // // //           }
+// // // // //         );
 
-// // // // //           setDebrisX(
-// // // // //             Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // // //       /*
+// // // // //        * Every debris item successfully
+// // // // //        * passing the player gives 10 points.
+// // // // //        */
+
+// // // // //       if (passedCount > 0) {
+// // // // //         const nextScore =
+// // // // //           Math.min(
+// // // // //             config.targetScore,
+// // // // //             scoreRef.current +
+// // // // //               passedCount * 10
 // // // // //           );
 
-// // // // //           return 0;
+// // // // //         scoreRef.current =
+// // // // //           nextScore;
+
+// // // // //         setScore(nextScore);
+
+// // // // //         if (
+// // // // //           nextScore >=
+// // // // //           config.targetScore
+// // // // //         ) {
+// // // // //           debrisRef.current =
+// // // // //             survivingDebris;
+
+// // // // //           setDebris(
+// // // // //             survivingDebris
+// // // // //           );
+
+// // // // //           winGame();
+
+// // // // //           return;
 // // // // //         }
+// // // // //       }
 
-// // // // //         return nextY;
-// // // // //       });
-// // // // //     }, 40);
+// // // // //       /*
+// // // // //        * ------------------------------------------------------------
+// // // // //        * SPAWNING
+// // // // //        * ------------------------------------------------------------
+// // // // //        */
 
-// // // // //     return () => clearInterval(gameInterval);
-// // // // //   }, [visible, gameOver, hasWon, GAME_WIDTH, GAME_HEIGHT]);
+// // // // //       if (
+// // // // //         timestamp -
+// // // // //           lastSpawnTimeRef.current >=
+// // // // //         config.spawnInterval
+// // // // //       ) {
+// // // // //         lastSpawnTimeRef.current =
+// // // // //           timestamp;
+
+// // // // //         if (
+// // // // //           survivingDebris.length <
+// // // // //           config.spawnCount
+// // // // //         ) {
+// // // // //           survivingDebris.push(
+// // // // //             createDebrisObject()
+// // // // //           );
+// // // // //         }
+// // // // //       }
+
+// // // // //       /*
+// // // // //        * Keep debris within the intended
+// // // // //        * maximum number.
+// // // // //        */
+
+// // // // //       while (
+// // // // //         survivingDebris.length >
+// // // // //         config.spawnCount
+// // // // //       ) {
+// // // // //         survivingDebris.shift();
+// // // // //       }
+
+// // // // //       debrisRef.current =
+// // // // //         survivingDebris;
+
+// // // // //       setDebris(
+// // // // //         survivingDebris
+// // // // //       );
+
+// // // // //       animationFrameRef.current =
+// // // // //         requestAnimationFrame(
+// // // // //           runGameLoop
+// // // // //         );
+// // // // //     },
+// // // // //     [
+// // // // //       clampPlayerX,
+// // // // //       config.debrisSpeed,
+// // // // //       config.playerSpeed,
+// // // // //       config.spawnCount,
+// // // // //       config.spawnInterval,
+// // // // //       config.targetScore,
+// // // // //       createDebrisObject,
+// // // // //       finishGame,
+// // // // //       GAME_HEIGHT,
+// // // // //       checkCollision,
+// // // // //       winGame,
+// // // // //     ]
+// // // // //   );
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * COLLISION
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | START ACTUAL GAME
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //   useEffect(() => {
-// // // // //     if (gameOver || hasWon) {
-// // // // //       return;
-// // // // //     }
+// // // // //   const beginGame = useCallback(() => {
+// // // // //     const initialX =
+// // // // //       GAME_WIDTH / 2 -
+// // // // //       PLAYER_SIZE / 2;
 
-// // // // //     const playerCenter =
-// // // // //       playerPositionX + PLAYER_SIZE / 2;
+// // // // //     playerXRef.current =
+// // // // //       initialX;
 
-// // // // //     const debrisCenter =
-// // // // //       debrisX + DEBRIS_SIZE / 2;
+// // // // //     debrisRef.current =
+// // // // //       createInitialDebris();
 
-// // // // //     const horizontalDistance =
-// // // // //       Math.abs(playerCenter - debrisCenter);
+// // // // //     scoreRef.current = 0;
 
-// // // // //     const playerBottom = GAME_HEIGHT - 10;
+// // // // //     gameRunningRef.current =
+// // // // //       true;
 
-// // // // //     const debrisBottom =
-// // // // //       debrisY + DEBRIS_SIZE;
+// // // // //     gameOverRef.current =
+// // // // //       false;
 
-// // // // //     // Collision zone near the player.
-// // // // //     if (
-// // // // //       debrisBottom >= playerBottom - PLAYER_SIZE &&
-// // // // //       debrisY <= playerBottom &&
-// // // // //       horizontalDistance < 28
-// // // // //     ) {
-// // // // //       setGameOver(true);
+// // // // //     hasWonRef.current =
+// // // // //       false;
 
-// // // // //       Haptics.impactAsync(
-// // // // //         Haptics.ImpactFeedbackStyle.Heavy
+// // // // //     movementRef.current = 0;
+
+// // // // //     lastFrameTimeRef.current =
+// // // // //       null;
+
+// // // // //     lastSpawnTimeRef.current =
+// // // // //       performance.now();
+
+// // // // //     setPlayerPositionX(
+// // // // //       initialX
+// // // // //     );
+
+// // // // //     setDebris(
+// // // // //       debrisRef.current
+// // // // //     );
+
+// // // // //     setScore(0);
+
+// // // // //     setGameOver(false);
+
+// // // // //     setHasWon(false);
+
+// // // // //     setGameStarted(true);
+
+// // // // //     Haptics.notificationAsync(
+// // // // //       Haptics.NotificationFeedbackType
+// // // // //         .Success
+// // // // //     );
+
+// // // // //     animationFrameRef.current =
+// // // // //       requestAnimationFrame(
+// // // // //         runGameLoop
 // // // // //       );
-// // // // //     }
 // // // // //   }, [
-// // // // //     debrisY,
-// // // // //     debrisX,
-// // // // //     playerPositionX,
-// // // // //     gameOver,
-// // // // //     hasWon,
-// // // // //     GAME_HEIGHT,
+// // // // //     GAME_WIDTH,
+// // // // //     createInitialDebris,
+// // // // //     runGameLoop,
 // // // // //   ]);
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * RESTART
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | START / COUNTDOWN
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
-// // // // //   const restartGame = () => {
-// // // // //     setScore(0);
-// // // // //     setDebrisY(0);
+// // // // //   const startGame = useCallback(() => {
+// // // // //     if (
+// // // // //       gameRunningRef.current ||
+// // // // //       countdown !== null
+// // // // //     ) {
+// // // // //       return;
+// // // // //     }
 
-// // // // //     setDebrisX(
-// // // // //       Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
-// // // // //     );
-
-// // // // //     setPlayerPositionX(
-// // // // //       GAME_WIDTH / 2 - PLAYER_SIZE / 2
-// // // // //     );
+// // // // //     /*
+// // // // //      * If this is a retry, clear the
+// // // // //      * previous game-over state.
+// // // // //      */
 
 // // // // //     setGameOver(false);
+
 // // // // //     setHasWon(false);
+
+// // // // //     gameOverRef.current =
+// // // // //       false;
+
+// // // // //     hasWonRef.current =
+// // // // //       false;
+
+// // // // //     setCountdown(3);
+
+// // // // //     let count = 3;
+
+// // // // //     countdownTimerRef.current =
+// // // // //       setInterval(() => {
+// // // // //         count -= 1;
+
+// // // // //         if (count <= 0) {
+// // // // //           if (
+// // // // //             countdownTimerRef.current
+// // // // //           ) {
+// // // // //             clearInterval(
+// // // // //               countdownTimerRef.current
+// // // // //             );
+// // // // //           }
+
+// // // // //           countdownTimerRef.current =
+// // // // //             null;
+
+// // // // //           setCountdown(null);
+
+// // // // //           beginGame();
+
+// // // // //           return;
+// // // // //         }
+
+// // // // //         setCountdown(count);
+
+// // // // //         Haptics.impactAsync(
+// // // // //           Haptics.ImpactFeedbackStyle.Light
+// // // // //         );
+// // // // //       }, 700);
+// // // // //   }, [
+// // // // //     beginGame,
+// // // // //     countdown,
+// // // // //   ]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | TOUCH MOVEMENT
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const movePlayer = useCallback(
+// // // // //     (direction) => {
+// // // // //       if (
+// // // // //         !gameRunningRef.current ||
+// // // // //         gameOverRef.current ||
+// // // // //         hasWonRef.current
+// // // // //       ) {
+// // // // //         return;
+// // // // //       }
+
+// // // // //       const amount =
+// // // // //         config.playerSpeed *
+// // // // //         0.18;
+
+// // // // //       let nextX =
+// // // // //         playerXRef.current;
+
+// // // // //       if (direction === 'left') {
+// // // // //         nextX -= amount;
+// // // // //       } else {
+// // // // //         nextX += amount;
+// // // // //       }
+
+// // // // //       nextX =
+// // // // //         clampPlayerX(nextX);
+
+// // // // //       playerXRef.current =
+// // // // //         nextX;
+
+// // // // //       setPlayerPositionX(
+// // // // //         nextX
+// // // // //       );
+
+// // // // //       Haptics.impactAsync(
+// // // // //         Haptics.ImpactFeedbackStyle.Light
+// // // // //       );
+// // // // //     },
+// // // // //     [
+// // // // //       clampPlayerX,
+// // // // //       config.playerSpeed,
+// // // // //     ]
+// // // // //   );
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | ACCELEROMETER
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   useEffect(() => {
+// // // // //     let mounted = true;
+
+// // // // //     const setupAccelerometer =
+// // // // //       async () => {
+// // // // //         if (
+// // // // //           !visible ||
+// // // // //           !gameStarted ||
+// // // // //           gameOver ||
+// // // // //           hasWon
+// // // // //         ) {
+// // // // //           return;
+// // // // //         }
+
+// // // // //         try {
+// // // // //           const available =
+// // // // //             await Accelerometer.isAvailableAsync();
+
+// // // // //           if (!mounted) {
+// // // // //             return;
+// // // // //           }
+
+// // // // //           if (!available) {
+// // // // //             setSensorAvailable(false);
+// // // // //             return;
+// // // // //           }
+
+// // // // //           setSensorAvailable(true);
+
+// // // // //           Accelerometer.setUpdateInterval(
+// // // // //             50
+// // // // //           );
+
+// // // // //           sensorSubscriptionRef.current =
+// // // // //             Accelerometer.addListener(
+// // // // //               (data) => {
+// // // // //                 if (
+// // // // //                   !gameRunningRef.current
+// // // // //                 ) {
+// // // // //                   return;
+// // // // //                 }
+
+// // // // //                 /*
+// // // // //                  * Expo's accelerometer x axis
+// // // // //                  * controls horizontal movement.
+// // // // //                  */
+
+// // // // //                 movementRef.current =
+// // // // //                   data.x;
+// // // // //               }
+// // // // //             );
+// // // // //         } catch (error) {
+// // // // //           console.log(
+// // // // //             'Accelerometer error:',
+// // // // //             error
+// // // // //           );
+
+// // // // //           if (mounted) {
+// // // // //             setSensorAvailable(false);
+// // // // //           }
+// // // // //         }
+// // // // //       };
+
+// // // // //     setupAccelerometer();
+
+// // // // //     return () => {
+// // // // //       mounted = false;
+
+// // // // //       if (
+// // // // //         sensorSubscriptionRef.current
+// // // // //       ) {
+// // // // //         sensorSubscriptionRef.current.remove();
+
+// // // // //         sensorSubscriptionRef.current =
+// // // // //           null;
+// // // // //       }
+// // // // //     };
+// // // // //   }, [
+// // // // //     visible,
+// // // // //     gameStarted,
+// // // // //     gameOver,
+// // // // //     hasWon,
+// // // // //   ]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | MODAL CLEANUP
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   useEffect(() => {
+// // // // //     if (!visible) {
+// // // // //       resetGame();
+// // // // //     }
+// // // // //   }, [
+// // // // //     visible,
+// // // // //     resetGame,
+// // // // //   ]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | COMPONENT UNMOUNT CLEANUP
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   useEffect(() => {
+// // // // //     return () => {
+// // // // //       if (
+// // // // //         countdownTimerRef.current
+// // // // //       ) {
+// // // // //         clearInterval(
+// // // // //           countdownTimerRef.current
+// // // // //         );
+// // // // //       }
+
+// // // // //       if (
+// // // // //         animationFrameRef.current
+// // // // //       ) {
+// // // // //         cancelAnimationFrame(
+// // // // //           animationFrameRef.current
+// // // // //         );
+// // // // //       }
+
+// // // // //       if (
+// // // // //         sensorSubscriptionRef.current
+// // // // //       ) {
+// // // // //         sensorSubscriptionRef.current.remove();
+// // // // //       }
+// // // // //     };
+// // // // //   }, []);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | CLOSE
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const handleClose = useCallback(() => {
+// // // // //     console.log('Closebuttonpressed');
+// // // // //     console.log('FloodRunner: handleClose called');
+// // // // //     resetGame();
+// // // // //     console.log('Calling Parent onClose');
+// // // // //     console.log('FloodRunner: calling onClose');
+// // // // //     onClose();
+// // // // //   },[resetGame, onClose]);
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | CLAIM REWARD
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const handleClaimReward = () => {
+// // // // //     if (!hasWonRef.current) {
+// // // // //       return;
+// // // // //     }
+
+// // // // //     // onWin({
+// // // // //     //   xp: config.reward.xp,
+// // // // //     //   coins: config.reward.coins,
+// // // // //     // });
+// // // // //     if (typeof onWin === 'function') {
+// // // // //       onWin({
+// // // // //         xp: config.reward.xp,
+// // // // //         coins: config.reward.coins,
+// // // // //       });
+// // // // //     } else {
+// // // // //       console.warn(
+// // // // //         'FloodRunnerGameModal: onWin callback was not provided.'
+// // // // //       );
+// // // // //     }
+// // // // //     handleClose();
 // // // // //   };
 
 // // // // //   /*
-// // // // //    * ---------------------------------------------------------
-// // // // //    * RENDER
-// // // // //    * ---------------------------------------------------------
-// // // // //    */
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | PROGRESS
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
+
+// // // // //   const progressPercentage =
+// // // // //     Math.min(
+// // // // //       100,
+// // // // //       (score /
+// // // // //         config.targetScore) *
+// // // // //         100
+// // // // //     );
+
+// // // // //   /*
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   | RENDER
+// // // // //   |--------------------------------------------------------------------------
+// // // // //   */
 
 // // // // //   return (
 // // // // //     <Modal
 // // // // //       visible={visible}
 // // // // //       animationType="slide"
 // // // // //       transparent
-// // // // //       onRequestClose={onClose}
+// // // // //       onRequestClose={handleClose}
 // // // // //     >
 // // // // //       <View style={styles.modalOverlay}>
-
 // // // // //         <View
 // // // // //           style={[
 // // // // //             styles.modalContentCard,
 // // // // //             {
-// // // // //               width: Math.min(SCREEN_WIDTH - 24, 480),
+// // // // //               width:
+// // // // //                 GAME_WIDTH + 32,
 // // // // //             },
 // // // // //           ]}
 // // // // //         >
-
 // // // // //           {/* HEADER */}
 
 // // // // //           <View style={styles.modalHeader}>
-// // // // //             <View style={{ flex: 1 }}>
-// // // // //               <Text style={styles.modalTitle}>
-// // // // //                 Flash Flood Evacuation Drill
-// // // // //               </Text>
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.headerTitleArea
+// // // // //               }
+// // // // //             >
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.headerIcon
+// // // // //                 }
+// // // // //               >
+// // // // //                 <Ionicons
+// // // // //                   name="water"
+// // // // //                   size={20}
+// // // // //                   color="#38BDF8"
+// // // // //                 />
+// // // // //               </View>
 
-// // // // //               <Text style={styles.modalSubtitle}>
-// // // // //                 Reach high ground while avoiding flood debris.
-// // // // //               </Text>
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.headerTextArea
+// // // // //                 }
+// // // // //               >
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.modalTitle
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.title'
+// // // // //                   )}
+// // // // //                 </Text>
+
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.levelLabel
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.level',
+// // // // //                     {
+// // // // //                       level:
+// // // // //                         selectedLevel,
+// // // // //                     }
+// // // // //                   )}{' '}
+// // // // //                   •{' '}
+// // // // //                   {t(
+// // // // //                     config.nameKey
+// // // // //                   )}
+// // // // //                 </Text>
+// // // // //               </View>
 // // // // //             </View>
 
 // // // // //             <TouchableOpacity
-// // // // //               onPress={onClose}
-// // // // //               style={styles.closeButton}
+// // // // //               onPress={handleClose}
+// // // // //               accessibilityRole="button"
+// // // // //               accessibilityLabel={t('common.close')}
 // // // // //             >
 // // // // //               <Ionicons
 // // // // //                 name="close-circle"
-// // // // //                 size={28}
+// // // // //                 size={30}
 // // // // //                 color="#64748B"
 // // // // //               />
 // // // // //             </TouchableOpacity>
 // // // // //           </View>
 
-// // // // //           {/* INSTRUCTIONS */}
+// // // // //           {/* OBJECTIVE */}
 
-// // // // //           <View style={styles.instructionBox}>
-// // // // //             <Ionicons
-// // // // //               name="phone-portrait-outline"
-// // // // //               size={18}
-// // // // //               color="#38BDF8"
-// // // // //             />
+// // // // //           <View
+// // // // //             style={
+// // // // //               styles.objectiveCard
+// // // // //             }
+// // // // //           >
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.objectiveIcon
+// // // // //               }
+// // // // //             >
+// // // // //               <Ionicons
+// // // // //                 name="flag"
+// // // // //                 size={18}
+// // // // //                 color="#34D399"
+// // // // //               />
+// // // // //             </View>
 
-// // // // //             <Text style={styles.instructionText}>
-// // // // //               Tilt your phone left and right to move the responder.
-// // // // //               Avoid falling debris and reach 50 points.
-// // // // //             </Text>
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.objectiveTextArea
+// // // // //               }
+// // // // //             >
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.objectiveTitle
+// // // // //                 }
+// // // // //               >
+// // // // //                 {t(
+// // // // //                   'games.floodRunner.objective'
+// // // // //                 )}
+// // // // //               </Text>
+
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.objectiveText
+// // // // //                 }
+// // // // //               >
+// // // // //                 {t(
+// // // // //                   'games.floodRunner.objectiveDescription'
+// // // // //                 )}
+// // // // //               </Text>
+// // // // //             </View>
 // // // // //           </View>
 
-// // // // //           {/* GAME */}
+// // // // //           {/* INSTRUCTIONS */}
+
+// // // // //           {!gameStarted &&
+// // // // //             !gameOver &&
+// // // // //             !hasWon &&
+// // // // //             countdown === null && (
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.instructionsCard
+// // // // //                 }
+// // // // //               >
+// // // // //                 <View
+// // // // //                   style={
+// // // // //                     styles.instructionsHeader
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="help-circle"
+// // // // //                     size={20}
+// // // // //                     color="#FBBF24"
+// // // // //                   />
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.instructionsTitle
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.howToPlay'
+// // // // //                     )}
+// // // // //                   </Text>
+// // // // //                 </View>
+
+// // // // //                 <InstructionRow
+// // // // //                   icon="swap-horizontal"
+// // // // //                   text={t(
+// // // // //                     'games.floodRunner.instructions.move'
+// // // // //                   )}
+// // // // //                 />
+
+// // // // //                 <InstructionRow
+// // // // //                   icon="warning"
+// // // // //                   text={t(
+// // // // //                     'games.floodRunner.instructions.avoid'
+// // // // //                   )}
+// // // // //                 />
+
+// // // // //                 <InstructionRow
+// // // // //                   icon="water"
+// // // // //                   text={t(
+// // // // //                     'games.floodRunner.instructions.flood'
+// // // // //                   )}
+// // // // //                 />
+
+// // // // //                 <InstructionRow
+// // // // //                   icon="flag"
+// // // // //                   text={t(
+// // // // //                     'games.floodRunner.instructions.finish',
+// // // // //                     {
+// // // // //                       score:
+// // // // //                         config.targetScore,
+// // // // //                     }
+// // // // //                   )}
+// // // // //                 />
+// // // // //               </View>
+// // // // //             )}
+
+// // // // //           {/* SENSOR STATUS */}
+
+// // // // //           {gameStarted &&
+// // // // //             !gameOver &&
+// // // // //             !hasWon && (
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.sensorStatus
+// // // // //                 }
+// // // // //               >
+// // // // //                 <Ionicons
+// // // // //                   name={
+// // // // //                     sensorAvailable
+// // // // //                       ? 'phone-portrait-outline'
+// // // // //                       : 'hand-left-outline'
+// // // // //                   }
+// // // // //                   size={15}
+// // // // //                   color={
+// // // // //                     sensorAvailable
+// // // // //                       ? '#34D399'
+// // // // //                       : '#FBBF24'
+// // // // //                   }
+// // // // //                 />
+
+// // // // //                 <Text
+// // // // //                   style={[
+// // // // //                     styles.sensorText,
+// // // // //                     {
+// // // // //                       color:
+// // // // //                         sensorAvailable
+// // // // //                           ? '#34D399'
+// // // // //                           : '#FBBF24',
+// // // // //                     },
+// // // // //                   ]}
+// // // // //                 >
+// // // // //                   {sensorAvailable
+// // // // //                     ? t(
+// // // // //                         'games.floodRunner.tiltActive'
+// // // // //                       )
+// // // // //                     : t(
+// // // // //                         'games.floodRunner.touchActive'
+// // // // //                       )}
+// // // // //                 </Text>
+// // // // //               </View>
+// // // // //             )}
+
+// // // // //           {/* GAME CANVAS */}
 
 // // // // //           <View
 // // // // //             style={[
 // // // // //               styles.gameCanvas,
 // // // // //               {
-// // // // //                 width: GAME_WIDTH,
-// // // // //                 height: GAME_HEIGHT,
+// // // // //                 width:
+// // // // //                   GAME_WIDTH,
+// // // // //                 height:
+// // // // //                   GAME_HEIGHT,
 // // // // //               },
 // // // // //             ]}
 // // // // //           >
+// // // // //             {/* SAFE ZONE */}
 
-// // // // //             {/* WATER */}
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.safeZone
+// // // // //               }
+// // // // //             >
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.safeZoneIcon
+// // // // //                 }
+// // // // //               >
+// // // // //                 <Ionicons
+// // // // //                   name="shield-checkmark"
+// // // // //                   size={18}
+// // // // //                   color="#34D399"
+// // // // //                 />
+// // // // //               </View>
 
-// // // // //             <View style={styles.waterLayer} />
+// // // // //               <View>
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.safeZoneTitle
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.safeShelter'
+// // // // //                   )}
+// // // // //                 </Text>
 
-// // // // //             {/* SHELTER */}
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.safeZoneSub
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.highGround'
+// // // // //                   )}
+// // // // //                 </Text>
+// // // // //               </View>
+// // // // //             </View>
 
-// // // // //             <View style={styles.shelterLine}>
-// // // // //               <Ionicons
-// // // // //                 name="shield-checkmark"
-// // // // //                 size={14}
-// // // // //                 color="#34D399"
+// // // // //             {/* DANGER FIELD */}
+
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.dangerField
+// // // // //               }
+// // // // //             >
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.routeLine
+// // // // //                 }
 // // // // //               />
 
-// // // // //               <Text style={styles.shelterLineText}>
-// // // // //                 SAFE ELEVATED SHELTER
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.dangerText
+// // // // //                 }
+// // // // //               >
+// // // // //                 {t(
+// // // // //                   'games.floodRunner.evacuationRoute'
+// // // // //                 )}
 // // // // //               </Text>
 // // // // //             </View>
 
 // // // // //             {/* DEBRIS */}
 
-// // // // //             {!gameOver && !hasWon && (
-// // // // //               <View
-// // // // //                 style={[
-// // // // //                   styles.debrisNode,
-// // // // //                   {
-// // // // //                     left: debrisX,
-// // // // //                     top: debrisY,
-// // // // //                     width: DEBRIS_SIZE,
-// // // // //                     height: DEBRIS_SIZE,
-// // // // //                   },
-// // // // //                 ]}
-// // // // //               >
-// // // // //                 <View style={styles.debrisCircle}>
+// // // // //             {gameStarted &&
+// // // // //               !gameOver &&
+// // // // //               !hasWon &&
+// // // // //               debris.map((item) => (
+// // // // //                 <View
+// // // // //                   key={item.id}
+// // // // //                   style={[
+// // // // //                     styles.debrisNode,
+// // // // //                     {
+// // // // //                       left: item.x,
+// // // // //                       top: item.y,
+// // // // //                     },
+// // // // //                   ]}
+// // // // //                 >
 // // // // //                   <Ionicons
 // // // // //                     name="warning"
-// // // // //                     size={18}
-// // // // //                     color="#FFFFFF"
+// // // // //                     size={20}
+// // // // //                     color="#FCA5A5"
 // // // // //                   />
 // // // // //                 </View>
-// // // // //               </View>
-// // // // //             )}
+// // // // //               ))}
 
 // // // // //             {/* PLAYER */}
 
+// // // // //             {gameStarted &&
+// // // // //               !gameOver &&
+// // // // //               !hasWon && (
+// // // // //                 <View
+// // // // //                   style={[
+// // // // //                     styles.playerNode,
+// // // // //                     {
+// // // // //                       left:
+// // // // //                         playerPositionX,
+// // // // //                       bottom:
+// // // // //                         PLAYER_BOTTOM_OFFSET +
+// // // // //                         FLOOD_HEIGHT,
+// // // // //                     },
+// // // // //                   ]}
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="person"
+// // // // //                     size={25}
+// // // // //                     color="#FFFFFF"
+// // // // //                   />
+// // // // //                 </View>
+// // // // //               )}
+
+// // // // //             {/* FLOOD */}
+
 // // // // //             <View
-// // // // //               style={[
-// // // // //                 styles.playerNode,
-// // // // //                 {
-// // // // //                   left: playerPositionX,
-// // // // //                   bottom: 12,
-// // // // //                   width: PLAYER_SIZE,
-// // // // //                   height: PLAYER_SIZE,
-// // // // //                 },
-// // // // //               ]}
+// // // // //               style={
+// // // // //                 styles.floodLayer
+// // // // //               }
 // // // // //             >
-// // // // //               <View style={styles.playerCircle}>
-// // // // //                 <Ionicons
-// // // // //                   name="person"
-// // // // //                   size={21}
-// // // // //                   color="#020617"
-// // // // //                 />
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.waveContainer
+// // // // //                 }
+// // // // //               >
+// // // // //                 {Array.from({
+// // // // //                   length: 12,
+// // // // //                 }).map(
+// // // // //                   (_, index) => (
+// // // // //                     <Text
+// // // // //                       key={index}
+// // // // //                       style={
+// // // // //                         styles.wave
+// // // // //                       }
+// // // // //                     >
+// // // // //                       ~
+// // // // //                     </Text>
+// // // // //                   )
+// // // // //                 )}
 // // // // //               </View>
+
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.floodLabel
+// // // // //                 }
+// // // // //               >
+// // // // //                 {t(
+// // // // //                   'games.floodRunner.floodZone'
+// // // // //                 )}
+// // // // //               </Text>
 // // // // //             </View>
+
+// // // // //             {/* COUNTDOWN */}
+
+// // // // //             {countdown !== null && (
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.countdownOverlay
+// // // // //                 }
+// // // // //               >
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.countdownNumber
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {countdown}
+// // // // //                 </Text>
+
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.countdownText
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.getReady'
+// // // // //                   )}
+// // // // //                 </Text>
+// // // // //               </View>
+// // // // //             )}
+
+// // // // //             {/* START SCREEN */}
+
+// // // // //             {!gameStarted &&
+// // // // //               countdown === null &&
+// // // // //               !gameOver &&
+// // // // //               !hasWon && (
+// // // // //                 <View
+// // // // //                   style={
+// // // // //                     styles.startOverlay
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <View
+// // // // //                     style={
+// // // // //                       styles.startIcon
+// // // // //                     }
+// // // // //                   >
+// // // // //                     <Ionicons
+// // // // //                       name="walk"
+// // // // //                       size={34}
+// // // // //                       color="#38BDF8"
+// // // // //                     />
+// // // // //                   </View>
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.startTitle
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.ready'
+// // // // //                     )}
+// // // // //                   </Text>
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.startDescription
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.startDescription'
+// // // // //                     )}
+// // // // //                   </Text>
+
+// // // // //                   <TouchableOpacity
+// // // // //                     style={
+// // // // //                       styles.startButton
+// // // // //                     }
+// // // // //                     onPress={
+// // // // //                       startGame
+// // // // //                     }
+// // // // //                     activeOpacity={
+// // // // //                       0.8
+// // // // //                     }
+// // // // //                   >
+// // // // //                     <Ionicons
+// // // // //                       name="play"
+// // // // //                       size={18}
+// // // // //                       color="#FFFFFF"
+// // // // //                     />
+
+// // // // //                     <Text
+// // // // //                       style={
+// // // // //                         styles.startButtonText
+// // // // //                       }
+// // // // //                     >
+// // // // //                       {t(
+// // // // //                         'games.floodRunner.start'
+// // // // //                       )}
+// // // // //                     </Text>
+// // // // //                   </TouchableOpacity>
+// // // // //                 </View>
+// // // // //               )}
 
 // // // // //             {/* GAME OVER */}
 
 // // // // //             {gameOver && (
-// // // // //               <View style={styles.endGameOverlay}>
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.endGameOverlay
+// // // // //                 }
+// // // // //               >
+// // // // //                 <View
+// // // // //                   style={[
+// // // // //                     styles.resultIcon,
+// // // // //                     {
+// // // // //                       backgroundColor:
+// // // // //                         '#450A0A',
+// // // // //                     },
+// // // // //                   ]}
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="warning"
+// // // // //                     size={34}
+// // // // //                     color="#EF4444"
+// // // // //                   />
+// // // // //                 </View>
 
-// // // // //                 <Ionicons
-// // // // //                   name="warning"
-// // // // //                   size={38}
-// // // // //                   color="#EF4444"
-// // // // //                 />
-
-// // // // //                 <Text style={styles.gameOverTitle}>
-// // // // //                   Trapped by Water!
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.gameOverTitle
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.failed'
+// // // // //                   )}
 // // // // //                 </Text>
 
-// // // // //                 <Text style={styles.gameOverText}>
-// // // // //                   Avoid the debris and try again.
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.gameOverText
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.failedDescription'
+// // // // //                   )}
+// // // // //                 </Text>
+
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.finalScore
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {score} /{' '}
+// // // // //                   {config.targetScore}
 // // // // //                 </Text>
 
 // // // // //                 <TouchableOpacity
-// // // // //                   style={styles.retryBtn}
-// // // // //                   onPress={restartGame}
+// // // // //                   style={
+// // // // //                     styles.retryButton
+// // // // //                   }
+// // // // //                   onPress={
+// // // // //                     startGame
+// // // // //                   }
+// // // // //                   activeOpacity={
+// // // // //                     0.8
+// // // // //                   }
 // // // // //                 >
 // // // // //                   <Ionicons
 // // // // //                     name="refresh"
-// // // // //                     size={16}
+// // // // //                     size={18}
 // // // // //                     color="#FFFFFF"
 // // // // //                   />
 
-// // // // //                   <Text style={styles.retryText}>
-// // // // //                     Retry Drill
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.buttonText
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.retry'
+// // // // //                     )}
 // // // // //                   </Text>
 // // // // //                 </TouchableOpacity>
-
 // // // // //               </View>
 // // // // //             )}
 
 // // // // //             {/* WIN */}
 
 // // // // //             {hasWon && (
-// // // // //               <View style={styles.endGameOverlay}>
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.endGameOverlay
+// // // // //                 }
+// // // // //               >
+// // // // //                 <View
+// // // // //                   style={[
+// // // // //                     styles.resultIcon,
+// // // // //                     {
+// // // // //                       backgroundColor:
+// // // // //                         '#064E3B',
+// // // // //                     },
+// // // // //                   ]}
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="shield-checkmark"
+// // // // //                     size={36}
+// // // // //                     color="#10B981"
+// // // // //                   />
+// // // // //                 </View>
 
-// // // // //                 <Ionicons
-// // // // //                   name="checkmark-circle"
-// // // // //                   size={42}
-// // // // //                   color="#34D399"
-// // // // //                 />
-
-// // // // //                 <Text style={styles.winTitle}>
-// // // // //                   Reached High Ground!
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.successTitle
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.success'
+// // // // //                   )}
 // // // // //                 </Text>
 
-// // // // //                 <Text style={styles.gameOverText}>
-// // // // //                   You successfully completed the evacuation drill.
+// // // // //                 <Text
+// // // // //                   style={
+// // // // //                     styles.gameOverText
+// // // // //                   }
+// // // // //                 >
+// // // // //                   {t(
+// // // // //                     'games.floodRunner.successDescription'
+// // // // //                   )}
 // // // // //                 </Text>
+
+// // // // //                 <View
+// // // // //                   style={
+// // // // //                     styles.rewardRow
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <Reward
+// // // // //                     icon="flash"
+// // // // //                     value={`+${config.reward.xp}`}
+// // // // //                     label={t(
+// // // // //                       'games.floodRunner.xp'
+// // // // //                     )}
+// // // // //                   />
+
+// // // // //                   <Reward
+// // // // //                     icon="cash"
+// // // // //                     value={`+${config.reward.coins}`}
+// // // // //                     label={t(
+// // // // //                       'games.floodRunner.coins'
+// // // // //                     )}
+// // // // //                   />
+// // // // //                 </View>
 
 // // // // //                 <TouchableOpacity
-// // // // //                   style={styles.claimRewardBtn}
-// // // // //                   onPress={() => {
-// // // // //                     onWin({
-// // // // //                       xp: 100,
-// // // // //                       coins: 25,
-// // // // //                     });
-
-// // // // //                     onClose();
-// // // // //                   }}
+// // // // //                   style={
+// // // // //                     styles.claimRewardButton
+// // // // //                   }
+// // // // //                   onPress={
+// // // // //                     handleClaimReward
+// // // // //                   }
+// // // // //                   activeOpacity={
+// // // // //                     0.8
+// // // // //                   }
 // // // // //                 >
-// // // // //                   <Text style={styles.claimRewardText}>
-// // // // //                     Claim +100 XP & +25 Coins
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.buttonText
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.claimReward'
+// // // // //                     )}
 // // // // //                   </Text>
 // // // // //                 </TouchableOpacity>
-
 // // // // //               </View>
 // // // // //             )}
-
 // // // // //           </View>
 
-// // // // //           {/* HUD */}
+// // // // //           {/* SCORE */}
 
-// // // // //           <View style={styles.gameHud}>
+// // // // //           <View
+// // // // //             style={styles.gameHud}
+// // // // //           >
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.scoreHeader
+// // // // //               }
+// // // // //             >
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.scoreLabel
+// // // // //                 }
+// // // // //               >
+// // // // //                 {t(
+// // // // //                   'games.floodRunner.score'
+// // // // //                 )}
+// // // // //               </Text>
 
-// // // // //             <View style={styles.scoreBox}>
-// // // // //               <Ionicons
-// // // // //                 name="trophy"
-// // // // //                 size={16}
-// // // // //                 color="#FBBF24"
-// // // // //               />
-
-// // // // //               <Text style={styles.scoreText}>
-// // // // //                 {score} / 50
+// // // // //               <Text
+// // // // //                 style={
+// // // // //                   styles.scoreValue
+// // // // //                 }
+// // // // //               >
+// // // // //                 {score} /{' '}
+// // // // //                 {config.targetScore}
 // // // // //               </Text>
 // // // // //             </View>
 
-// // // // //             <Text style={styles.scoreLabel}>
-// // // // //               EVACUATION SCORE
-// // // // //             </Text>
-
+// // // // //             <View
+// // // // //               style={
+// // // // //                 styles.progressBackground
+// // // // //               }
+// // // // //             >
+// // // // //               <View
+// // // // //                 style={[
+// // // // //                   styles.progressFill,
+// // // // //                   {
+// // // // //                     width: `${progressPercentage}%`,
+// // // // //                   },
+// // // // //                 ]}
+// // // // //               />
+// // // // //             </View>
 // // // // //           </View>
 
-// // // // //         </View>
+// // // // //           {/* CONTROLS */}
 
+// // // // //           {gameStarted &&
+// // // // //             !gameOver &&
+// // // // //             !hasWon && (
+// // // // //               <View
+// // // // //                 style={
+// // // // //                   styles.controls
+// // // // //                 }
+// // // // //               >
+// // // // //                 <TouchableOpacity
+// // // // //                   style={
+// // // // //                     styles.controlButton
+// // // // //                   }
+// // // // //                   onPress={() =>
+// // // // //                     movePlayer(
+// // // // //                       'left'
+// // // // //                     )
+// // // // //                   }
+// // // // //                   activeOpacity={
+// // // // //                     0.7
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="arrow-back"
+// // // // //                     size={24}
+// // // // //                     color="#FFFFFF"
+// // // // //                   />
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.controlText
+// // // // //                     }
+// // // // //                     numberOfLines={
+// // // // //                       2
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.left'
+// // // // //                     )}
+// // // // //                   </Text>
+// // // // //                 </TouchableOpacity>
+
+// // // // //                 <View
+// // // // //                   style={
+// // // // //                     styles.controlHint
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name={
+// // // // //                       sensorAvailable
+// // // // //                         ? 'phone-portrait-outline'
+// // // // //                         : 'hand-left-outline'
+// // // // //                     }
+// // // // //                     size={21}
+// // // // //                     color="#38BDF8"
+// // // // //                   />
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.controlHintText
+// // // // //                     }
+// // // // //                     numberOfLines={
+// // // // //                       2
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {sensorAvailable
+// // // // //                       ? t(
+// // // // //                           'games.floodRunner.tilt'
+// // // // //                         )
+// // // // //                       : t(
+// // // // //                           'games.floodRunner.touch'
+// // // // //                         )}
+// // // // //                   </Text>
+// // // // //                 </View>
+
+// // // // //                 <TouchableOpacity
+// // // // //                   style={
+// // // // //                     styles.controlButton
+// // // // //                   }
+// // // // //                   onPress={() =>
+// // // // //                     movePlayer(
+// // // // //                       'right'
+// // // // //                     )
+// // // // //                   }
+// // // // //                   activeOpacity={
+// // // // //                     0.7
+// // // // //                   }
+// // // // //                 >
+// // // // //                   <Ionicons
+// // // // //                     name="arrow-forward"
+// // // // //                     size={24}
+// // // // //                     color="#FFFFFF"
+// // // // //                   />
+
+// // // // //                   <Text
+// // // // //                     style={
+// // // // //                       styles.controlText
+// // // // //                     }
+// // // // //                     numberOfLines={
+// // // // //                       2
+// // // // //                     }
+// // // // //                   >
+// // // // //                     {t(
+// // // // //                       'games.floodRunner.right'
+// // // // //                     )}
+// // // // //                   </Text>
+// // // // //                 </TouchableOpacity>
+// // // // //               </View>
+// // // // //             )}
+// // // // //         </View>
 // // // // //       </View>
 // // // // //     </Modal>
 // // // // //   );
 // // // // // }
 
-// // // // // const styles = StyleSheet.create({
+// // // // // /*
+// // // // // |--------------------------------------------------------------------------
+// // // // // | INSTRUCTION ROW
+// // // // // |--------------------------------------------------------------------------
+// // // // // */
 
+// // // // // function InstructionRow({
+// // // // //   icon,
+// // // // //   text,
+// // // // // }) {
+// // // // //   return (
+// // // // //     <View
+// // // // //       style={
+// // // // //         styles.instructionRow
+// // // // //       }
+// // // // //     >
+// // // // //       <View
+// // // // //         style={
+// // // // //           styles.instructionIcon
+// // // // //         }
+// // // // //       >
+// // // // //         <Ionicons
+// // // // //           name={icon}
+// // // // //           size={16}
+// // // // //           color="#38BDF8"
+// // // // //         />
+// // // // //       </View>
+
+// // // // //       <Text
+// // // // //         style={
+// // // // //           styles.instructionText
+// // // // //         }
+// // // // //       >
+// // // // //         {text}
+// // // // //       </Text>
+// // // // //     </View>
+// // // // //   );
+// // // // // }
+
+// // // // // /*
+// // // // // |--------------------------------------------------------------------------
+// // // // // | REWARD
+// // // // // |--------------------------------------------------------------------------
+// // // // // */
+
+// // // // // function Reward({
+// // // // //   icon,
+// // // // //   value,
+// // // // //   label,
+// // // // // }) {
+// // // // //   return (
+// // // // //     <View
+// // // // //       style={styles.reward}
+// // // // //     >
+// // // // //       <Ionicons
+// // // // //         name={icon}
+// // // // //         size={18}
+// // // // //         color="#FBBF24"
+// // // // //       />
+
+// // // // //       <Text
+// // // // //         style={
+// // // // //           styles.rewardValue
+// // // // //         }
+// // // // //       >
+// // // // //         {value}
+// // // // //       </Text>
+
+// // // // //       <Text
+// // // // //         style={
+// // // // //           styles.rewardLabel
+// // // // //         }
+// // // // //       >
+// // // // //         {label}
+// // // // //       </Text>
+// // // // //     </View>
+// // // // //   );
+// // // // // }
+
+// // // // // /*
+// // // // // |--------------------------------------------------------------------------
+// // // // // | STYLES
+// // // // // |--------------------------------------------------------------------------
+// // // // // */
+
+// // // // // const styles = StyleSheet.create({
 // // // // //   modalOverlay: {
 // // // // //     flex: 1,
-// // // // //     backgroundColor: 'rgba(2, 6, 23, 0.88)',
+// // // // //     backgroundColor:
+// // // // //       'rgba(2, 6, 23, 0.94)',
 // // // // //     justifyContent: 'center',
 // // // // //     alignItems: 'center',
 // // // // //     padding: 12,
@@ -640,15 +5919,39 @@
 // // // // //     backgroundColor: '#0F172A',
 // // // // //     borderWidth: 1,
 // // // // //     borderColor: '#1E293B',
-// // // // //     borderRadius: 20,
+// // // // //     borderRadius: 22,
 // // // // //     padding: 16,
-// // // // //     maxHeight: '92%',
+// // // // //     maxWidth: 400,
+// // // // //     maxHeight: '96%',
 // // // // //   },
 
 // // // // //   modalHeader: {
 // // // // //     flexDirection: 'row',
-// // // // //     alignItems: 'flex-start',
+// // // // //     justifyContent:
+// // // // //       'space-between',
+// // // // //     alignItems: 'center',
 // // // // //     marginBottom: 10,
+// // // // //   },
+
+// // // // //   headerTitleArea: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     flex: 1,
+// // // // //     marginRight: 10,
+// // // // //   },
+
+// // // // //   headerIcon: {
+// // // // //     width: 38,
+// // // // //     height: 38,
+// // // // //     borderRadius: 12,
+// // // // //     backgroundColor: '#082F49',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginRight: 10,
+// // // // //   },
+
+// // // // //   headerTextArea: {
+// // // // //     flex: 1,
 // // // // //   },
 
 // // // // //   modalTitle: {
@@ -657,635 +5960,2051 @@
 // // // // //     fontWeight: '900',
 // // // // //   },
 
-// // // // //   modalSubtitle: {
-// // // // //     color: '#64748B',
+// // // // //   levelLabel: {
+// // // // //     color: '#38BDF8',
 // // // // //     fontSize: 11,
+// // // // //     fontWeight: '800',
 // // // // //     marginTop: 3,
 // // // // //   },
 
-// // // // //   closeButton: {
-// // // // //     marginLeft: 10,
-// // // // //   },
-
-// // // // //   instructionBox: {
+// // // // //   objectiveCard: {
 // // // // //     flexDirection: 'row',
 // // // // //     alignItems: 'center',
-// // // // //     backgroundColor: '#082F49',
+// // // // //     backgroundColor: '#052E16',
 // // // // //     borderWidth: 1,
-// // // // //     borderColor: '#075985',
+// // // // //     borderColor: '#166534',
+// // // // //     borderRadius: 13,
+// // // // //     padding: 11,
+// // // // //     marginBottom: 10,
+// // // // //   },
+
+// // // // //   objectiveIcon: {
+// // // // //     width: 32,
+// // // // //     height: 32,
 // // // // //     borderRadius: 10,
-// // // // //     padding: 9,
-// // // // //     marginBottom: 12,
-// // // // //     gap: 8,
+// // // // //     backgroundColor: '#064E3B',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginRight: 10,
+// // // // //   },
+
+// // // // //   objectiveTextArea: {
+// // // // //     flex: 1,
+// // // // //   },
+
+// // // // //   objectiveTitle: {
+// // // // //     color: '#34D399',
+// // // // //     fontSize: 11,
+// // // // //     fontWeight: '900',
+// // // // //     textTransform: 'uppercase',
+// // // // //   },
+
+// // // // //   objectiveText: {
+// // // // //     color: '#A7F3D0',
+// // // // //     fontSize: 11,
+// // // // //     lineHeight: 16,
+// // // // //     marginTop: 2,
+// // // // //   },
+
+// // // // //   instructionsCard: {
+// // // // //     backgroundColor: '#111827',
+// // // // //     borderWidth: 1,
+// // // // //     borderColor: '#334155',
+// // // // //     borderRadius: 14,
+// // // // //     padding: 13,
+// // // // //     marginBottom: 10,
+// // // // //   },
+
+// // // // //   instructionsHeader: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     marginBottom: 8,
+// // // // //   },
+
+// // // // //   instructionsTitle: {
+// // // // //     color: '#FFFFFF',
+// // // // //     fontSize: 13,
+// // // // //     fontWeight: '900',
+// // // // //     marginLeft: 7,
+// // // // //   },
+
+// // // // //   instructionRow: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'flex-start',
+// // // // //     marginTop: 7,
+// // // // //   },
+
+// // // // //   instructionIcon: {
+// // // // //     width: 25,
+// // // // //     height: 25,
+// // // // //     borderRadius: 8,
+// // // // //     backgroundColor: '#082F49',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginRight: 8,
 // // // // //   },
 
 // // // // //   instructionText: {
 // // // // //     flex: 1,
-// // // // //     color: '#BAE6FD',
+// // // // //     color: '#CBD5E1',
+// // // // //     fontSize: 11,
+// // // // //     lineHeight: 17,
+// // // // //     paddingTop: 3,
+// // // // //   },
+
+// // // // //   sensorStatus: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     alignSelf: 'flex-start',
+// // // // //     backgroundColor: '#020617',
+// // // // //     paddingHorizontal: 9,
+// // // // //     paddingVertical: 5,
+// // // // //     borderRadius: 8,
+// // // // //     marginBottom: 8,
+// // // // //   },
+
+// // // // //   sensorText: {
 // // // // //     fontSize: 10,
-// // // // //     lineHeight: 15,
+// // // // //     fontWeight: '800',
+// // // // //     marginLeft: 6,
 // // // // //   },
 
 // // // // //   gameCanvas: {
 // // // // //     backgroundColor: '#020617',
-// // // // //     borderRadius: 14,
+// // // // //     borderRadius: 16,
 // // // // //     borderWidth: 1,
 // // // // //     borderColor: '#1E293B',
 // // // // //     position: 'relative',
 // // // // //     overflow: 'hidden',
 // // // // //   },
 
-// // // // //   waterLayer: {
-// // // // //     position: 'absolute',
-// // // // //     left: 0,
-// // // // //     right: 0,
-// // // // //     bottom: 0,
-// // // // //     height: '32%',
-// // // // //     backgroundColor: '#082F49',
-// // // // //     opacity: 0.75,
-// // // // //   },
-
-// // // // //   shelterLine: {
+// // // // //   safeZone: {
 // // // // //     position: 'absolute',
 // // // // //     top: 0,
 // // // // //     left: 0,
 // // // // //     right: 0,
+// // // // //     height: SAFE_ZONE_HEIGHT,
 // // // // //     backgroundColor: '#064E3B',
-// // // // //     paddingVertical: 7,
-// // // // //     alignItems: 'center',
-// // // // //     justifyContent: 'center',
-// // // // //     flexDirection: 'row',
-// // // // //     gap: 6,
 // // // // //     borderBottomWidth: 1,
 // // // // //     borderBottomColor: '#10B981',
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     paddingHorizontal: 14,
+// // // // //     zIndex: 4,
 // // // // //   },
 
-// // // // //   shelterLineText: {
-// // // // //     color: '#34D399',
-// // // // //     fontSize: 9,
+// // // // //   safeZoneIcon: {
+// // // // //     width: 34,
+// // // // //     height: 34,
+// // // // //     borderRadius: 10,
+// // // // //     backgroundColor: '#065F46',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginRight: 9,
+// // // // //   },
+
+// // // // //   safeZoneTitle: {
+// // // // //     color: '#D1FAE5',
+// // // // //     fontSize: 11,
 // // // // //     fontWeight: '900',
 // // // // //     letterSpacing: 0.5,
 // // // // //   },
 
-// // // // //   playerNode: {
-// // // // //     position: 'absolute',
-// // // // //     justifyContent: 'center',
-// // // // //     alignItems: 'center',
+// // // // //   safeZoneSub: {
+// // // // //     color: '#6EE7B7',
+// // // // //     fontSize: 9,
+// // // // //     fontWeight: '700',
+// // // // //     marginTop: 2,
 // // // // //   },
 
-// // // // //   playerCircle: {
-// // // // //     width: 34,
-// // // // //     height: 34,
-// // // // //     borderRadius: 17,
-// // // // //     backgroundColor: '#38BDF8',
-// // // // //     borderWidth: 2,
-// // // // //     borderColor: '#FFFFFF',
-// // // // //     justifyContent: 'center',
+// // // // //   dangerField: {
+// // // // //     position: 'absolute',
+// // // // //     top: SAFE_ZONE_HEIGHT,
+// // // // //     bottom: FLOOD_HEIGHT,
+// // // // //     left: 0,
+// // // // //     right: 0,
 // // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //   },
+
+// // // // //   routeLine: {
+// // // // //     position: 'absolute',
+// // // // //     width: 2,
+// // // // //     height: '100%',
+// // // // //     backgroundColor: '#1E293B',
+// // // // //     opacity: 0.8,
+// // // // //   },
+
+// // // // //   dangerText: {
+// // // // //     color: '#334155',
+// // // // //     fontSize: 8,
+// // // // //     fontWeight: '900',
+// // // // //     letterSpacing: 1.5,
+// // // // //     transform: [
+// // // // //       {
+// // // // //         rotate: '-90deg',
+// // // // //       },
+// // // // //     ],
 // // // // //   },
 
 // // // // //   debrisNode: {
 // // // // //     position: 'absolute',
-// // // // //     justifyContent: 'center',
+// // // // //     width: DEBRIS_SIZE,
+// // // // //     height: DEBRIS_SIZE,
+// // // // //     borderRadius:
+// // // // //       DEBRIS_SIZE / 2,
+// // // // //     backgroundColor: '#450A0A',
+// // // // //     borderWidth: 1,
+// // // // //     borderColor: '#EF4444',
 // // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     zIndex: 5,
 // // // // //   },
 
-// // // // //   debrisCircle: {
-// // // // //     width: 28,
-// // // // //     height: 28,
-// // // // //     borderRadius: 14,
-// // // // //     backgroundColor: '#EF4444',
+// // // // //   playerNode: {
+// // // // //     position: 'absolute',
+// // // // //     width: PLAYER_SIZE,
+// // // // //     height: PLAYER_SIZE,
+// // // // //     borderRadius:
+// // // // //       PLAYER_SIZE / 2,
+// // // // //     backgroundColor: '#2563EB',
 // // // // //     borderWidth: 2,
-// // // // //     borderColor: '#FCA5A5',
+// // // // //     borderColor: '#60A5FA',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     zIndex: 6,
+// // // // //   },
+
+// // // // //   floodLayer: {
+// // // // //     position: 'absolute',
+// // // // //     bottom: 0,
+// // // // //     left: 0,
+// // // // //     right: 0,
+// // // // //     height: FLOOD_HEIGHT,
+// // // // //     backgroundColor: '#075985',
+// // // // //     borderTopWidth: 1,
+// // // // //     borderTopColor: '#38BDF8',
 // // // // //     justifyContent: 'center',
 // // // // //     alignItems: 'center',
+// // // // //     zIndex: 3,
 // // // // //   },
 
-// // // // //   gameHud: {
-// // // // //     marginTop: 10,
-// // // // //     alignItems: 'center',
-// // // // //   },
-
-// // // // //   scoreBox: {
+// // // // //   waveContainer: {
+// // // // //     position: 'absolute',
+// // // // //     top: -13,
+// // // // //     left: 0,
+// // // // //     right: 0,
 // // // // //     flexDirection: 'row',
-// // // // //     alignItems: 'center',
-// // // // //     gap: 6,
+// // // // //     justifyContent:
+// // // // //       'space-around',
 // // // // //   },
 
-// // // // //   scoreText: {
+// // // // //   wave: {
+// // // // //     color: '#38BDF8',
+// // // // //     fontSize: 24,
+// // // // //     fontWeight: '900',
+// // // // //   },
+
+// // // // //   floodLabel: {
+// // // // //     color: '#BAE6FD',
+// // // // //     fontSize: 9,
+// // // // //     fontWeight: '900',
+// // // // //     letterSpacing: 2,
+// // // // //     marginTop: 12,
+// // // // //   },
+
+// // // // //   startOverlay: {
+// // // // //     position: 'absolute',
+// // // // //     top: SAFE_ZONE_HEIGHT,
+// // // // //     bottom: FLOOD_HEIGHT,
+// // // // //     left: 0,
+// // // // //     right: 0,
+// // // // //     backgroundColor:
+// // // // //       'rgba(2, 6, 23, 0.94)',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     padding: 24,
+// // // // //     zIndex: 20,
+// // // // //   },
+
+// // // // //   startIcon: {
+// // // // //     width: 62,
+// // // // //     height: 62,
+// // // // //     borderRadius: 20,
+// // // // //     backgroundColor: '#082F49',
+// // // // //     borderWidth: 1,
+// // // // //     borderColor: '#0369A1',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginBottom: 12,
+// // // // //   },
+
+// // // // //   startTitle: {
 // // // // //     color: '#FFFFFF',
 // // // // //     fontSize: 20,
 // // // // //     fontWeight: '900',
+// // // // //     textAlign: 'center',
 // // // // //   },
 
-// // // // //   scoreLabel: {
-// // // // //     color: '#64748B',
-// // // // //     fontSize: 8,
+// // // // //   startDescription: {
+// // // // //     color: '#94A3B8',
+// // // // //     fontSize: 12,
+// // // // //     lineHeight: 18,
+// // // // //     textAlign: 'center',
+// // // // //     marginTop: 6,
+// // // // //     maxWidth: 250,
+// // // // //   },
+
+// // // // //   startButton: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     backgroundColor: '#0284C7',
+// // // // //     borderRadius: 12,
+// // // // //     minHeight: 48,
+// // // // //     paddingHorizontal: 22,
+// // // // //     marginTop: 16,
+// // // // //   },
+
+// // // // //   startButtonText: {
+// // // // //     color: '#FFFFFF',
+// // // // //     fontSize: 13,
 // // // // //     fontWeight: '900',
-// // // // //     letterSpacing: 1,
+// // // // //     marginLeft: 7,
+// // // // //   },
+
+// // // // //   countdownOverlay: {
+// // // // //     position: 'absolute',
+// // // // //     top: SAFE_ZONE_HEIGHT,
+// // // // //     bottom: FLOOD_HEIGHT,
+// // // // //     left: 0,
+// // // // //     right: 0,
+// // // // //     backgroundColor:
+// // // // //       'rgba(2, 6, 23, 0.85)',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     zIndex: 30,
+// // // // //   },
+
+// // // // //   countdownNumber: {
+// // // // //     color: '#38BDF8',
+// // // // //     fontSize: 64,
+// // // // //     fontWeight: '900',
+// // // // //   },
+
+// // // // //   countdownText: {
+// // // // //     color: '#CBD5E1',
+// // // // //     fontSize: 12,
+// // // // //     fontWeight: '800',
 // // // // //     marginTop: 2,
 // // // // //   },
 
 // // // // //   endGameOverlay: {
 // // // // //     position: 'absolute',
-// // // // //     top: 50,
-// // // // //     bottom: 20,
-// // // // //     left: 16,
-// // // // //     right: 16,
-// // // // //     backgroundColor: 'rgba(15, 23, 42, 0.96)',
+// // // // //     top: SAFE_ZONE_HEIGHT,
+// // // // //     bottom: FLOOD_HEIGHT,
+// // // // //     left: 12,
+// // // // //     right: 12,
+// // // // //     backgroundColor:
+// // // // //       'rgba(15, 23, 42, 0.97)',
 // // // // //     borderWidth: 1,
 // // // // //     borderColor: '#334155',
 // // // // //     borderRadius: 18,
-// // // // //     justifyContent: 'center',
 // // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
 // // // // //     padding: 20,
+// // // // //     zIndex: 30,
+// // // // //   },
+
+// // // // //   resultIcon: {
+// // // // //     width: 64,
+// // // // //     height: 64,
+// // // // //     borderRadius: 20,
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginBottom: 10,
 // // // // //   },
 
 // // // // //   gameOverTitle: {
 // // // // //     color: '#EF4444',
 // // // // //     fontWeight: '900',
-// // // // //     fontSize: 19,
-// // // // //     marginTop: 8,
+// // // // //     fontSize: 20,
+// // // // //     textAlign: 'center',
 // // // // //   },
 
-// // // // //   winTitle: {
-// // // // //     color: '#34D399',
+// // // // //   successTitle: {
+// // // // //     color: '#10B981',
 // // // // //     fontWeight: '900',
-// // // // //     fontSize: 19,
-// // // // //     marginTop: 8,
+// // // // //     fontSize: 20,
+// // // // //     textAlign: 'center',
 // // // // //   },
 
 // // // // //   gameOverText: {
 // // // // //     color: '#94A3B8',
 // // // // //     fontSize: 11,
 // // // // //     textAlign: 'center',
-// // // // //     marginTop: 5,
+// // // // //     lineHeight: 17,
+// // // // //     marginTop: 7,
+// // // // //     maxWidth: 250,
 // // // // //   },
 
-// // // // //   retryBtn: {
-// // // // //     backgroundColor: '#EF4444',
-// // // // //     paddingVertical: 10,
-// // // // //     paddingHorizontal: 18,
-// // // // //     borderRadius: 10,
-// // // // //     marginTop: 14,
+// // // // //   finalScore: {
+// // // // //     color: '#FFFFFF',
+// // // // //     fontSize: 24,
+// // // // //     fontWeight: '900',
+// // // // //     marginTop: 12,
+// // // // //   },
+
+// // // // //   retryButton: {
 // // // // //     flexDirection: 'row',
 // // // // //     alignItems: 'center',
-// // // // //     gap: 6,
+// // // // //     justifyContent: 'center',
+// // // // //     backgroundColor: '#DC2626',
+// // // // //     minHeight: 44,
+// // // // //     paddingHorizontal: 20,
+// // // // //     borderRadius: 11,
+// // // // //     marginTop: 14,
 // // // // //   },
 
-// // // // //   retryText: {
+// // // // //   claimRewardButton: {
+// // // // //     backgroundColor: '#059669',
+// // // // //     minHeight: 46,
+// // // // //     paddingHorizontal: 22,
+// // // // //     borderRadius: 11,
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     marginTop: 14,
+// // // // //   },
+
+// // // // //   buttonText: {
 // // // // //     color: '#FFFFFF',
-// // // // //     fontWeight: '800',
+// // // // //     fontWeight: '900',
 // // // // //     fontSize: 12,
 // // // // //   },
 
-// // // // //   claimRewardBtn: {
-// // // // //     backgroundColor: '#10B981',
-// // // // //     paddingVertical: 12,
-// // // // //     paddingHorizontal: 20,
-// // // // //     borderRadius: 12,
-// // // // //     alignItems: 'center',
+// // // // //   rewardRow: {
+// // // // //     flexDirection: 'row',
 // // // // //     marginTop: 14,
+// // // // //     gap: 10,
 // // // // //   },
 
-// // // // //   claimRewardText: {
-// // // // //     color: '#FFFFFF',
+// // // // //   reward: {
+// // // // //     minWidth: 78,
+// // // // //     backgroundColor: '#111827',
+// // // // //     borderWidth: 1,
+// // // // //     borderColor: '#334155',
+// // // // //     borderRadius: 10,
+// // // // //     paddingVertical: 8,
+// // // // //     paddingHorizontal: 10,
+// // // // //     alignItems: 'center',
+// // // // //   },
+
+// // // // //   rewardValue: {
+// // // // //     color: '#FBBF24',
+// // // // //     fontSize: 16,
 // // // // //     fontWeight: '900',
-// // // // //     fontSize: 13,
+// // // // //     marginTop: 2,
+// // // // //   },
+
+// // // // //   rewardLabel: {
+// // // // //     color: '#64748B',
+// // // // //     fontSize: 8,
+// // // // //     fontWeight: '800',
+// // // // //     marginTop: 1,
+// // // // //   },
+
+// // // // //   gameHud: {
+// // // // //     marginTop: 10,
+// // // // //   },
+
+// // // // //   scoreHeader: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent:
+// // // // //       'space-between',
+// // // // //   },
+
+// // // // //   scoreLabel: {
+// // // // //     color: '#64748B',
+// // // // //     fontSize: 9,
+// // // // //     fontWeight: '900',
+// // // // //     letterSpacing: 1,
+// // // // //   },
+
+// // // // //   scoreValue: {
+// // // // //     color: '#FFFFFF',
+// // // // //     fontSize: 16,
+// // // // //     fontWeight: '900',
+// // // // //   },
+
+// // // // //   progressBackground: {
+// // // // //     height: 6,
+// // // // //     width: '100%',
+// // // // //     backgroundColor: '#1E293B',
+// // // // //     borderRadius: 3,
+// // // // //     overflow: 'hidden',
+// // // // //     marginTop: 5,
+// // // // //   },
+
+// // // // //   progressFill: {
+// // // // //     height: '100%',
+// // // // //     backgroundColor: '#38BDF8',
+// // // // //     borderRadius: 3,
+// // // // //   },
+
+// // // // //   controls: {
+// // // // //     flexDirection: 'row',
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent:
+// // // // //       'space-between',
+// // // // //     marginTop: 11,
+// // // // //     gap: 8,
+// // // // //   },
+
+// // // // //   controlButton: {
+// // // // //     flex: 1,
+// // // // //     minHeight: 54,
+// // // // //     backgroundColor: '#1E3A8A',
+// // // // //     borderWidth: 1,
+// // // // //     borderColor: '#3B82F6',
+// // // // //     borderRadius: 13,
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //     paddingHorizontal: 5,
+// // // // //   },
+
+// // // // //   controlText: {
+// // // // //     color: '#BFDBFE',
+// // // // //     fontSize: 8,
+// // // // //     fontWeight: '900',
+// // // // //     marginTop: 2,
+// // // // //     textAlign: 'center',
+// // // // //   },
+
+// // // // //   controlHint: {
+// // // // //     width: 54,
+// // // // //     alignItems: 'center',
+// // // // //     justifyContent: 'center',
+// // // // //   },
+
+// // // // //   controlHintText: {
+// // // // //     color: '#38BDF8',
+// // // // //     fontSize: 7,
+// // // // //     fontWeight: '900',
+// // // // //     marginTop: 3,
+// // // // //     textAlign: 'center',
 // // // // //   },
 // // // // // });
 
 
+// // // // import React, {
+// // // //   useCallback,
+// // // //   useEffect,
+// // // //   useRef,
+// // // //   useState,
+// // // // } from 'react';
 
-// // // // // components/FloodRunnerGameModal.js
-// // // // import React, { useState, useEffect, useRef } from 'react';
 // // // // import {
 // // // //   View,
 // // // //   Text,
 // // // //   StyleSheet,
 // // // //   TouchableOpacity,
-// // // //   Modal,
 // // // //   Dimensions,
+// // // //   BackHandler,
 // // // // } from 'react-native';
+
 // // // // import { Ionicons } from '@expo/vector-icons';
 // // // // import * as Haptics from 'expo-haptics';
 // // // // import { Accelerometer } from 'expo-sensors';
+// // // // import { useTranslation } from 'react-i18next';
+// // // // import { useNavigation, useRoute } from '@react-navigation/native';
 
-// // // // const { width: SCREEN_WIDTH } = Dimensions.get('window');
+// // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
+// // // //   Dimensions.get('window');
 
-// // // // export default function FloodRunnerGameModal({
-// // // //   visible,
-// // // //   onClose,
-// // // //   onWin,
-// // // // }) {
-// // // //   const GAME_WIDTH = Math.min(SCREEN_WIDTH - 64, 360);
-// // // //   const GAME_HEIGHT = 300;
+// // // // /*
+// // // // |--------------------------------------------------------------------------
+// // // // | LEVEL CONFIGURATION
+// // // // |--------------------------------------------------------------------------
+// // // // */
 
-// // // //   const PLAYER_SIZE = 36;
-// // // //   const DEBRIS_SIZE = 28;
+// // // // const LEVEL_CONFIG = {
+// // // //   1: {
+// // // //     nameKey: 'games.floodRunner.levels.easy',
+// // // //     targetScore: 50,
 
-// // // //   const [playerPositionX, setPlayerPositionX] = useState(
-// // // //     GAME_WIDTH / 2 - PLAYER_SIZE / 2
+// // // //     debrisSpeed: 155,
+// // // //     spawnInterval: 1150,
+// // // //     spawnCount: 1,
+
+// // // //     playerSpeed: 300,
+
+// // // //     reward: {
+// // // //       xp: 100,
+// // // //       coins: 25,
+// // // //     },
+// // // //   },
+
+// // // //   2: {
+// // // //     nameKey: 'games.floodRunner.levels.moderate',
+// // // //     targetScore: 75,
+
+// // // //     debrisSpeed: 205,
+// // // //     spawnInterval: 900,
+// // // //     spawnCount: 2,
+
+// // // //     playerSpeed: 340,
+
+// // // //     reward: {
+// // // //       xp: 150,
+// // // //       coins: 40,
+// // // //     },
+// // // //   },
+
+// // // //   3: {
+// // // //     nameKey: 'games.floodRunner.levels.advanced',
+// // // //     targetScore: 100,
+
+// // // //     debrisSpeed: 255,
+// // // //     spawnInterval: 750,
+// // // //     spawnCount: 3,
+
+// // // //     playerSpeed: 380,
+
+// // // //     reward: {
+// // // //       xp: 200,
+// // // //       coins: 60,
+// // // //     },
+// // // //   },
+// // // // };
+
+// // // // const PLAYER_SIZE = 36;
+// // // // const DEBRIS_SIZE = 28;
+
+// // // // const SAFE_ZONE_HEIGHT = 56;
+// // // // const FLOOD_HEIGHT = 64;
+
+// // // // const PLAYER_BOTTOM_OFFSET = 14;
+
+// // // // const COLLISION_PADDING = 4;
+
+// // // // /*
+// // // // |--------------------------------------------------------------------------
+// // // // | COMPONENT
+// // // // |--------------------------------------------------------------------------
+// // // // */
+
+// // // // export default function FloodRunnerGameModal() {
+// // // //   const { t } = useTranslation();
+
+// // // //   const navigation = useNavigation();
+
+// // // //   const route = useRoute();
+
+// // // //   /*
+// // // //    * The game is now a normal React Navigation screen.
+// // // //    *
+// // // //    * MissionsScreen can open it with:
+// // // //    *
+// // // //    * navigation.navigate('FloodRunnerGameModal', {
+// // // //    *   level: 1,
+// // // //    * });
+// // // //    */
+
+// // // //   const routeLevel =
+// // // //     route?.params?.level ?? 1;
+
+// // // //   const selectedLevel = Math.min(
+// // // //     3,
+// // // //     Math.max(
+// // // //       1,
+// // // //       Number(routeLevel) || 1
+// // // //     )
 // // // //   );
 
-// // // //   const [debrisY, setDebrisY] = useState(-30);
-// // // //   const [debrisX, setDebrisX] = useState(
-// // // //     Math.random() * (GAME_WIDTH - DEBRIS_SIZE)
+// // // //   const config =
+// // // //     LEVEL_CONFIG[selectedLevel];
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | GAME DIMENSIONS
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const GAME_WIDTH = Math.min(
+// // // //     SCREEN_WIDTH - 32,
+// // // //     390
 // // // //   );
 
-// // // //   const [score, setScore] = useState(0);
-// // // //   const [gameOver, setGameOver] = useState(false);
-// // // //   const [hasWon, setHasWon] = useState(false);
-// // // //   const [sensorAvailable, setSensorAvailable] = useState(false);
-
-// // // //   const movementRef = useRef(0);
+// // // //   const GAME_HEIGHT = Math.min(
+// // // //     SCREEN_HEIGHT * 0.52,
+// // // //     430
+// // // //   );
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * ACCELEROMETER
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | REACT STATE
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //   useEffect(() => {
-// // // //     let subscription;
+// // // //   const [gameStarted, setGameStarted] =
+// // // //     useState(false);
 
-// // // //     const setupAccelerometer = async () => {
-// // // //       if (!visible || gameOver || hasWon) {
-// // // //         return;
-// // // //       }
+// // // //   const [countdown, setCountdown] =
+// // // //     useState(null);
 
-// // // //       try {
-// // // //         const available = await Accelerometer.isAvailableAsync();
+// // // //   const [playerPositionX, setPlayerPositionX] =
+// // // //     useState(
+// // // //       GAME_WIDTH / 2 -
+// // // //         PLAYER_SIZE / 2
+// // // //     );
 
-// // // //         if (!available) {
-// // // //           setSensorAvailable(false);
-// // // //           return;
-// // // //         }
+// // // //   const [debris, setDebris] =
+// // // //     useState([]);
 
-// // // //         setSensorAvailable(true);
+// // // //   const [score, setScore] =
+// // // //     useState(0);
 
-// // // //         Accelerometer.setUpdateInterval(50);
+// // // //   const [gameOver, setGameOver] =
+// // // //     useState(false);
 
-// // // //         subscription = Accelerometer.addListener((data) => {
-// // // //           /*
-// // // //            * data.x normally changes when the phone is tilted
-// // // //            * left/right.
-// // // //            *
-// // // //            * Increase this value if movement feels too slow.
-// // // //            */
-// // // //           movementRef.current = data.x;
-// // // //         });
-// // // //       } catch (error) {
-// // // //         console.log('Accelerometer error:', error);
-// // // //         setSensorAvailable(false);
-// // // //       }
-// // // //     };
+// // // //   const [hasWon, setHasWon] =
+// // // //     useState(false);
 
-// // // //     setupAccelerometer();
-
-// // // //     return () => {
-// // // //       if (subscription) {
-// // // //         subscription.remove();
-// // // //       }
-// // // //     };
-// // // //   }, [visible, gameOver, hasWon]);
+// // // //   const [sensorAvailable, setSensorAvailable] =
+// // // //     useState(false);
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * PLAYER MOVEMENT
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | REFS
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //   useEffect(() => {
-// // // //     if (!visible || gameOver || hasWon) {
-// // // //       return;
-// // // //     }
+// // // //   const playerXRef = useRef(
+// // // //     GAME_WIDTH / 2 -
+// // // //       PLAYER_SIZE / 2
+// // // //   );
 
-// // // //     const movementInterval = setInterval(() => {
-// // // //       const tilt = movementRef.current;
+// // // //   const debrisRef = useRef([]);
 
-// // // //       if (Math.abs(tilt) < 0.05) {
-// // // //         return;
-// // // //       }
+// // // //   const scoreRef = useRef(0);
 
-// // // //       setPlayerPositionX((prevX) => {
-// // // //         const speed = 12;
+// // // //   const gameRunningRef =
+// // // //     useRef(false);
 
-// // // //         let nextX = prevX + tilt * speed;
+// // // //   const gameOverRef =
+// // // //     useRef(false);
 
-// // // //         nextX = Math.max(
-// // // //           0,
-// // // //           Math.min(
-// // // //             GAME_WIDTH - PLAYER_SIZE,
-// // // //             nextX
-// // // //           )
-// // // //         );
+// // // //   const hasWonRef =
+// // // //     useRef(false);
 
-// // // //         return nextX;
-// // // //       });
-// // // //     }, 50);
+// // // //   const movementRef =
+// // // //     useRef(0);
 
-// // // //     return () => clearInterval(movementInterval);
-// // // //   }, [visible, gameOver, hasWon]);
+// // // //   const animationFrameRef =
+// // // //     useRef(null);
+
+// // // //   const lastFrameTimeRef =
+// // // //     useRef(null);
+
+// // // //   const lastSpawnTimeRef =
+// // // //     useRef(0);
+
+// // // //   const countdownTimerRef =
+// // // //     useRef(null);
+
+// // // //   const sensorSubscriptionRef =
+// // // //     useRef(null);
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * TOUCH MOVEMENT
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | CLAMP PLAYER
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //   const movePlayer = (direction) => {
-// // // //     if (gameOver || hasWon) {
-// // // //       return;
-// // // //     }
-
-// // // //     setPlayerPositionX((prevX) => {
-// // // //       const amount = 35;
-
-// // // //       let nextX =
-// // // //         direction === 'left'
-// // // //           ? prevX - amount
-// // // //           : prevX + amount;
-
-// // // //       nextX = Math.max(
+// // // //   const clampPlayerX = useCallback(
+// // // //     (x) => {
+// // // //       return Math.max(
 // // // //         0,
 // // // //         Math.min(
 // // // //           GAME_WIDTH - PLAYER_SIZE,
-// // // //           nextX
+// // // //           x
 // // // //         )
 // // // //       );
-
-// // // //       return nextX;
-// // // //     });
-
-// // // //     Haptics.impactAsync(
-// // // //       Haptics.ImpactFeedbackStyle.Light
-// // // //     );
-// // // //   };
+// // // //     },
+// // // //     [GAME_WIDTH]
+// // // //   );
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * DEBRIS / GAME LOOP
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | CREATE DEBRIS
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //   useEffect(() => {
-// // // //     if (!visible || gameOver || hasWon) {
-// // // //       return;
+// // // //   const createDebrisObject =
+// // // //     useCallback(
+// // // //       (y = -DEBRIS_SIZE) => {
+// // // //         return {
+// // // //           id:
+// // // //             `${Date.now()}-${Math.random()}`,
+
+// // // //           x:
+// // // //             Math.random() *
+// // // //             Math.max(
+// // // //               1,
+// // // //               GAME_WIDTH - DEBRIS_SIZE
+// // // //             ),
+
+// // // //           y,
+// // // //         };
+// // // //       },
+// // // //       [GAME_WIDTH]
+// // // //     );
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | INITIAL DEBRIS
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const createInitialDebris =
+// // // //     useCallback(() => {
+// // // //       const objects = [];
+
+// // // //       for (
+// // // //         let index = 0;
+// // // //         index < config.spawnCount;
+// // // //         index += 1
+// // // //       ) {
+// // // //         objects.push({
+// // // //           id:
+// // // //             `${Date.now()}-${index}-${Math.random()}`,
+
+// // // //           x:
+// // // //             Math.random() *
+// // // //             Math.max(
+// // // //               1,
+// // // //               GAME_WIDTH - DEBRIS_SIZE
+// // // //             ),
+
+// // // //           y:
+// // // //             -DEBRIS_SIZE -
+// // // //             index * 115 -
+// // // //             Math.random() * 90,
+// // // //         });
+// // // //       }
+
+// // // //       return objects;
+// // // //     }, [
+// // // //       config.spawnCount,
+// // // //       GAME_WIDTH,
+// // // //     ]);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | STOP GAME LOOP
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const stopGameLoop = useCallback(() => {
+// // // //     gameRunningRef.current =
+// // // //       false;
+
+// // // //     if (
+// // // //       animationFrameRef.current
+// // // //     ) {
+// // // //       cancelAnimationFrame(
+// // // //         animationFrameRef.current
+// // // //       );
+
+// // // //       animationFrameRef.current =
+// // // //         null;
 // // // //     }
 
-// // // //     const gameInterval = setInterval(() => {
-// // // //       setDebrisY((prevY) => {
-// // // //         const nextY = prevY + 6;
+// // // //     lastFrameTimeRef.current =
+// // // //       null;
+// // // //   }, []);
 
-// // // //         /*
-// // // //          * Debris reached bottom.
-// // // //          */
-// // // //         if (nextY > GAME_HEIGHT) {
-// // // //           setScore((previousScore) => {
-// // // //             const newScore = previousScore + 10;
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | RESET GAME
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //             if (newScore >= 50) {
-// // // //               setHasWon(true);
+// // // //   const resetGame = useCallback(() => {
+// // // //     if (
+// // // //       countdownTimerRef.current
+// // // //     ) {
+// // // //       clearInterval(
+// // // //         countdownTimerRef.current
+// // // //       );
 
-// // // //               Haptics.notificationAsync(
-// // // //                 Haptics.NotificationFeedbackType.Success
-// // // //               );
-// // // //             }
+// // // //       countdownTimerRef.current =
+// // // //         null;
+// // // //     }
 
-// // // //             return newScore;
-// // // //           });
+// // // //     stopGameLoop();
 
-// // // //           setDebrisX(
-// // // //             Math.random() *
-// // // //               (GAME_WIDTH - DEBRIS_SIZE)
-// // // //           );
+// // // //     if (
+// // // //       sensorSubscriptionRef.current
+// // // //     ) {
+// // // //       sensorSubscriptionRef.current.remove();
 
-// // // //           return -30;
-// // // //         }
+// // // //       sensorSubscriptionRef.current =
+// // // //         null;
+// // // //     }
 
-// // // //         return nextY;
-// // // //       });
-// // // //     }, 40);
+// // // //     const initialX =
+// // // //       GAME_WIDTH / 2 -
+// // // //       PLAYER_SIZE / 2;
 
-// // // //     return () => clearInterval(gameInterval);
+// // // //     playerXRef.current =
+// // // //       initialX;
+
+// // // //     debrisRef.current = [];
+
+// // // //     scoreRef.current = 0;
+
+// // // //     gameRunningRef.current =
+// // // //       false;
+
+// // // //     gameOverRef.current =
+// // // //       false;
+
+// // // //     hasWonRef.current =
+// // // //       false;
+
+// // // //     movementRef.current = 0;
+
+// // // //     lastFrameTimeRef.current =
+// // // //       null;
+
+// // // //     lastSpawnTimeRef.current =
+// // // //       0;
+
+// // // //     setGameStarted(false);
+// // // //     setCountdown(null);
+// // // //     setPlayerPositionX(initialX);
+// // // //     setDebris([]);
+// // // //     setScore(0);
+// // // //     setGameOver(false);
+// // // //     setHasWon(false);
 // // // //   }, [
-// // // //     visible,
-// // // //     gameOver,
-// // // //     hasWon,
 // // // //     GAME_WIDTH,
+// // // //     stopGameLoop,
 // // // //   ]);
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * COLLISION
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | GAME OVER
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
-// // // //   useEffect(() => {
-// // // //     if (gameOver || hasWon) {
-// // // //       return;
-// // // //     }
+// // // //   const finishGame =
+// // // //     useCallback(() => {
+// // // //       if (
+// // // //         !gameRunningRef.current ||
+// // // //         gameOverRef.current ||
+// // // //         hasWonRef.current
+// // // //       ) {
+// // // //         return;
+// // // //       }
 
-// // // //     const playerLeft = playerPositionX;
-// // // //     const playerRight =
-// // // //       playerPositionX + PLAYER_SIZE;
+// // // //       gameRunningRef.current =
+// // // //         false;
 
-// // // //     const playerTop =
-// // // //       GAME_HEIGHT - PLAYER_SIZE - 10;
+// // // //       gameOverRef.current =
+// // // //         true;
 
-// // // //     const playerBottom =
-// // // //       playerTop + PLAYER_SIZE;
-
-// // // //     const debrisLeft = debrisX;
-// // // //     const debrisRight =
-// // // //       debrisX + DEBRIS_SIZE;
-
-// // // //     const debrisTop = debrisY;
-// // // //     const debrisBottom =
-// // // //       debrisY + DEBRIS_SIZE;
-
-// // // //     const collision =
-// // // //       playerLeft < debrisRight &&
-// // // //       playerRight > debrisLeft &&
-// // // //       playerTop < debrisBottom &&
-// // // //       playerBottom > debrisTop;
-
-// // // //     if (collision) {
 // // // //       setGameOver(true);
+
+// // // //       if (
+// // // //         animationFrameRef.current
+// // // //       ) {
+// // // //         cancelAnimationFrame(
+// // // //           animationFrameRef.current
+// // // //         );
+
+// // // //         animationFrameRef.current =
+// // // //           null;
+// // // //       }
 
 // // // //       Haptics.impactAsync(
 // // // //         Haptics.ImpactFeedbackStyle.Heavy
 // // // //       );
-// // // //     }
+// // // //     }, []);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | WIN
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const winGame =
+// // // //     useCallback(() => {
+// // // //       if (
+// // // //         hasWonRef.current ||
+// // // //         gameOverRef.current
+// // // //       ) {
+// // // //         return;
+// // // //       }
+
+// // // //       gameRunningRef.current =
+// // // //         false;
+
+// // // //       hasWonRef.current =
+// // // //         true;
+
+// // // //       scoreRef.current =
+// // // //         config.targetScore;
+
+// // // //       setScore(
+// // // //         config.targetScore
+// // // //       );
+
+// // // //       setHasWon(true);
+
+// // // //       if (
+// // // //         animationFrameRef.current
+// // // //       ) {
+// // // //         cancelAnimationFrame(
+// // // //           animationFrameRef.current
+// // // //         );
+
+// // // //         animationFrameRef.current =
+// // // //           null;
+// // // //       }
+
+// // // //       Haptics.notificationAsync(
+// // // //         Haptics.NotificationFeedbackType
+// // // //           .Success
+// // // //       );
+// // // //     }, [
+// // // //       config.targetScore,
+// // // //     ]);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | COLLISION
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const checkCollision =
+// // // //     useCallback(
+// // // //       (playerX, debrisItem) => {
+// // // //         const playerLeft =
+// // // //           playerX +
+// // // //           COLLISION_PADDING;
+
+// // // //         const playerRight =
+// // // //           playerX +
+// // // //           PLAYER_SIZE -
+// // // //           COLLISION_PADDING;
+
+// // // //         const playerTop =
+// // // //           GAME_HEIGHT -
+// // // //           PLAYER_SIZE -
+// // // //           PLAYER_BOTTOM_OFFSET -
+// // // //           FLOOD_HEIGHT +
+// // // //           COLLISION_PADDING;
+
+// // // //         const playerBottom =
+// // // //           playerTop +
+// // // //           PLAYER_SIZE -
+// // // //           COLLISION_PADDING;
+
+// // // //         const debrisLeft =
+// // // //           debrisItem.x +
+// // // //           COLLISION_PADDING;
+
+// // // //         const debrisRight =
+// // // //           debrisItem.x +
+// // // //           DEBRIS_SIZE -
+// // // //           COLLISION_PADDING;
+
+// // // //         const debrisTop =
+// // // //           debrisItem.y +
+// // // //           COLLISION_PADDING;
+
+// // // //         const debrisBottom =
+// // // //           debrisItem.y +
+// // // //           DEBRIS_SIZE -
+// // // //           COLLISION_PADDING;
+
+// // // //         return (
+// // // //           playerLeft <
+// // // //             debrisRight &&
+// // // //           playerRight >
+// // // //             debrisLeft &&
+// // // //           playerTop <
+// // // //             debrisBottom &&
+// // // //           playerBottom >
+// // // //             debrisTop
+// // // //         );
+// // // //       },
+// // // //       [GAME_HEIGHT]
+// // // //     );
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | GAME LOOP
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const runGameLoop =
+// // // //     useCallback(
+// // // //       (timestamp) => {
+// // // //         if (
+// // // //           !gameRunningRef.current ||
+// // // //           gameOverRef.current ||
+// // // //           hasWonRef.current
+// // // //         ) {
+// // // //           return;
+// // // //         }
+
+// // // //         if (
+// // // //           lastFrameTimeRef.current ===
+// // // //           null
+// // // //         ) {
+// // // //           lastFrameTimeRef.current =
+// // // //             timestamp;
+// // // //         }
+
+// // // //         const delta =
+// // // //           Math.min(
+// // // //             timestamp -
+// // // //               lastFrameTimeRef.current,
+// // // //             50
+// // // //           ) / 1000;
+
+// // // //         lastFrameTimeRef.current =
+// // // //           timestamp;
+
+// // // //         /*
+// // // //          * PLAYER
+// // // //          */
+
+// // // //         const tilt =
+// // // //           movementRef.current;
+
+// // // //         let nextPlayerX =
+// // // //           playerXRef.current;
+
+// // // //         if (
+// // // //           Math.abs(tilt) >= 0.04
+// // // //         ) {
+// // // //           nextPlayerX +=
+// // // //             tilt *
+// // // //             config.playerSpeed *
+// // // //             delta;
+// // // //         }
+
+// // // //         nextPlayerX =
+// // // //           clampPlayerX(
+// // // //             nextPlayerX
+// // // //           );
+
+// // // //         playerXRef.current =
+// // // //           nextPlayerX;
+
+// // // //         setPlayerPositionX(
+// // // //           nextPlayerX
+// // // //         );
+
+// // // //         /*
+// // // //          * DEBRIS
+// // // //          */
+
+// // // //         const previousDebris =
+// // // //           debrisRef.current;
+
+// // // //         const movedDebris =
+// // // //           previousDebris.map(
+// // // //             (item) => ({
+// // // //               ...item,
+
+// // // //               y:
+// // // //                 item.y +
+// // // //                 config.debrisSpeed *
+// // // //                   delta,
+// // // //             })
+// // // //           );
+
+// // // //         /*
+// // // //          * COLLISION
+// // // //          */
+
+// // // //         const collision =
+// // // //           movedDebris.some(
+// // // //             (item) =>
+// // // //               checkCollision(
+// // // //                 nextPlayerX,
+// // // //                 item
+// // // //               )
+// // // //           );
+
+// // // //         if (collision) {
+// // // //           debrisRef.current =
+// // // //             movedDebris;
+
+// // // //           setDebris(
+// // // //             movedDebris
+// // // //           );
+
+// // // //           finishGame();
+
+// // // //           return;
+// // // //         }
+
+// // // //         /*
+// // // //          * SCORE
+// // // //          */
+
+// // // //         let passedCount = 0;
+
+// // // //         const survivingDebris =
+// // // //           movedDebris.filter(
+// // // //             (item) => {
+// // // //               if (
+// // // //                 item.y >
+// // // //                 GAME_HEIGHT
+// // // //               ) {
+// // // //                 passedCount += 1;
+// // // //                 return false;
+// // // //               }
+
+// // // //               return true;
+// // // //             }
+// // // //           );
+
+// // // //         if (passedCount > 0) {
+// // // //           const nextScore =
+// // // //             Math.min(
+// // // //               config.targetScore,
+// // // //               scoreRef.current +
+// // // //                 passedCount * 10
+// // // //             );
+
+// // // //           scoreRef.current =
+// // // //             nextScore;
+
+// // // //           setScore(nextScore);
+
+// // // //           if (
+// // // //             nextScore >=
+// // // //             config.targetScore
+// // // //           ) {
+// // // //             debrisRef.current =
+// // // //               survivingDebris;
+
+// // // //             setDebris(
+// // // //               survivingDebris
+// // // //             );
+
+// // // //             winGame();
+
+// // // //             return;
+// // // //           }
+// // // //         }
+
+// // // //         /*
+// // // //          * SPAWN
+// // // //          */
+
+// // // //         if (
+// // // //           timestamp -
+// // // //             lastSpawnTimeRef.current >=
+// // // //           config.spawnInterval
+// // // //         ) {
+// // // //           lastSpawnTimeRef.current =
+// // // //             timestamp;
+
+// // // //           if (
+// // // //             survivingDebris.length <
+// // // //             config.spawnCount
+// // // //           ) {
+// // // //             survivingDebris.push(
+// // // //               createDebrisObject()
+// // // //             );
+// // // //           }
+// // // //         }
+
+// // // //         while (
+// // // //           survivingDebris.length >
+// // // //           config.spawnCount
+// // // //         ) {
+// // // //           survivingDebris.shift();
+// // // //         }
+
+// // // //         debrisRef.current =
+// // // //           survivingDebris;
+
+// // // //         setDebris(
+// // // //           survivingDebris
+// // // //         );
+
+// // // //         animationFrameRef.current =
+// // // //           requestAnimationFrame(
+// // // //             runGameLoop
+// // // //           );
+// // // //       },
+// // // //       [
+// // // //         clampPlayerX,
+// // // //         config.debrisSpeed,
+// // // //         config.playerSpeed,
+// // // //         config.spawnCount,
+// // // //         config.spawnInterval,
+// // // //         config.targetScore,
+// // // //         createDebrisObject,
+// // // //         finishGame,
+// // // //         GAME_HEIGHT,
+// // // //         checkCollision,
+// // // //         winGame,
+// // // //       ]
+// // // //     );
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | BEGIN GAME
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const beginGame =
+// // // //     useCallback(() => {
+// // // //       const initialX =
+// // // //         GAME_WIDTH / 2 -
+// // // //         PLAYER_SIZE / 2;
+
+// // // //       playerXRef.current =
+// // // //         initialX;
+
+// // // //       debrisRef.current =
+// // // //         createInitialDebris();
+
+// // // //       scoreRef.current = 0;
+
+// // // //       gameRunningRef.current =
+// // // //         true;
+
+// // // //       gameOverRef.current =
+// // // //         false;
+
+// // // //       hasWonRef.current =
+// // // //         false;
+
+// // // //       movementRef.current = 0;
+
+// // // //       lastFrameTimeRef.current =
+// // // //         null;
+
+// // // //       lastSpawnTimeRef.current =
+// // // //         performance.now();
+
+// // // //       setPlayerPositionX(
+// // // //         initialX
+// // // //       );
+
+// // // //       setDebris(
+// // // //         debrisRef.current
+// // // //       );
+
+// // // //       setScore(0);
+
+// // // //       setGameOver(false);
+
+// // // //       setHasWon(false);
+
+// // // //       setGameStarted(true);
+
+// // // //       Haptics.notificationAsync(
+// // // //         Haptics.NotificationFeedbackType
+// // // //           .Success
+// // // //       );
+
+// // // //       animationFrameRef.current =
+// // // //         requestAnimationFrame(
+// // // //           runGameLoop
+// // // //         );
+// // // //     }, [
+// // // //       GAME_WIDTH,
+// // // //       createInitialDebris,
+// // // //       runGameLoop,
+// // // //     ]);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | START GAME
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const startGame =
+// // // //     useCallback(() => {
+// // // //       if (
+// // // //         gameRunningRef.current ||
+// // // //         countdown !== null
+// // // //       ) {
+// // // //         return;
+// // // //       }
+
+// // // //       /*
+// // // //        * Reset retry state.
+// // // //        */
+
+// // // //       setGameOver(false);
+// // // //       setHasWon(false);
+
+// // // //       gameOverRef.current =
+// // // //         false;
+
+// // // //       hasWonRef.current =
+// // // //         false;
+
+// // // //       setCountdown(3);
+
+// // // //       let count = 3;
+
+// // // //       Haptics.impactAsync(
+// // // //         Haptics.ImpactFeedbackStyle.Light
+// // // //       );
+
+// // // //       countdownTimerRef.current =
+// // // //         setInterval(() => {
+// // // //           count -= 1;
+
+// // // //           if (count <= 0) {
+// // // //             if (
+// // // //               countdownTimerRef.current
+// // // //             ) {
+// // // //               clearInterval(
+// // // //                 countdownTimerRef.current
+// // // //               );
+// // // //             }
+
+// // // //             countdownTimerRef.current =
+// // // //               null;
+
+// // // //             setCountdown(null);
+
+// // // //             beginGame();
+
+// // // //             return;
+// // // //           }
+
+// // // //           setCountdown(count);
+
+// // // //           Haptics.impactAsync(
+// // // //             Haptics.ImpactFeedbackStyle.Light
+// // // //           );
+// // // //         }, 700);
+// // // //     }, [
+// // // //       beginGame,
+// // // //       countdown,
+// // // //     ]);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | TOUCH MOVEMENT
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const movePlayer =
+// // // //     useCallback(
+// // // //       (direction) => {
+// // // //         if (
+// // // //           !gameRunningRef.current ||
+// // // //           gameOverRef.current ||
+// // // //           hasWonRef.current
+// // // //         ) {
+// // // //           return;
+// // // //         }
+
+// // // //         const amount =
+// // // //           config.playerSpeed *
+// // // //           0.18;
+
+// // // //         let nextX =
+// // // //           playerXRef.current;
+
+// // // //         if (
+// // // //           direction === 'left'
+// // // //         ) {
+// // // //           nextX -= amount;
+// // // //         } else {
+// // // //           nextX += amount;
+// // // //         }
+
+// // // //         nextX =
+// // // //           clampPlayerX(nextX);
+
+// // // //         playerXRef.current =
+// // // //           nextX;
+
+// // // //         setPlayerPositionX(
+// // // //           nextX
+// // // //         );
+
+// // // //         Haptics.impactAsync(
+// // // //           Haptics.ImpactFeedbackStyle.Light
+// // // //         );
+// // // //       },
+// // // //       [
+// // // //         clampPlayerX,
+// // // //         config.playerSpeed,
+// // // //       ]
+// // // //     );
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | ACCELEROMETER
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   useEffect(() => {
+// // // //     let mounted = true;
+
+// // // //     const setupAccelerometer =
+// // // //       async () => {
+// // // //         if (
+// // // //           !gameStarted ||
+// // // //           gameOver ||
+// // // //           hasWon
+// // // //         ) {
+// // // //           return;
+// // // //         }
+
+// // // //         try {
+// // // //           const available =
+// // // //             await Accelerometer.isAvailableAsync();
+
+// // // //           if (!mounted) {
+// // // //             return;
+// // // //           }
+
+// // // //           if (!available) {
+// // // //             setSensorAvailable(false);
+// // // //             return;
+// // // //           }
+
+// // // //           setSensorAvailable(true);
+
+// // // //           Accelerometer.setUpdateInterval(
+// // // //             50
+// // // //           );
+
+// // // //           sensorSubscriptionRef.current =
+// // // //             Accelerometer.addListener(
+// // // //               (data) => {
+// // // //                 if (
+// // // //                   !gameRunningRef.current
+// // // //                 ) {
+// // // //                   return;
+// // // //                 }
+
+// // // //                 movementRef.current =
+// // // //                   data.x;
+// // // //               }
+// // // //             );
+// // // //         } catch (error) {
+// // // //           console.log(
+// // // //             'FloodRunner accelerometer error:',
+// // // //             error
+// // // //           );
+
+// // // //           if (mounted) {
+// // // //             setSensorAvailable(false);
+// // // //           }
+// // // //         }
+// // // //       };
+
+// // // //     setupAccelerometer();
+
+// // // //     return () => {
+// // // //       mounted = false;
+
+// // // //       if (
+// // // //         sensorSubscriptionRef.current
+// // // //       ) {
+// // // //         sensorSubscriptionRef.current.remove();
+
+// // // //         sensorSubscriptionRef.current =
+// // // //           null;
+// // // //       }
+// // // //     };
 // // // //   }, [
-// // // //     debrisY,
-// // // //     debrisX,
-// // // //     playerPositionX,
+// // // //     gameStarted,
 // // // //     gameOver,
 // // // //     hasWon,
 // // // //   ]);
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * RESTART
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | BACK BUTTON
+// // // //   |--------------------------------------------------------------------------
+// // // //   |
+// // // //   | Do not allow Android back to leave the
+// // // //   | screen while the game is actively running.
+// // // //   |
+// // // //   */
 
-// // // //   const restartGame = () => {
-// // // //     setScore(0);
-// // // //     setDebrisY(-30);
-// // // //     setDebrisX(
-// // // //       Math.random() *
-// // // //         (GAME_WIDTH - DEBRIS_SIZE)
-// // // //     );
-// // // //     setGameOver(false);
-// // // //     setHasWon(false);
-// // // //     setPlayerPositionX(
-// // // //       GAME_WIDTH / 2 -
-// // // //         PLAYER_SIZE / 2
-// // // //     );
-// // // //     movementRef.current = 0;
-// // // //   };
+// // // //   useEffect(() => {
+// // // //     const subscription =
+// // // //       BackHandler.addEventListener(
+// // // //         'hardwareBackPress',
+// // // //         () => {
+// // // //           if (
+// // // //             gameRunningRef.current ||
+// // // //             countdown !== null
+// // // //           ) {
+// // // //             return true;
+// // // //           }
+
+// // // //           return false;
+// // // //         }
+// // // //       );
+
+// // // //     return () => {
+// // // //       subscription.remove();
+// // // //     };
+// // // //   }, [
+// // // //     countdown,
+// // // //   ]);
 
 // // // //   /*
-// // // //    * ---------------------------------------------------------
-// // // //    * RENDER
-// // // //    * ---------------------------------------------------------
-// // // //    */
+// // // //   |--------------------------------------------------------------------------
+// // // //   | CLEANUP
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   useEffect(() => {
+// // // //     return () => {
+// // // //       if (
+// // // //         countdownTimerRef.current
+// // // //       ) {
+// // // //         clearInterval(
+// // // //           countdownTimerRef.current
+// // // //         );
+// // // //       }
+
+// // // //       if (
+// // // //         animationFrameRef.current
+// // // //       ) {
+// // // //         cancelAnimationFrame(
+// // // //           animationFrameRef.current
+// // // //         );
+// // // //       }
+
+// // // //       if (
+// // // //         sensorSubscriptionRef.current
+// // // //       ) {
+// // // //         sensorSubscriptionRef.current.remove();
+// // // //       }
+// // // //     };
+// // // //   }, []);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | CLAIM REWARD
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const handleClaimReward =
+// // // //     useCallback(() => {
+// // // //       if (
+// // // //         !hasWonRef.current
+// // // //       ) {
+// // // //         return;
+// // // //       }
+
+// // // //       /*
+// // // //        * For now we simply return to Missions.
+// // // //        *
+// // // //        * Later you can connect this to your
+// // // //        * XP / coins system.
+// // // //        */
+
+// // // //       resetGame();
+
+// // // //       navigation.goBack();
+// // // //     }, [
+// // // //       navigation,
+// // // //       resetGame,
+// // // //     ]);
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | PROGRESS
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
+
+// // // //   const progressPercentage =
+// // // //     Math.min(
+// // // //       100,
+// // // //       (score /
+// // // //         config.targetScore) *
+// // // //         100
+// // // //     );
+
+// // // //   /*
+// // // //   |--------------------------------------------------------------------------
+// // // //   | RENDER
+// // // //   |--------------------------------------------------------------------------
+// // // //   */
 
 // // // //   return (
-// // // //     <Modal
-// // // //       visible={visible}
-// // // //       animationType="slide"
-// // // //       transparent
-// // // //       onRequestClose={onClose}
+// // // //     <View
+// // // //       style={styles.screen}
 // // // //     >
-// // // //       <View style={styles.modalOverlay}>
+// // // //       <View
+// // // //         style={[
+// // // //           styles.modalContentCard,
+// // // //           {
+// // // //             width:
+// // // //               Math.min(
+// // // //                 GAME_WIDTH + 32,
+// // // //                 SCREEN_WIDTH - 16
+// // // //               ),
+// // // //           },
+// // // //         ]}
+// // // //       >
+// // // //         {/* HEADER */}
+
+// // // //         <View
+// // // //           style={styles.modalHeader}
+// // // //         >
+// // // //           <View
+// // // //             style={
+// // // //               styles.headerTitleArea
+// // // //             }
+// // // //           >
+// // // //             <View
+// // // //               style={
+// // // //                 styles.headerIcon
+// // // //               }
+// // // //             >
+// // // //               <Ionicons
+// // // //                 name="water"
+// // // //                 size={20}
+// // // //                 color="#38BDF8"
+// // // //               />
+// // // //             </View>
+
+// // // //             <View
+// // // //               style={
+// // // //                 styles.headerTextArea
+// // // //               }
+// // // //             >
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.modalTitle
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.title'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.levelLabel
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.level',
+// // // //                   {
+// // // //                     level:
+// // // //                       selectedLevel,
+// // // //                   }
+// // // //                 )}{' '}
+// // // //                 •{' '}
+// // // //                 {t(
+// // // //                   config.nameKey
+// // // //                 )}
+// // // //               </Text>
+// // // //             </View>
+// // // //           </View>
+// // // //         </View>
+
+// // // //         {/* OBJECTIVE */}
+
+// // // //         <View
+// // // //           style={
+// // // //             styles.objectiveCard
+// // // //           }
+// // // //         >
+// // // //           <View
+// // // //             style={
+// // // //               styles.objectiveIcon
+// // // //             }
+// // // //           >
+// // // //             <Ionicons
+// // // //               name="flag"
+// // // //               size={18}
+// // // //               color="#34D399"
+// // // //             />
+// // // //           </View>
+
+// // // //           <View
+// // // //             style={
+// // // //               styles.objectiveTextArea
+// // // //             }
+// // // //           >
+// // // //             <Text
+// // // //               style={
+// // // //                 styles.objectiveTitle
+// // // //               }
+// // // //             >
+// // // //               {t(
+// // // //                 'games.floodRunner.objective'
+// // // //               )}
+// // // //             </Text>
+
+// // // //             <Text
+// // // //               style={
+// // // //                 styles.objectiveText
+// // // //               }
+// // // //             >
+// // // //               {t(
+// // // //                 'games.floodRunner.objectiveDescription'
+// // // //               )}
+// // // //             </Text>
+// // // //           </View>
+// // // //         </View>
+
+// // // //         {/* INSTRUCTIONS */}
+
+// // // //         {!gameStarted &&
+// // // //           !gameOver &&
+// // // //           !hasWon &&
+// // // //           countdown === null && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.instructionsCard
+// // // //               }
+// // // //             >
+// // // //               <View
+// // // //                 style={
+// // // //                   styles.instructionsHeader
+// // // //                 }
+// // // //               >
+// // // //                 <Ionicons
+// // // //                   name="help-circle"
+// // // //                   size={20}
+// // // //                   color="#FBBF24"
+// // // //                 />
+
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.instructionsTitle
+// // // //                   }
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.howToPlay'
+// // // //                   )}
+// // // //                 </Text>
+// // // //               </View>
+
+// // // //               <InstructionRow
+// // // //                 icon="swap-horizontal"
+// // // //                 text={t(
+// // // //                   'games.floodRunner.instructions.move'
+// // // //                 )}
+// // // //               />
+
+// // // //               <InstructionRow
+// // // //                 icon="warning"
+// // // //                 text={t(
+// // // //                   'games.floodRunner.instructions.avoid'
+// // // //                 )}
+// // // //               />
+
+// // // //               <InstructionRow
+// // // //                 icon="water"
+// // // //                 text={t(
+// // // //                   'games.floodRunner.instructions.flood'
+// // // //                 )}
+// // // //               />
+
+// // // //               <InstructionRow
+// // // //                 icon="flag"
+// // // //                 text={t(
+// // // //                   'games.floodRunner.instructions.finish',
+// // // //                   {
+// // // //                     score:
+// // // //                       config.targetScore,
+// // // //                   }
+// // // //                 )}
+// // // //               />
+// // // //             </View>
+// // // //           )}
+
+// // // //         {/* SENSOR STATUS */}
+
+// // // //         {gameStarted &&
+// // // //           !gameOver &&
+// // // //           !hasWon && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.sensorStatus
+// // // //               }
+// // // //             >
+// // // //               <Ionicons
+// // // //                 name={
+// // // //                   sensorAvailable
+// // // //                     ? 'phone-portrait-outline'
+// // // //                     : 'hand-left-outline'
+// // // //                 }
+// // // //                 size={15}
+// // // //                 color={
+// // // //                   sensorAvailable
+// // // //                     ? '#34D399'
+// // // //                     : '#FBBF24'
+// // // //                 }
+// // // //               />
+
+// // // //               <Text
+// // // //                 style={[
+// // // //                   styles.sensorText,
+// // // //                   {
+// // // //                     color:
+// // // //                       sensorAvailable
+// // // //                         ? '#34D399'
+// // // //                         : '#FBBF24',
+// // // //                   },
+// // // //                 ]}
+// // // //               >
+// // // //                 {sensorAvailable
+// // // //                   ? t(
+// // // //                       'games.floodRunner.tiltActive'
+// // // //                     )
+// // // //                   : t(
+// // // //                       'games.floodRunner.touchActive'
+// // // //                     )}
+// // // //               </Text>
+// // // //             </View>
+// // // //           )}
+
+// // // //         {/* GAME AREA */}
+
 // // // //         <View
 // // // //           style={[
-// // // //             styles.modalContentCard,
+// // // //             styles.gameCanvas,
 // // // //             {
-// // // //               width: GAME_WIDTH + 40,
+// // // //               width:
+// // // //                 GAME_WIDTH,
+// // // //               height:
+// // // //                 GAME_HEIGHT,
 // // // //             },
 // // // //           ]}
 // // // //         >
-// // // //           {/* HEADER */}
+// // // //           {/* SAFE ZONE */}
 
-// // // //           <View style={styles.modalHeader}>
-// // // //             <Text style={styles.modalTitle}>
-// // // //               Flash Flood Evacuation Drill
-// // // //             </Text>
-
-// // // //             <TouchableOpacity onPress={onClose}>
+// // // //           <View
+// // // //             style={
+// // // //               styles.safeZone
+// // // //             }
+// // // //           >
+// // // //             <View
+// // // //               style={
+// // // //                 styles.safeZoneIcon
+// // // //               }
+// // // //             >
 // // // //               <Ionicons
-// // // //                 name="close-circle"
-// // // //                 size={28}
-// // // //                 color="#64748B"
+// // // //                 name="shield-checkmark"
+// // // //                 size={18}
+// // // //                 color="#34D399"
 // // // //               />
-// // // //             </TouchableOpacity>
+// // // //             </View>
+
+// // // //             <View>
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.safeZoneTitle
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.safeShelter'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.safeZoneSub
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.highGround'
+// // // //                 )}
+// // // //               </Text>
+// // // //             </View>
 // // // //           </View>
 
-// // // //           <Text style={styles.instructions}>
-// // // //             Tilt your phone left/right or use the
-// // // //             buttons below to move your responder.
-// // // //           </Text>
+// // // //           {/* DANGER FIELD */}
 
-// // // //           {/* SENSOR STATUS */}
-
-// // // //           <View style={styles.sensorStatus}>
-// // // //             <Ionicons
-// // // //               name={
-// // // //                 sensorAvailable
-// // // //                   ? 'phone-portrait-outline'
-// // // //                   : 'hand-left-outline'
-// // // //               }
-// // // //               size={14}
-// // // //               color={
-// // // //                 sensorAvailable
-// // // //                   ? '#34D399'
-// // // //                   : '#FBBF24'
+// // // //           <View
+// // // //             style={
+// // // //               styles.dangerField
+// // // //             }
+// // // //           >
+// // // //             <View
+// // // //               style={
+// // // //                 styles.routeLine
 // // // //               }
 // // // //             />
 
 // // // //             <Text
-// // // //               style={[
-// // // //                 styles.sensorText,
-// // // //                 {
-// // // //                   color: sensorAvailable
-// // // //                     ? '#34D399'
-// // // //                     : '#FBBF24',
-// // // //                 },
-// // // //               ]}
+// // // //               style={
+// // // //                 styles.dangerText
+// // // //               }
 // // // //             >
-// // // //               {sensorAvailable
-// // // //                 ? 'Tilt controls active'
-// // // //                 : 'Use touch controls'}
+// // // //               {t(
+// // // //                 'games.floodRunner.evacuationRoute'
+// // // //               )}
 // // // //             </Text>
 // // // //           </View>
 
-// // // //           {/* GAME */}
+// // // //           {/* DEBRIS */}
 
-// // // //           <View
-// // // //             style={[
-// // // //               styles.gameCanvas,
-// // // //               {
-// // // //                 width: GAME_WIDTH,
-// // // //                 height: GAME_HEIGHT,
-// // // //               },
-// // // //             ]}
-// // // //           >
-// // // //             {/* SHELTER */}
-
-// // // //             <View style={styles.shelterLine}>
-// // // //               <Ionicons
-// // // //                 name="shield-checkmark"
-// // // //                 size={14}
-// // // //                 color="#34D399"
-// // // //               />
-
-// // // //               <Text style={styles.shelterLineText}>
-// // // //                 SAFE ELEVATED SHELTER
-// // // //               </Text>
-// // // //             </View>
-
-// // // //             {/* WATER */}
-
-// // // //             <View style={styles.waterLayer}>
-// // // //               <Text style={styles.waterText}>
-// // // //                 FLOOD ZONE
-// // // //               </Text>
-// // // //             </View>
-
-// // // //             {/* DEBRIS */}
-
-// // // //             {!gameOver && !hasWon && (
-// // // //               <View
-// // // //                 style={[
-// // // //                   styles.debrisNode,
-// // // //                   {
-// // // //                     left: debrisX,
-// // // //                     top: debrisY,
-// // // //                   },
-// // // //                 ]}
-// // // //               >
-// // // //                 <Ionicons
-// // // //                   name="warning"
-// // // //                   size={22}
-// // // //                   color="#EF4444"
-// // // //                 />
-// // // //               </View>
+// // // //           {gameStarted &&
+// // // //             !gameOver &&
+// // // //             !hasWon &&
+// // // //             debris.map(
+// // // //               (item) => (
+// // // //                 <View
+// // // //                   key={item.id}
+// // // //                   style={[
+// // // //                     styles.debrisNode,
+// // // //                     {
+// // // //                       left:
+// // // //                         item.x,
+// // // //                       top:
+// // // //                         item.y,
+// // // //                     },
+// // // //                   ]}
+// // // //                 >
+// // // //                   <Ionicons
+// // // //                     name="warning"
+// // // //                     size={20}
+// // // //                     color="#FCA5A5"
+// // // //                   />
+// // // //                 </View>
+// // // //               )
 // // // //             )}
 
-// // // //             {/* PLAYER */}
+// // // //           {/* PLAYER */}
 
-// // // //             {!gameOver && !hasWon && (
+// // // //           {gameStarted &&
+// // // //             !gameOver &&
+// // // //             !hasWon && (
 // // // //               <View
 // // // //                 style={[
 // // // //                   styles.playerNode,
 // // // //                   {
-// // // //                     left: playerPositionX,
-// // // //                     bottom: 10,
+// // // //                     left:
+// // // //                       playerPositionX,
+
+// // // //                     bottom:
+// // // //                       PLAYER_BOTTOM_OFFSET +
+// // // //                       FLOOD_HEIGHT,
 // // // //                   },
 // // // //                 ]}
 // // // //               >
@@ -1297,291 +8016,1074 @@
 // // // //               </View>
 // // // //             )}
 
-// // // //             {/* END SCREEN */}
+// // // //           {/* FLOOD */}
 
-// // // //             {(gameOver || hasWon) && (
-// // // //               <View style={styles.endGameOverlay}>
-// // // //                 {gameOver && (
-// // // //                   <>
-// // // //                     <Ionicons
-// // // //                       name="water"
-// // // //                       size={36}
-// // // //                       color="#EF4444"
-// // // //                     />
+// // // //           <View
+// // // //             style={
+// // // //               styles.floodLayer
+// // // //             }
+// // // //           >
+// // // //             <View
+// // // //               style={
+// // // //                 styles.waveContainer
+// // // //               }
+// // // //             >
+// // // //               {Array.from({
+// // // //                 length: 12,
+// // // //               }).map(
+// // // //                 (_, index) => (
+// // // //                   <Text
+// // // //                     key={index}
+// // // //                     style={
+// // // //                       styles.wave
+// // // //                     }
+// // // //                   >
+// // // //                     ~
+// // // //                   </Text>
+// // // //                 )
+// // // //               )}
+// // // //             </View>
 
-// // // //                     <Text style={styles.gameOverTitle}>
-// // // //                       Trapped by Water!
-// // // //                     </Text>
+// // // //             <Text
+// // // //               style={
+// // // //                 styles.floodLabel
+// // // //               }
+// // // //             >
+// // // //               {t(
+// // // //                 'games.floodRunner.floodZone'
+// // // //               )}
+// // // //             </Text>
+// // // //           </View>
 
-// // // //                     <Text style={styles.gameOverText}>
-// // // //                       Avoid the falling debris and
-// // // //                       reach the safe area.
-// // // //                     </Text>
+// // // //           {/* COUNTDOWN */}
 
-// // // //                     <TouchableOpacity
-// // // //                       style={styles.retryBtn}
-// // // //                       onPress={restartGame}
-// // // //                     >
-// // // //                       <Text style={styles.buttonText}>
-// // // //                         Retry Drill
-// // // //                       </Text>
-// // // //                     </TouchableOpacity>
-// // // //                   </>
+// // // //           {countdown !== null && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.countdownOverlay
+// // // //               }
+// // // //             >
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.countdownNumber
+// // // //                 }
+// // // //               >
+// // // //                 {countdown}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.countdownText
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.getReady'
 // // // //                 )}
+// // // //               </Text>
+// // // //             </View>
+// // // //           )}
 
-// // // //                 {hasWon && (
-// // // //                   <>
-// // // //                     <Ionicons
-// // // //                       name="shield-checkmark"
-// // // //                       size={40}
-// // // //                       color="#10B981"
-// // // //                     />
+// // // //           {/* START */}
 
-// // // //                     <Text
-// // // //                       style={styles.successTitle}
-// // // //                     >
-// // // //                       Reached High Ground!
-// // // //                     </Text>
+// // // //           {!gameStarted &&
+// // // //             countdown === null &&
+// // // //             !gameOver &&
+// // // //             !hasWon && (
+// // // //               <View
+// // // //                 style={
+// // // //                   styles.startOverlay
+// // // //                 }
+// // // //               >
+// // // //                 <View
+// // // //                   style={
+// // // //                     styles.startIcon
+// // // //                   }
+// // // //                 >
+// // // //                   <Ionicons
+// // // //                     name="walk"
+// // // //                     size={34}
+// // // //                     color="#38BDF8"
+// // // //                   />
+// // // //                 </View>
 
-// // // //                     <Text
-// // // //                       style={styles.gameOverText}
-// // // //                     >
-// // // //                       Excellent evacuation response.
-// // // //                     </Text>
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.startTitle
+// // // //                   }
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.ready'
+// // // //                   )}
+// // // //                 </Text>
 
-// // // //                     <TouchableOpacity
-// // // //                       style={styles.claimRewardBtn}
-// // // //                       onPress={() => {
-// // // //                         onWin({
-// // // //                           xp: 100,
-// // // //                           coins: 25,
-// // // //                         });
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.startDescription
+// // // //                   }
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.startDescription'
+// // // //                   )}
+// // // //                 </Text>
 
-// // // //                         onClose();
-// // // //                       }}
-// // // //                     >
-// // // //                       <Text
-// // // //                         style={styles.buttonText}
-// // // //                       >
-// // // //                         Claim +100 XP & +25 Coins
-// // // //                       </Text>
-// // // //                     </TouchableOpacity>
-// // // //                   </>
-// // // //                 )}
+// // // //                 <TouchableOpacity
+// // // //                   style={
+// // // //                     styles.startButton
+// // // //                   }
+// // // //                   onPress={
+// // // //                     startGame
+// // // //                   }
+// // // //                   activeOpacity={0.8}
+// // // //                 >
+// // // //                   <Ionicons
+// // // //                     name="play"
+// // // //                     size={18}
+// // // //                     color="#FFFFFF"
+// // // //                   />
+
+// // // //                   <Text
+// // // //                     style={
+// // // //                       styles.startButtonText
+// // // //                     }
+// // // //                   >
+// // // //                     {t(
+// // // //                       'games.floodRunner.start'
+// // // //                     )}
+// // // //                   </Text>
+// // // //                 </TouchableOpacity>
 // // // //               </View>
 // // // //             )}
-// // // //           </View>
 
-// // // //           {/* SCORE */}
+// // // //           {/* GAME OVER */}
 
-// // // //           <View style={styles.gameHud}>
-// // // //             <Text style={styles.scoreText}>
-// // // //               EVACUATION SCORE
-// // // //             </Text>
-
-// // // //             <Text style={styles.scoreValue}>
-// // // //               {score} / 50
-// // // //             </Text>
-// // // //           </View>
-
-// // // //           {/* CONTROLS */}
-
-// // // //           {!gameOver && !hasWon && (
-// // // //             <View style={styles.controls}>
-// // // //               <TouchableOpacity
-// // // //                 style={styles.controlButton}
-// // // //                 onPress={() =>
-// // // //                   movePlayer('left')
-// // // //                 }
-// // // //                 activeOpacity={0.7}
+// // // //           {gameOver && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.endGameOverlay
+// // // //               }
+// // // //             >
+// // // //               <View
+// // // //                 style={[
+// // // //                   styles.resultIcon,
+// // // //                   {
+// // // //                     backgroundColor:
+// // // //                       '#450A0A',
+// // // //                   },
+// // // //                 ]}
 // // // //               >
 // // // //                 <Ionicons
-// // // //                   name="arrow-back"
-// // // //                   size={28}
+// // // //                   name="warning"
+// // // //                   size={34}
+// // // //                   color="#EF4444"
+// // // //                 />
+// // // //               </View>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.gameOverTitle
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.failed'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.gameOverText
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.failedDescription'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.finalScore
+// // // //                 }
+// // // //               >
+// // // //                 {score} /{' '}
+// // // //                 {config.targetScore}
+// // // //               </Text>
+
+// // // //               <TouchableOpacity
+// // // //                 style={
+// // // //                   styles.retryButton
+// // // //                 }
+// // // //                 onPress={
+// // // //                   startGame
+// // // //                 }
+// // // //                 activeOpacity={0.8}
+// // // //               >
+// // // //                 <Ionicons
+// // // //                   name="refresh"
+// // // //                   size={18}
 // // // //                   color="#FFFFFF"
 // // // //                 />
 
-// // // //                 <Text style={styles.controlText}>
-// // // //                   LEFT
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.buttonText
+// // // //                   }
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.retry'
+// // // //                   )}
 // // // //                 </Text>
 // // // //               </TouchableOpacity>
+// // // //             </View>
+// // // //           )}
 
-// // // //               <View style={styles.controlHint}>
+// // // //           {/* WIN */}
+
+// // // //           {hasWon && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.endGameOverlay
+// // // //               }
+// // // //             >
+// // // //               <View
+// // // //                 style={[
+// // // //                   styles.resultIcon,
+// // // //                   {
+// // // //                     backgroundColor:
+// // // //                       '#064E3B',
+// // // //                   },
+// // // //                 ]}
+// // // //               >
 // // // //                 <Ionicons
-// // // //                   name="phone-portrait-outline"
-// // // //                   size={20}
-// // // //                   color="#38BDF8"
+// // // //                   name="shield-checkmark"
+// // // //                   size={36}
+// // // //                   color="#10B981"
+// // // //                 />
+// // // //               </View>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.successTitle
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.success'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <Text
+// // // //                 style={
+// // // //                   styles.gameOverText
+// // // //                 }
+// // // //               >
+// // // //                 {t(
+// // // //                   'games.floodRunner.successDescription'
+// // // //                 )}
+// // // //               </Text>
+
+// // // //               <View
+// // // //                 style={
+// // // //                   styles.rewardRow
+// // // //                 }
+// // // //               >
+// // // //                 <Reward
+// // // //                   icon="flash"
+// // // //                   value={`+${config.reward.xp}`}
+// // // //                   label={t(
+// // // //                     'games.floodRunner.xp'
+// // // //                   )}
 // // // //                 />
 
-// // // //                 <Text style={styles.controlHintText}>
-// // // //                   TILT
-// // // //                 </Text>
+// // // //                 <Reward
+// // // //                   icon="cash"
+// // // //                   value={`+${config.reward.coins}`}
+// // // //                   label={t(
+// // // //                     'games.floodRunner.coins'
+// // // //                   )}
+// // // //                 />
 // // // //               </View>
 
 // // // //               <TouchableOpacity
-// // // //                 style={styles.controlButton}
-// // // //                 onPress={() =>
-// // // //                   movePlayer('right')
+// // // //                 style={
+// // // //                   styles.claimRewardButton
 // // // //                 }
-// // // //                 activeOpacity={0.7}
+// // // //                 onPress={
+// // // //                   handleClaimReward
+// // // //                 }
+// // // //                 activeOpacity={0.8}
 // // // //               >
 // // // //                 <Ionicons
-// // // //                   name="arrow-forward"
-// // // //                   size={28}
+// // // //                   name="checkmark-circle"
+// // // //                   size={18}
 // // // //                   color="#FFFFFF"
 // // // //                 />
 
-// // // //                 <Text style={styles.controlText}>
-// // // //                   RIGHT
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.buttonText
+// // // //                   }
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.claimReward'
+// // // //                   )}
 // // // //                 </Text>
 // // // //               </TouchableOpacity>
 // // // //             </View>
 // // // //           )}
 // // // //         </View>
+
+// // // //         {/* SCORE */}
+
+// // // //         <View
+// // // //           style={styles.gameHud}
+// // // //         >
+// // // //           <View
+// // // //             style={
+// // // //               styles.scoreHeader
+// // // //             }
+// // // //           >
+// // // //             <Text
+// // // //               style={
+// // // //                 styles.scoreLabel
+// // // //               }
+// // // //             >
+// // // //               {t(
+// // // //                 'games.floodRunner.score'
+// // // //               )}
+// // // //             </Text>
+
+// // // //             <Text
+// // // //               style={
+// // // //                 styles.scoreValue
+// // // //               }
+// // // //             >
+// // // //               {score} /{' '}
+// // // //               {config.targetScore}
+// // // //             </Text>
+// // // //           </View>
+
+// // // //           <View
+// // // //             style={
+// // // //               styles.progressBackground
+// // // //             }
+// // // //           >
+// // // //             <View
+// // // //               style={[
+// // // //                 styles.progressFill,
+// // // //                 {
+// // // //                   width:
+// // // //                     `${progressPercentage}%`,
+// // // //                 },
+// // // //               ]}
+// // // //             />
+// // // //           </View>
+// // // //         </View>
+
+// // // //         {/* CONTROLS */}
+
+// // // //         {gameStarted &&
+// // // //           !gameOver &&
+// // // //           !hasWon && (
+// // // //             <View
+// // // //               style={
+// // // //                 styles.controls
+// // // //               }
+// // // //             >
+// // // //               <TouchableOpacity
+// // // //                 style={
+// // // //                   styles.controlButton
+// // // //                 }
+// // // //                 onPress={() =>
+// // // //                   movePlayer(
+// // // //                     'left'
+// // // //                   )
+// // // //                 }
+// // // //                 activeOpacity={0.7}
+// // // //               >
+// // // //                 <Ionicons
+// // // //                   name="arrow-back"
+// // // //                   size={24}
+// // // //                   color="#FFFFFF"
+// // // //                 />
+
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.controlText
+// // // //                   }
+// // // //                   numberOfLines={2}
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.left'
+// // // //                   )}
+// // // //                 </Text>
+// // // //               </TouchableOpacity>
+
+// // // //               <View
+// // // //                 style={
+// // // //                   styles.controlHint
+// // // //                 }
+// // // //               >
+// // // //                 <Ionicons
+// // // //                   name={
+// // // //                     sensorAvailable
+// // // //                       ? 'phone-portrait-outline'
+// // // //                       : 'hand-left-outline'
+// // // //                   }
+// // // //                   size={21}
+// // // //                   color="#38BDF8"
+// // // //                 />
+
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.controlHintText
+// // // //                   }
+// // // //                   numberOfLines={2}
+// // // //                 >
+// // // //                   {sensorAvailable
+// // // //                     ? t(
+// // // //                         'games.floodRunner.tilt'
+// // // //                       )
+// // // //                     : t(
+// // // //                         'games.floodRunner.touch'
+// // // //                       )}
+// // // //                 </Text>
+// // // //               </View>
+
+// // // //               <TouchableOpacity
+// // // //                 style={
+// // // //                   styles.controlButton
+// // // //                 }
+// // // //                 onPress={() =>
+// // // //                   movePlayer(
+// // // //                     'right'
+// // // //                   )
+// // // //                 }
+// // // //                 activeOpacity={0.7}
+// // // //               >
+// // // //                 <Ionicons
+// // // //                   name="arrow-forward"
+// // // //                   size={24}
+// // // //                   color="#FFFFFF"
+// // // //                 />
+
+// // // //                 <Text
+// // // //                   style={
+// // // //                     styles.controlText
+// // // //                   }
+// // // //                   numberOfLines={2}
+// // // //                 >
+// // // //                   {t(
+// // // //                     'games.floodRunner.right'
+// // // //                   )}
+// // // //                 </Text>
+// // // //               </TouchableOpacity>
+// // // //             </View>
+// // // //           )}
 // // // //       </View>
-// // // //     </Modal>
+// // // //     </View>
 // // // //   );
 // // // // }
 
+// // // // /*
+// // // // |--------------------------------------------------------------------------
+// // // // | INSTRUCTION ROW
+// // // // |--------------------------------------------------------------------------
+// // // // */
+
+// // // // function InstructionRow({
+// // // //   icon,
+// // // //   text,
+// // // // }) {
+// // // //   return (
+// // // //     <View
+// // // //       style={
+// // // //         styles.instructionRow
+// // // //       }
+// // // //     >
+// // // //       <View
+// // // //         style={
+// // // //           styles.instructionIcon
+// // // //         }
+// // // //       >
+// // // //         <Ionicons
+// // // //           name={icon}
+// // // //           size={16}
+// // // //           color="#38BDF8"
+// // // //         />
+// // // //       </View>
+
+// // // //       <Text
+// // // //         style={
+// // // //           styles.instructionText
+// // // //         }
+// // // //       >
+// // // //         {text}
+// // // //       </Text>
+// // // //     </View>
+// // // //   );
+// // // // }
+
+// // // // /*
+// // // // |--------------------------------------------------------------------------
+// // // // | REWARD
+// // // // |--------------------------------------------------------------------------
+// // // // */
+
+// // // // function Reward({
+// // // //   icon,
+// // // //   value,
+// // // //   label,
+// // // // }) {
+// // // //   return (
+// // // //     <View
+// // // //       style={styles.reward}
+// // // //     >
+// // // //       <Ionicons
+// // // //         name={icon}
+// // // //         size={18}
+// // // //         color="#FBBF24"
+// // // //       />
+
+// // // //       <Text
+// // // //         style={
+// // // //           styles.rewardValue
+// // // //         }
+// // // //       >
+// // // //         {value}
+// // // //       </Text>
+
+// // // //       <Text
+// // // //         style={
+// // // //           styles.rewardLabel
+// // // //         }
+// // // //       >
+// // // //         {label}
+// // // //       </Text>
+// // // //     </View>
+// // // //   );
+// // // // }
+
+// // // // /*
+// // // // |--------------------------------------------------------------------------
+// // // // | STYLES
+// // // // |--------------------------------------------------------------------------
+// // // // */
+
 // // // // const styles = StyleSheet.create({
-// // // //   modalOverlay: {
+// // // //   screen: {
 // // // //     flex: 1,
-// // // //     backgroundColor: 'rgba(2, 6, 23, 0.9)',
+// // // //     backgroundColor: '#020617',
 // // // //     justifyContent: 'center',
 // // // //     alignItems: 'center',
-// // // //     padding: 16,
+// // // //     padding: 8,
 // // // //   },
 
 // // // //   modalContentCard: {
 // // // //     backgroundColor: '#0F172A',
 // // // //     borderWidth: 1,
 // // // //     borderColor: '#1E293B',
-// // // //     borderRadius: 20,
-// // // //     padding: 20,
-// // // //     maxWidth: 400,
+// // // //     borderRadius: 22,
+// // // //     padding: 12,
+// // // //     maxWidth: 430,
+// // // //     maxHeight: '98%',
 // // // //   },
 
 // // // //   modalHeader: {
 // // // //     flexDirection: 'row',
 // // // //     justifyContent: 'space-between',
 // // // //     alignItems: 'center',
-// // // //     marginBottom: 8,
+// // // //     marginBottom: 10,
+// // // //   },
+
+// // // //   headerTitleArea: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     flex: 1,
+// // // //   },
+
+// // // //   headerIcon: {
+// // // //     width: 38,
+// // // //     height: 38,
+// // // //     borderRadius: 12,
+// // // //     backgroundColor: '#082F49',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     marginRight: 10,
+// // // //   },
+
+// // // //   headerTextArea: {
+// // // //     flex: 1,
 // // // //   },
 
 // // // //   modalTitle: {
 // // // //     color: '#FFFFFF',
 // // // //     fontSize: 17,
 // // // //     fontWeight: '900',
-// // // //     flex: 1,
+// // // //   },
+
+// // // //   levelLabel: {
+// // // //     color: '#38BDF8',
+// // // //     fontSize: 11,
+// // // //     fontWeight: '800',
+// // // //     marginTop: 3,
+// // // //   },
+
+// // // //   objectiveCard: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     backgroundColor: '#052E16',
+// // // //     borderWidth: 1,
+// // // //     borderColor: '#166534',
+// // // //     borderRadius: 13,
+// // // //     padding: 10,
+// // // //     marginBottom: 8,
+// // // //   },
+
+// // // //   objectiveIcon: {
+// // // //     width: 32,
+// // // //     height: 32,
+// // // //     borderRadius: 10,
+// // // //     backgroundColor: '#064E3B',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
 // // // //     marginRight: 10,
 // // // //   },
 
-// // // //   instructions: {
-// // // //     color: '#94A3B8',
-// // // //     fontSize: 12,
-// // // //     lineHeight: 18,
-// // // //     marginBottom: 10,
+// // // //   objectiveTextArea: {
+// // // //     flex: 1,
+// // // //   },
+
+// // // //   objectiveTitle: {
+// // // //     color: '#34D399',
+// // // //     fontSize: 11,
+// // // //     fontWeight: '900',
+// // // //     textTransform: 'uppercase',
+// // // //   },
+
+// // // //   objectiveText: {
+// // // //     color: '#A7F3D0',
+// // // //     fontSize: 11,
+// // // //     lineHeight: 16,
+// // // //     marginTop: 2,
+// // // //   },
+
+// // // //   instructionsCard: {
+// // // //     backgroundColor: '#111827',
+// // // //     borderWidth: 1,
+// // // //     borderColor: '#334155',
+// // // //     borderRadius: 14,
+// // // //     padding: 11,
+// // // //     marginBottom: 8,
+// // // //   },
+
+// // // //   instructionsHeader: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     marginBottom: 6,
+// // // //   },
+
+// // // //   instructionsTitle: {
+// // // //     color: '#FFFFFF',
+// // // //     fontSize: 13,
+// // // //     fontWeight: '900',
+// // // //     marginLeft: 7,
+// // // //   },
+
+// // // //   instructionRow: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'flex-start',
+// // // //     marginTop: 6,
+// // // //   },
+
+// // // //   instructionIcon: {
+// // // //     width: 25,
+// // // //     height: 25,
+// // // //     borderRadius: 8,
+// // // //     backgroundColor: '#082F49',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     marginRight: 8,
+// // // //   },
+
+// // // //   instructionText: {
+// // // //     flex: 1,
+// // // //     color: '#CBD5E1',
+// // // //     fontSize: 11,
+// // // //     lineHeight: 16,
+// // // //     paddingTop: 3,
 // // // //   },
 
 // // // //   sensorStatus: {
 // // // //     flexDirection: 'row',
 // // // //     alignItems: 'center',
 // // // //     alignSelf: 'flex-start',
-// // // //     gap: 6,
-// // // //     marginBottom: 10,
 // // // //     backgroundColor: '#020617',
 // // // //     paddingHorizontal: 9,
 // // // //     paddingVertical: 5,
 // // // //     borderRadius: 8,
+// // // //     marginBottom: 8,
 // // // //   },
 
 // // // //   sensorText: {
 // // // //     fontSize: 10,
 // // // //     fontWeight: '800',
+// // // //     marginLeft: 6,
 // // // //   },
 
 // // // //   gameCanvas: {
 // // // //     backgroundColor: '#020617',
-// // // //     borderRadius: 14,
+// // // //     borderRadius: 16,
 // // // //     borderWidth: 1,
 // // // //     borderColor: '#1E293B',
 // // // //     position: 'relative',
 // // // //     overflow: 'hidden',
 // // // //   },
 
-// // // //   waterLayer: {
-// // // //     position: 'absolute',
-// // // //     bottom: 0,
-// // // //     left: 0,
-// // // //     right: 0,
-// // // //     height: 55,
-// // // //     backgroundColor: '#0C4A6E',
-// // // //     opacity: 0.35,
-// // // //     justifyContent: 'center',
-// // // //     alignItems: 'center',
-// // // //   },
-
-// // // //   waterText: {
-// // // //     color: '#38BDF8',
-// // // //     fontSize: 9,
-// // // //     fontWeight: '900',
-// // // //     letterSpacing: 2,
-// // // //   },
-
-// // // //   shelterLine: {
+// // // //   safeZone: {
 // // // //     position: 'absolute',
 // // // //     top: 0,
 // // // //     left: 0,
 // // // //     right: 0,
-// // // //     height: 38,
+// // // //     height: SAFE_ZONE_HEIGHT,
 // // // //     backgroundColor: '#064E3B',
 // // // //     borderBottomWidth: 1,
 // // // //     borderBottomColor: '#10B981',
 // // // //     flexDirection: 'row',
 // // // //     alignItems: 'center',
-// // // //     justifyContent: 'center',
-// // // //     gap: 6,
-// // // //     zIndex: 2,
+// // // //     paddingHorizontal: 14,
+// // // //     zIndex: 4,
 // // // //   },
 
-// // // //   shelterLineText: {
-// // // //     color: '#34D399',
-// // // //     fontSize: 9,
-// // // //     fontWeight: '900',
-// // // //   },
-
-// // // //   playerNode: {
-// // // //     position: 'absolute',
-// // // //     width: 36,
-// // // //     height: 36,
-// // // //     borderRadius: 18,
-// // // //     backgroundColor: '#2563EB',
-// // // //     borderWidth: 2,
-// // // //     borderColor: '#60A5FA',
+// // // //   safeZoneIcon: {
+// // // //     width: 34,
+// // // //     height: 34,
+// // // //     borderRadius: 10,
+// // // //     backgroundColor: '#065F46',
 // // // //     alignItems: 'center',
 // // // //     justifyContent: 'center',
-// // // //     zIndex: 3,
+// // // //     marginRight: 9,
+// // // //   },
+
+// // // //   safeZoneTitle: {
+// // // //     color: '#D1FAE5',
+// // // //     fontSize: 11,
+// // // //     fontWeight: '900',
+// // // //     letterSpacing: 0.5,
+// // // //   },
+
+// // // //   safeZoneSub: {
+// // // //     color: '#6EE7B7',
+// // // //     fontSize: 9,
+// // // //     fontWeight: '700',
+// // // //     marginTop: 2,
+// // // //   },
+
+// // // //   dangerField: {
+// // // //     position: 'absolute',
+// // // //     top: SAFE_ZONE_HEIGHT,
+// // // //     bottom: FLOOD_HEIGHT,
+// // // //     left: 0,
+// // // //     right: 0,
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //   },
+
+// // // //   routeLine: {
+// // // //     position: 'absolute',
+// // // //     width: 2,
+// // // //     height: '100%',
+// // // //     backgroundColor: '#1E293B',
+// // // //     opacity: 0.8,
+// // // //   },
+
+// // // //   dangerText: {
+// // // //     color: '#334155',
+// // // //     fontSize: 8,
+// // // //     fontWeight: '900',
+// // // //     letterSpacing: 1.5,
+// // // //     transform: [
+// // // //       {
+// // // //         rotate: '-90deg',
+// // // //       },
+// // // //     ],
 // // // //   },
 
 // // // //   debrisNode: {
 // // // //     position: 'absolute',
-// // // //     width: 28,
-// // // //     height: 28,
-// // // //     borderRadius: 14,
+// // // //     width: DEBRIS_SIZE,
+// // // //     height: DEBRIS_SIZE,
+// // // //     borderRadius:
+// // // //       DEBRIS_SIZE / 2,
 // // // //     backgroundColor: '#450A0A',
 // // // //     borderWidth: 1,
 // // // //     borderColor: '#EF4444',
 // // // //     alignItems: 'center',
 // // // //     justifyContent: 'center',
+// // // //     zIndex: 5,
+// // // //   },
+
+// // // //   playerNode: {
+// // // //     position: 'absolute',
+// // // //     width: PLAYER_SIZE,
+// // // //     height: PLAYER_SIZE,
+// // // //     borderRadius:
+// // // //       PLAYER_SIZE / 2,
+// // // //     backgroundColor: '#2563EB',
+// // // //     borderWidth: 2,
+// // // //     borderColor: '#60A5FA',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     zIndex: 6,
+// // // //   },
+
+// // // //   floodLayer: {
+// // // //     position: 'absolute',
+// // // //     bottom: 0,
+// // // //     left: 0,
+// // // //     right: 0,
+// // // //     height: FLOOD_HEIGHT,
+// // // //     backgroundColor: '#075985',
+// // // //     borderTopWidth: 1,
+// // // //     borderTopColor: '#38BDF8',
+// // // //     justifyContent: 'center',
+// // // //     alignItems: 'center',
 // // // //     zIndex: 3,
 // // // //   },
 
-// // // //   gameHud: {
+// // // //   waveContainer: {
+// // // //     position: 'absolute',
+// // // //     top: -13,
+// // // //     left: 0,
+// // // //     right: 0,
+// // // //     flexDirection: 'row',
+// // // //     justifyContent: 'space-around',
+// // // //   },
+
+// // // //   wave: {
+// // // //     color: '#38BDF8',
+// // // //     fontSize: 24,
+// // // //     fontWeight: '900',
+// // // //   },
+
+// // // //   floodLabel: {
+// // // //     color: '#BAE6FD',
+// // // //     fontSize: 9,
+// // // //     fontWeight: '900',
+// // // //     letterSpacing: 2,
 // // // //     marginTop: 12,
+// // // //   },
+
+// // // //   startOverlay: {
+// // // //     position: 'absolute',
+// // // //     top: SAFE_ZONE_HEIGHT,
+// // // //     bottom: FLOOD_HEIGHT,
+// // // //     left: 0,
+// // // //     right: 0,
+// // // //     backgroundColor:
+// // // //       'rgba(2, 6, 23, 0.94)',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     padding: 20,
+// // // //     zIndex: 20,
+// // // //   },
+
+// // // //   startIcon: {
+// // // //     width: 62,
+// // // //     height: 62,
+// // // //     borderRadius: 20,
+// // // //     backgroundColor: '#082F49',
+// // // //     borderWidth: 1,
+// // // //     borderColor: '#0369A1',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     marginBottom: 12,
+// // // //   },
+
+// // // //   startTitle: {
+// // // //     color: '#FFFFFF',
+// // // //     fontSize: 20,
+// // // //     fontWeight: '900',
+// // // //     textAlign: 'center',
+// // // //   },
+
+// // // //   startDescription: {
+// // // //     color: '#94A3B8',
+// // // //     fontSize: 12,
+// // // //     lineHeight: 18,
+// // // //     textAlign: 'center',
+// // // //     marginTop: 6,
+// // // //     maxWidth: 250,
+// // // //   },
+
+// // // //   startButton: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     backgroundColor: '#0284C7',
+// // // //     borderRadius: 12,
+// // // //     minHeight: 48,
+// // // //     paddingHorizontal: 22,
+// // // //     marginTop: 16,
+// // // //   },
+
+// // // //   startButtonText: {
+// // // //     color: '#FFFFFF',
+// // // //     fontSize: 13,
+// // // //     fontWeight: '900',
+// // // //     marginLeft: 7,
+// // // //   },
+
+// // // //   countdownOverlay: {
+// // // //     position: 'absolute',
+// // // //     top: SAFE_ZONE_HEIGHT,
+// // // //     bottom: FLOOD_HEIGHT,
+// // // //     left: 0,
+// // // //     right: 0,
+// // // //     backgroundColor:
+// // // //       'rgba(2, 6, 23, 0.85)',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     zIndex: 30,
+// // // //   },
+
+// // // //   countdownNumber: {
+// // // //     color: '#38BDF8',
+// // // //     fontSize: 64,
+// // // //     fontWeight: '900',
+// // // //   },
+
+// // // //   countdownText: {
+// // // //     color: '#CBD5E1',
+// // // //     fontSize: 12,
+// // // //     fontWeight: '800',
+// // // //     marginTop: 2,
+// // // //   },
+
+// // // //   endGameOverlay: {
+// // // //     position: 'absolute',
+// // // //     top: SAFE_ZONE_HEIGHT + 8,
+// // // //     bottom: FLOOD_HEIGHT + 8,
+// // // //     left: 10,
+// // // //     right: 10,
+// // // //     backgroundColor:
+// // // //       'rgba(15, 23, 42, 0.98)',
+// // // //     borderWidth: 1,
+// // // //     borderColor: '#334155',
+// // // //     borderRadius: 18,
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     padding: 18,
+// // // //     zIndex: 30,
+// // // //   },
+
+// // // //   resultIcon: {
+// // // //     width: 64,
+// // // //     height: 64,
+// // // //     borderRadius: 20,
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     marginBottom: 10,
+// // // //   },
+
+// // // //   gameOverTitle: {
+// // // //     color: '#EF4444',
+// // // //     fontWeight: '900',
+// // // //     fontSize: 20,
+// // // //     textAlign: 'center',
+// // // //   },
+
+// // // //   successTitle: {
+// // // //     color: '#10B981',
+// // // //     fontWeight: '900',
+// // // //     fontSize: 20,
+// // // //     textAlign: 'center',
+// // // //   },
+
+// // // //   gameOverText: {
+// // // //     color: '#94A3B8',
+// // // //     fontSize: 11,
+// // // //     textAlign: 'center',
+// // // //     lineHeight: 17,
+// // // //     marginTop: 7,
+// // // //     maxWidth: 250,
+// // // //   },
+
+// // // //   finalScore: {
+// // // //     color: '#FFFFFF',
+// // // //     fontSize: 24,
+// // // //     fontWeight: '900',
+// // // //     marginTop: 12,
+// // // //   },
+
+// // // //   retryButton: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     backgroundColor: '#DC2626',
+// // // //     minHeight: 44,
+// // // //     paddingHorizontal: 20,
+// // // //     borderRadius: 11,
+// // // //     marginTop: 14,
+// // // //   },
+
+// // // //   claimRewardButton: {
+// // // //     flexDirection: 'row',
+// // // //     backgroundColor: '#059669',
+// // // //     minHeight: 46,
+// // // //     paddingHorizontal: 22,
+// // // //     borderRadius: 11,
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'center',
+// // // //     marginTop: 14,
+// // // //   },
+
+// // // //   buttonText: {
+// // // //     color: '#FFFFFF',
+// // // //     fontWeight: '900',
+// // // //     fontSize: 12,
+// // // //     marginLeft: 6,
+// // // //   },
+
+// // // //   rewardRow: {
+// // // //     flexDirection: 'row',
+// // // //     marginTop: 14,
+// // // //     gap: 10,
+// // // //   },
+
+// // // //   reward: {
+// // // //     minWidth: 78,
+// // // //     backgroundColor: '#111827',
+// // // //     borderWidth: 1,
+// // // //     borderColor: '#334155',
+// // // //     borderRadius: 10,
+// // // //     paddingVertical: 8,
+// // // //     paddingHorizontal: 10,
 // // // //     alignItems: 'center',
 // // // //   },
 
-// // // //   scoreText: {
+// // // //   rewardValue: {
+// // // //     color: '#FBBF24',
+// // // //     fontSize: 16,
+// // // //     fontWeight: '900',
+// // // //     marginTop: 2,
+// // // //   },
+
+// // // //   rewardLabel: {
+// // // //     color: '#64748B',
+// // // //     fontSize: 8,
+// // // //     fontWeight: '800',
+// // // //     marginTop: 1,
+// // // //   },
+
+// // // //   gameHud: {
+// // // //     marginTop: 9,
+// // // //   },
+
+// // // //   scoreHeader: {
+// // // //     flexDirection: 'row',
+// // // //     alignItems: 'center',
+// // // //     justifyContent: 'space-between',
+// // // //   },
+
+// // // //   scoreLabel: {
 // // // //     color: '#64748B',
 // // // //     fontSize: 9,
 // // // //     fontWeight: '900',
@@ -1590,28 +9092,43 @@
 
 // // // //   scoreValue: {
 // // // //     color: '#FFFFFF',
-// // // //     fontSize: 22,
+// // // //     fontSize: 16,
 // // // //     fontWeight: '900',
-// // // //     marginTop: 2,
+// // // //   },
+
+// // // //   progressBackground: {
+// // // //     height: 6,
+// // // //     width: '100%',
+// // // //     backgroundColor: '#1E293B',
+// // // //     borderRadius: 3,
+// // // //     overflow: 'hidden',
+// // // //     marginTop: 5,
+// // // //   },
+
+// // // //   progressFill: {
+// // // //     height: '100%',
+// // // //     backgroundColor: '#38BDF8',
+// // // //     borderRadius: 3,
 // // // //   },
 
 // // // //   controls: {
 // // // //     flexDirection: 'row',
 // // // //     alignItems: 'center',
 // // // //     justifyContent: 'space-between',
-// // // //     marginTop: 14,
-// // // //     gap: 10,
+// // // //     marginTop: 9,
+// // // //     gap: 8,
 // // // //   },
 
 // // // //   controlButton: {
-// // // //     width: 90,
-// // // //     height: 58,
+// // // //     flex: 1,
+// // // //     minHeight: 54,
 // // // //     backgroundColor: '#1E3A8A',
 // // // //     borderWidth: 1,
 // // // //     borderColor: '#3B82F6',
-// // // //     borderRadius: 14,
+// // // //     borderRadius: 13,
 // // // //     alignItems: 'center',
 // // // //     justifyContent: 'center',
+// // // //     paddingHorizontal: 5,
 // // // //   },
 
 // // // //   controlText: {
@@ -1619,118 +9136,53 @@
 // // // //     fontSize: 8,
 // // // //     fontWeight: '900',
 // // // //     marginTop: 2,
+// // // //     textAlign: 'center',
 // // // //   },
 
 // // // //   controlHint: {
+// // // //     width: 54,
 // // // //     alignItems: 'center',
 // // // //     justifyContent: 'center',
-// // // //     opacity: 0.8,
 // // // //   },
 
 // // // //   controlHintText: {
 // // // //     color: '#38BDF8',
-// // // //     fontSize: 8,
+// // // //     fontSize: 7,
 // // // //     fontWeight: '900',
-// // // //     marginTop: 2,
-// // // //   },
-
-// // // //   endGameOverlay: {
-// // // //     position: 'absolute',
-// // // //     top: 55,
-// // // //     bottom: 20,
-// // // //     left: 20,
-// // // //     right: 20,
-// // // //     backgroundColor: 'rgba(15, 23, 42, 0.96)',
-// // // //     borderWidth: 1,
-// // // //     borderColor: '#334155',
-// // // //     borderRadius: 18,
-// // // //     alignItems: 'center',
-// // // //     justifyContent: 'center',
-// // // //     padding: 20,
-// // // //     zIndex: 10,
-// // // //   },
-
-// // // //   gameOverTitle: {
-// // // //     color: '#EF4444',
-// // // //     fontWeight: '900',
-// // // //     fontSize: 19,
-// // // //     marginTop: 8,
-// // // //   },
-
-// // // //   successTitle: {
-// // // //     color: '#10B981',
-// // // //     fontWeight: '900',
-// // // //     fontSize: 19,
-// // // //     marginTop: 8,
-// // // //   },
-
-// // // //   gameOverText: {
-// // // //     color: '#94A3B8',
-// // // //     fontSize: 11,
+// // // //     marginTop: 3,
 // // // //     textAlign: 'center',
-// // // //     lineHeight: 17,
-// // // //     marginTop: 5,
-// // // //   },
-
-// // // //   retryBtn: {
-// // // //     backgroundColor: '#EF4444',
-// // // //     paddingVertical: 11,
-// // // //     paddingHorizontal: 20,
-// // // //     borderRadius: 10,
-// // // //     marginTop: 14,
-// // // //   },
-
-// // // //   claimRewardBtn: {
-// // // //     backgroundColor: '#10B981',
-// // // //     paddingVertical: 12,
-// // // //     paddingHorizontal: 20,
-// // // //     borderRadius: 12,
-// // // //     marginTop: 14,
-// // // //   },
-
-// // // //   buttonText: {
-// // // //     color: '#FFFFFF',
-// // // //     fontWeight: '900',
-// // // //     fontSize: 12,
 // // // //   },
 // // // // });
 
-// // // // /**
-// // // //  * ┌─────────────────────────┐
-// // // // │ 🏢  ELEVATED SHELTER    │
-// // // // │     🟢 SAFE ZONE        │
-// // // // ├─────────────────────────┤
-// // // // │ ~~~~~~~ 🌊 ~~~~~~~~~~~~ │
-// // // // │   🚗       ⚡           │
-// // // // │ ~~~~~~  ⚠️  ~~~~~~~~~~ │
-// // // // │        🧍               │
-// // // // │ 🌊🌊🌊🌊🌊🌊🌊🌊🌊🌊 │
-// // // // │     FLOOD ZONE          │
-// // // // └─────────────────────────┘
-
-// // // //  */
 
 
 
-// // // import React, { useEffect, useMemo, useRef, useState } from 'react';
+// // // // FloodRunnerGameModal.js
+
+// // // import React, {
+// // //   useCallback,
+// // //   useEffect,
+// // //   useRef,
+// // //   useState,
+// // // } from 'react';
+
 // // // import {
 // // //   View,
 // // //   Text,
 // // //   StyleSheet,
 // // //   TouchableOpacity,
-// // //   Modal,
 // // //   Dimensions,
-// // //   ScrollView,
+// // //   BackHandler,
 // // // } from 'react-native';
 
 // // // import { Ionicons } from '@expo/vector-icons';
 // // // import * as Haptics from 'expo-haptics';
 // // // import { Accelerometer } from 'expo-sensors';
-
-// // // // Replace this import with the location of your translation hook.
-// // // // Example if you use react-i18next:
-// // // // import { useTranslation } from 'react-i18next';
 // // // import { useTranslation } from 'react-i18next';
+// // // import {
+// // //   useNavigation,
+// // //   useRoute,
+// // // } from '@react-navigation/native';
 
 // // // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
 // // //   Dimensions.get('window');
@@ -1739,28 +9191,19 @@
 // // // |--------------------------------------------------------------------------
 // // // | LEVEL CONFIGURATION
 // // // |--------------------------------------------------------------------------
-// // // |
-// // // | Three levels:
-// // // |
-// // // | Level 1 = Easy
-// // // | Level 2 = Moderate
-// // // | Level 3 = Advanced
-// // // |
-// // // | The core game logic remains the same.
-// // // |--------------------------------------------------------------------------
 // // // */
 
 // // // const LEVEL_CONFIG = {
 // // //   1: {
 // // //     nameKey: 'games.floodRunner.levels.easy',
+
 // // //     targetScore: 50,
 
-// // //     debrisSpeed: 6,
-// // //     gameTick: 45,
-
+// // //     debrisSpeed: 155,
+// // //     spawnInterval: 1150,
 // // //     spawnCount: 1,
 
-// // //     playerSpeed: 35,
+// // //     playerSpeed: 300,
 
 // // //     reward: {
 // // //       xp: 100,
@@ -1770,14 +9213,14 @@
 
 // // //   2: {
 // // //     nameKey: 'games.floodRunner.levels.moderate',
+
 // // //     targetScore: 75,
 
-// // //     debrisSpeed: 8,
-// // //     gameTick: 40,
-
+// // //     debrisSpeed: 205,
+// // //     spawnInterval: 900,
 // // //     spawnCount: 2,
 
-// // //     playerSpeed: 38,
+// // //     playerSpeed: 340,
 
 // // //     reward: {
 // // //       xp: 150,
@@ -1787,14 +9230,14 @@
 
 // // //   3: {
 // // //     nameKey: 'games.floodRunner.levels.advanced',
+
 // // //     targetScore: 100,
 
-// // //     debrisSpeed: 10,
-// // //     gameTick: 35,
-
+// // //     debrisSpeed: 255,
+// // //     spawnInterval: 750,
 // // //     spawnCount: 3,
 
-// // //     playerSpeed: 42,
+// // //     playerSpeed: 380,
 
 // // //     reward: {
 // // //       xp: 200,
@@ -1803,28 +9246,52 @@
 // // //   },
 // // // };
 
+// // // /*
+// // // |--------------------------------------------------------------------------
+// // // | GAME CONSTANTS
+// // // |--------------------------------------------------------------------------
+// // // */
+
 // // // const PLAYER_SIZE = 36;
 // // // const DEBRIS_SIZE = 28;
 
-// // // const STARTING_DEBRIS_Y = -40;
+// // // const SAFE_ZONE_HEIGHT = 56;
+// // // const FLOOD_HEIGHT = 64;
 
-// // // export default function FloodRunnerGameModal({
-// // //   visible,
-// // //   onClose,
-// // //   onWin,
-// // //   level = 1,
-// // // }) {
+// // // const PLAYER_BOTTOM_OFFSET = 14;
+
+// // // const COLLISION_PADDING = 5;
+
+// // // const TOUCH_MOVE_MULTIPLIER = 0.22;
+
+// // // const SENSOR_DEAD_ZONE = 0.05;
+
+// // // /*
+// // // |--------------------------------------------------------------------------
+// // // | COMPONENT
+// // // |--------------------------------------------------------------------------
+// // // */
+
+// // // export default function FloodRunnerGameModal() {
 // // //   const { t } = useTranslation();
+
+// // //   const navigation = useNavigation();
+// // //   const route = useRoute();
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
-// // //   | SAFE LEVEL
+// // //   | LEVEL
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
+// // //   const routeLevel = route?.params?.level ?? 1;
+
 // // //   const selectedLevel = Math.min(
 // // //     3,
-// // //     Math.max(1, Number(level) || 1)
+// // //     Math.max(
+// // //       1,
+// // //       Number(routeLevel) || 1
+// // //     )
 // // //   );
 
 // // //   const config = LEVEL_CONFIG[selectedLevel];
@@ -1836,18 +9303,22 @@
 // // //   */
 
 // // //   const GAME_WIDTH = Math.min(
-// // //     SCREEN_WIDTH - 48,
-// // //     360
+// // //     SCREEN_WIDTH - 32,
+// // //     390
 // // //   );
 
 // // //   const GAME_HEIGHT = Math.min(
-// // //     SCREEN_HEIGHT * 0.43,
-// // //     330
+// // //     SCREEN_HEIGHT * 0.52,
+// // //     430
 // // //   );
+
+// // //   const INITIAL_PLAYER_X =
+// // //     GAME_WIDTH / 2 -
+// // //     PLAYER_SIZE / 2;
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
-// // //   | GAME STATE
+// // //   | STATE
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
@@ -1858,18 +9329,8 @@
 // // //     useState(null);
 
 // // //   const [playerPositionX, setPlayerPositionX] =
-// // //     useState(
-// // //       GAME_WIDTH / 2 -
-// // //         PLAYER_SIZE / 2
-// // //     );
+// // //     useState(INITIAL_PLAYER_X);
 
-// // //   /*
-// // //    * Multiple debris objects.
-// // //    *
-// // //    * Level 1 = 1
-// // //    * Level 2 = 2
-// // //    * Level 3 = 3
-// // //    */
 // // //   const [debris, setDebris] =
 // // //     useState([]);
 
@@ -1885,11 +9346,98 @@
 // // //   const [sensorAvailable, setSensorAvailable] =
 // // //     useState(false);
 
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | REFS
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const playerXRef = useRef(
+// // //     INITIAL_PLAYER_X
+// // //   );
+
+// // //   const debrisRef = useRef([]);
+
+// // //   const scoreRef = useRef(0);
+
+// // //   const gameRunningRef =
+// // //     useRef(false);
+
+// // //   const gameOverRef =
+// // //     useRef(false);
+
+// // //   const hasWonRef =
+// // //     useRef(false);
+
 // // //   const movementRef =
+// // //     useRef(0);
+
+// // //   const animationFrameRef =
+// // //     useRef(null);
+
+// // //   const lastFrameTimeRef =
+// // //     useRef(null);
+
+// // //   const lastSpawnTimeRef =
 // // //     useRef(0);
 
 // // //   const countdownTimerRef =
 // // //     useRef(null);
+
+// // //   const sensorSubscriptionRef =
+// // //     useRef(null);
+
+// // //   /*
+// // //    * Prevents an old animation frame from
+// // //    * accidentally continuing after restart.
+// // //    */
+// // //   const gameSessionRef =
+// // //     useRef(0);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | HAPTICS
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const safeImpact = useCallback(
+// // //     async (style) => {
+// // //       try {
+// // //         await Haptics.impactAsync(style);
+// // //       } catch (error) {
+// // //         // Haptics may be unavailable on some devices.
+// // //       }
+// // //     },
+// // //     []
+// // //   );
+
+// // //   const safeNotification =
+// // //     useCallback(async (type) => {
+// // //       try {
+// // //         await Haptics.notificationAsync(type);
+// // //       } catch (error) {
+// // //         // Haptics may be unavailable.
+// // //       }
+// // //     }, []);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | CLAMP PLAYER
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const clampPlayerX = useCallback(
+// // //     (x) => {
+// // //       return Math.max(
+// // //         0,
+// // //         Math.min(
+// // //           GAME_WIDTH - PLAYER_SIZE,
+// // //           x
+// // //         )
+// // //       );
+// // //     },
+// // //     [GAME_WIDTH]
+// // //   );
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
@@ -1897,25 +9445,120 @@
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
-// // //   const createDebris = () => {
-// // //     return Array.from(
-// // //       {
-// // //         length: config.spawnCount,
+// // //   const createDebrisObject =
+// // //     useCallback(
+// // //       (y = -DEBRIS_SIZE) => {
+// // //         return {
+// // //           id:
+// // //             `${Date.now()}-${Math.random()}`,
+
+// // //           x:
+// // //             Math.random() *
+// // //             Math.max(
+// // //               1,
+// // //               GAME_WIDTH - DEBRIS_SIZE
+// // //             ),
+
+// // //           y,
+// // //         };
 // // //       },
-// // //       (_, index) => ({
-// // //         id: `${Date.now()}-${index}-${Math.random()}`,
-
-// // //         x:
-// // //           Math.random() *
-// // //           (GAME_WIDTH - DEBRIS_SIZE),
-
-// // //         y:
-// // //           STARTING_DEBRIS_Y -
-// // //           index * 100 -
-// // //           Math.random() * 80,
-// // //       })
+// // //       [GAME_WIDTH]
 // // //     );
-// // //   };
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | CREATE INITIAL DEBRIS
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const createInitialDebris =
+// // //     useCallback(() => {
+// // //       const objects = [];
+
+// // //       /*
+// // //        * Start debris at different heights so
+// // //        * the player has time to react.
+// // //        */
+
+// // //       for (
+// // //         let index = 0;
+// // //         index < config.spawnCount;
+// // //         index += 1
+// // //       ) {
+// // //         objects.push({
+// // //           id:
+// // //             `${Date.now()}-${index}-${Math.random()}`,
+
+// // //           x:
+// // //             Math.random() *
+// // //             Math.max(
+// // //               1,
+// // //               GAME_WIDTH - DEBRIS_SIZE
+// // //             ),
+
+// // //           y:
+// // //             -DEBRIS_SIZE -
+// // //             index * 120 -
+// // //             Math.random() * 100,
+// // //         });
+// // //       }
+
+// // //       return objects;
+// // //     }, [
+// // //       config.spawnCount,
+// // //       GAME_WIDTH,
+// // //     ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | STOP SENSOR
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const stopSensor = useCallback(() => {
+// // //     if (
+// // //       sensorSubscriptionRef.current
+// // //     ) {
+// // //       try {
+// // //         sensorSubscriptionRef.current.remove();
+// // //       } catch (error) {
+// // //         // Ignore cleanup errors.
+// // //       }
+
+// // //       sensorSubscriptionRef.current =
+// // //         null;
+// // //     }
+
+// // //     movementRef.current = 0;
+// // //   }, []);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | STOP GAME LOOP
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const stopGameLoop = useCallback(() => {
+// // //     gameRunningRef.current =
+// // //       false;
+
+// // //     gameSessionRef.current += 1;
+
+// // //     if (
+// // //       animationFrameRef.current !==
+// // //       null
+// // //     ) {
+// // //       cancelAnimationFrame(
+// // //         animationFrameRef.current
+// // //       );
+
+// // //       animationFrameRef.current =
+// // //         null;
+// // //     }
+
+// // //     lastFrameTimeRef.current =
+// // //       null;
+// // //   }, []);
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
@@ -1923,26 +9566,638 @@
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
-// // //   const resetGame = () => {
-// // //     setScore(0);
+// // //   const resetGame = useCallback(() => {
+// // //     /*
+// // //      * Stop countdown.
+// // //      */
 
-// // //     setGameOver(false);
+// // //     if (
+// // //       countdownTimerRef.current
+// // //     ) {
+// // //       clearInterval(
+// // //         countdownTimerRef.current
+// // //       );
 
-// // //     setHasWon(false);
+// // //       countdownTimerRef.current =
+// // //         null;
+// // //     }
 
-// // //     setGameStarted(false);
+// // //     /*
+// // //      * Stop gameplay.
+// // //      */
 
-// // //     setCountdown(null);
+// // //     stopGameLoop();
+// // //     stopSensor();
 
-// // //     setPlayerPositionX(
-// // //       GAME_WIDTH / 2 -
-// // //         PLAYER_SIZE / 2
-// // //     );
+// // //     /*
+// // //      * Reset refs.
+// // //      */
 
-// // //     setDebris([]);
+// // //     playerXRef.current =
+// // //       INITIAL_PLAYER_X;
+
+// // //     debrisRef.current = [];
+
+// // //     scoreRef.current = 0;
+
+// // //     gameRunningRef.current =
+// // //       false;
+
+// // //     gameOverRef.current =
+// // //       false;
+
+// // //     hasWonRef.current =
+// // //       false;
 
 // // //     movementRef.current = 0;
-// // //   };
+
+// // //     lastFrameTimeRef.current =
+// // //       null;
+
+// // //     lastSpawnTimeRef.current =
+// // //       0;
+
+// // //     /*
+// // //      * Reset state.
+// // //      */
+
+// // //     setGameStarted(false);
+// // //     setCountdown(null);
+// // //     setPlayerPositionX(
+// // //       INITIAL_PLAYER_X
+// // //     );
+// // //     setDebris([]);
+// // //     setScore(0);
+// // //     setGameOver(false);
+// // //     setHasWon(false);
+// // //   }, [
+// // //     INITIAL_PLAYER_X,
+// // //     stopGameLoop,
+// // //     stopSensor,
+// // //   ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | FINISH GAME
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const finishGame =
+// // //     useCallback(() => {
+// // //       if (
+// // //         !gameRunningRef.current ||
+// // //         gameOverRef.current ||
+// // //         hasWonRef.current
+// // //       ) {
+// // //         return;
+// // //       }
+
+// // //       gameRunningRef.current =
+// // //         false;
+
+// // //       gameOverRef.current =
+// // //         true;
+
+// // //       stopSensor();
+
+// // //       if (
+// // //         animationFrameRef.current !==
+// // //         null
+// // //       ) {
+// // //         cancelAnimationFrame(
+// // //           animationFrameRef.current
+// // //         );
+
+// // //         animationFrameRef.current =
+// // //           null;
+// // //       }
+
+// // //       lastFrameTimeRef.current =
+// // //         null;
+
+// // //       setGameOver(true);
+
+// // //       safeNotification(
+// // //         Haptics.NotificationFeedbackType
+// // //           .Error
+// // //       );
+// // //     }, [
+// // //       safeNotification,
+// // //       stopSensor,
+// // //     ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | WIN GAME
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const winGame =
+// // //     useCallback(() => {
+// // //       if (
+// // //         hasWonRef.current ||
+// // //         gameOverRef.current
+// // //       ) {
+// // //         return;
+// // //       }
+
+// // //       gameRunningRef.current =
+// // //         false;
+
+// // //       hasWonRef.current =
+// // //         true;
+
+// // //       stopSensor();
+
+// // //       scoreRef.current =
+// // //         config.targetScore;
+
+// // //       setScore(
+// // //         config.targetScore
+// // //       );
+
+// // //       setHasWon(true);
+
+// // //       if (
+// // //         animationFrameRef.current !==
+// // //         null
+// // //       ) {
+// // //         cancelAnimationFrame(
+// // //           animationFrameRef.current
+// // //         );
+
+// // //         animationFrameRef.current =
+// // //           null;
+// // //       }
+
+// // //       lastFrameTimeRef.current =
+// // //         null;
+
+// // //       safeNotification(
+// // //         Haptics.NotificationFeedbackType
+// // //           .Success
+// // //       );
+// // //     }, [
+// // //       config.targetScore,
+// // //       safeNotification,
+// // //       stopSensor,
+// // //     ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | COLLISION
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const checkCollision =
+// // //     useCallback(
+// // //       (playerX, debrisItem) => {
+// // //         const playerTop =
+// // //           GAME_HEIGHT -
+// // //           PLAYER_SIZE -
+// // //           PLAYER_BOTTOM_OFFSET -
+// // //           FLOOD_HEIGHT;
+
+// // //         const playerLeft =
+// // //           playerX +
+// // //           COLLISION_PADDING;
+
+// // //         const playerRight =
+// // //           playerX +
+// // //           PLAYER_SIZE -
+// // //           COLLISION_PADDING;
+
+// // //         const playerCollisionTop =
+// // //           playerTop +
+// // //           COLLISION_PADDING;
+
+// // //         const playerCollisionBottom =
+// // //           playerTop +
+// // //           PLAYER_SIZE -
+// // //           COLLISION_PADDING;
+
+// // //         const debrisLeft =
+// // //           debrisItem.x +
+// // //           COLLISION_PADDING;
+
+// // //         const debrisRight =
+// // //           debrisItem.x +
+// // //           DEBRIS_SIZE -
+// // //           COLLISION_PADDING;
+
+// // //         const debrisTop =
+// // //           debrisItem.y +
+// // //           COLLISION_PADDING;
+
+// // //         const debrisBottom =
+// // //           debrisItem.y +
+// // //           DEBRIS_SIZE -
+// // //           COLLISION_PADDING;
+
+// // //         return (
+// // //           playerLeft <
+// // //             debrisRight &&
+// // //           playerRight >
+// // //             debrisLeft &&
+// // //           playerCollisionTop <
+// // //             debrisBottom &&
+// // //           playerCollisionBottom >
+// // //             debrisTop
+// // //         );
+// // //       },
+// // //       [GAME_HEIGHT]
+// // //     );
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | GAME LOOP
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const runGameLoop =
+// // //     useCallback(
+// // //       (timestamp, sessionId) => {
+// // //         /*
+// // //          * Ignore an animation frame belonging
+// // //          * to an old game session.
+// // //          */
+
+// // //         if (
+// // //           sessionId !==
+// // //           gameSessionRef.current
+// // //         ) {
+// // //           return;
+// // //         }
+
+// // //         if (
+// // //           !gameRunningRef.current ||
+// // //           gameOverRef.current ||
+// // //           hasWonRef.current
+// // //         ) {
+// // //           return;
+// // //         }
+
+// // //         /*
+// // //          * First frame.
+// // //          */
+
+// // //         if (
+// // //           lastFrameTimeRef.current ===
+// // //           null
+// // //         ) {
+// // //           lastFrameTimeRef.current =
+// // //             timestamp;
+// // //         }
+
+// // //         /*
+// // //          * Cap delta so the game doesn't
+// // //          * jump after a frame-rate drop.
+// // //          */
+
+// // //         const delta = Math.min(
+// // //           timestamp -
+// // //             lastFrameTimeRef.current,
+// // //           50
+// // //         ) / 1000;
+
+// // //         lastFrameTimeRef.current =
+// // //           timestamp;
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | PLAYER MOVEMENT
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         let nextPlayerX =
+// // //           playerXRef.current;
+
+// // //         const tilt =
+// // //           movementRef.current;
+
+// // //         if (
+// // //           Math.abs(tilt) >=
+// // //           SENSOR_DEAD_ZONE
+// // //         ) {
+// // //           nextPlayerX +=
+// // //             tilt *
+// // //             config.playerSpeed *
+// // //             delta;
+// // //         }
+
+// // //         nextPlayerX =
+// // //           clampPlayerX(
+// // //             nextPlayerX
+// // //           );
+
+// // //         playerXRef.current =
+// // //           nextPlayerX;
+
+// // //         setPlayerPositionX(
+// // //           nextPlayerX
+// // //         );
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | MOVE DEBRIS
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         const movedDebris =
+// // //           debrisRef.current.map(
+// // //             (item) => ({
+// // //               ...item,
+
+// // //               y:
+// // //                 item.y +
+// // //                 config.debrisSpeed *
+// // //                   delta,
+// // //             })
+// // //           );
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | COLLISION
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         const collision =
+// // //           movedDebris.some(
+// // //             (item) =>
+// // //               checkCollision(
+// // //                 nextPlayerX,
+// // //                 item
+// // //               )
+// // //           );
+
+// // //         if (collision) {
+// // //           debrisRef.current =
+// // //             movedDebris;
+
+// // //           setDebris(
+// // //             movedDebris
+// // //           );
+
+// // //           finishGame();
+
+// // //           return;
+// // //         }
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | SCORE
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         let passedCount = 0;
+
+// // //         const survivingDebris =
+// // //           movedDebris.filter(
+// // //             (item) => {
+// // //               if (
+// // //                 item.y >
+// // //                 GAME_HEIGHT
+// // //               ) {
+// // //                 passedCount += 1;
+// // //                 return false;
+// // //               }
+
+// // //               return true;
+// // //             }
+// // //           );
+
+// // //         if (
+// // //           passedCount > 0
+// // //         ) {
+// // //           const nextScore =
+// // //             Math.min(
+// // //               config.targetScore,
+// // //               scoreRef.current +
+// // //                 passedCount * 10
+// // //             );
+
+// // //           scoreRef.current =
+// // //             nextScore;
+
+// // //           setScore(nextScore);
+
+// // //           /*
+// // //            * Win immediately once the
+// // //            * target has been reached.
+// // //            */
+
+// // //           if (
+// // //             nextScore >=
+// // //             config.targetScore
+// // //           ) {
+// // //             debrisRef.current =
+// // //               survivingDebris;
+
+// // //             setDebris(
+// // //               survivingDebris
+// // //             );
+
+// // //             winGame();
+
+// // //             return;
+// // //           }
+// // //         }
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | SPAWN
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         if (
+// // //           timestamp -
+// // //             lastSpawnTimeRef.current >=
+// // //           config.spawnInterval
+// // //         ) {
+// // //           lastSpawnTimeRef.current =
+// // //             timestamp;
+
+// // //           /*
+// // //            * Only spawn if we haven't
+// // //            * reached the configured number
+// // //            * of active obstacles.
+// // //            */
+
+// // //           if (
+// // //             survivingDebris.length <
+// // //             config.spawnCount
+// // //           ) {
+// // //             survivingDebris.push(
+// // //               createDebrisObject()
+// // //             );
+// // //           }
+// // //         }
+
+// // //         /*
+// // //          * Safety limit.
+// // //          */
+
+// // //         while (
+// // //           survivingDebris.length >
+// // //           config.spawnCount
+// // //         ) {
+// // //           survivingDebris.shift();
+// // //         }
+
+// // //         debrisRef.current =
+// // //           survivingDebris;
+
+// // //         setDebris(
+// // //           survivingDebris
+// // //         );
+
+// // //         /*
+// // //          |--------------------------------------------------------------------------
+// // //          | NEXT FRAME
+// // //          |--------------------------------------------------------------------------
+// // //          */
+
+// // //         animationFrameRef.current =
+// // //           requestAnimationFrame(
+// // //             (nextTimestamp) =>
+// // //               runGameLoop(
+// // //                 nextTimestamp,
+// // //                 sessionId
+// // //               )
+// // //           );
+// // //       },
+// // //       [
+// // //         clampPlayerX,
+// // //         config.debrisSpeed,
+// // //         config.playerSpeed,
+// // //         config.spawnCount,
+// // //         config.spawnInterval,
+// // //         config.targetScore,
+// // //         createDebrisObject,
+// // //         finishGame,
+// // //         GAME_HEIGHT,
+// // //         checkCollision,
+// // //         winGame,
+// // //       ]
+// // //     );
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | BEGIN GAME
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const beginGame =
+// // //     useCallback(() => {
+// // //       /*
+// // //        * Create a new session.
+// // //        */
+
+// // //       const sessionId =
+// // //         gameSessionRef.current + 1;
+
+// // //       gameSessionRef.current =
+// // //         sessionId;
+
+// // //       /*
+// // //        * Stop any previous frame.
+// // //        */
+
+// // //       if (
+// // //         animationFrameRef.current !==
+// // //         null
+// // //       ) {
+// // //         cancelAnimationFrame(
+// // //           animationFrameRef.current
+// // //         );
+
+// // //         animationFrameRef.current =
+// // //           null;
+// // //       }
+
+// // //       /*
+// // //        * Initial player.
+// // //        */
+
+// // //       playerXRef.current =
+// // //         INITIAL_PLAYER_X;
+
+// // //       /*
+// // //        * Initial obstacles.
+// // //        */
+
+// // //       const initialDebris =
+// // //         createInitialDebris();
+
+// // //       debrisRef.current =
+// // //         initialDebris;
+
+// // //       /*
+// // //        * Reset game refs.
+// // //        */
+
+// // //       scoreRef.current = 0;
+
+// // //       gameRunningRef.current =
+// // //         true;
+
+// // //       gameOverRef.current =
+// // //         false;
+
+// // //       hasWonRef.current =
+// // //         false;
+
+// // //       movementRef.current = 0;
+
+// // //       lastFrameTimeRef.current =
+// // //         null;
+
+// // //       lastSpawnTimeRef.current =
+// // //         performance.now();
+
+// // //       /*
+// // //        * Update UI.
+// // //        */
+
+// // //       setPlayerPositionX(
+// // //         INITIAL_PLAYER_X
+// // //       );
+
+// // //       setDebris(
+// // //         initialDebris
+// // //       );
+
+// // //       setScore(0);
+
+// // //       setGameOver(false);
+
+// // //       setHasWon(false);
+
+// // //       setGameStarted(true);
+
+// // //       safeNotification(
+// // //         Haptics.NotificationFeedbackType
+// // //           .Success
+// // //       );
+
+// // //       /*
+// // //        * Start loop.
+// // //        */
+
+// // //       animationFrameRef.current =
+// // //         requestAnimationFrame(
+// // //           (timestamp) =>
+// // //             runGameLoop(
+// // //               timestamp,
+// // //               sessionId
+// // //             )
+// // //         );
+// // //     }, [
+// // //       INITIAL_PLAYER_X,
+// // //       createInitialDebris,
+// // //       runGameLoop,
+// // //       safeNotification,
+// // //     ]);
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
@@ -1950,69 +10205,176 @@
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
-// // //   const startGame = () => {
-// // //     if (gameStarted || countdown !== null) {
-// // //       return;
-// // //     }
+// // //   const startGame =
+// // //     useCallback(() => {
+// // //       /*
+// // //        * Don't allow multiple starts.
+// // //        */
 
-// // //     setCountdown(3);
+// // //       if (
+// // //         gameRunningRef.current ||
+// // //         countdown !== null
+// // //       ) {
+// // //         return;
+// // //       }
 
-// // //     let count = 3;
+// // //       /*
+// // //        * Clear any previous timer.
+// // //        */
 
-// // //     countdownTimerRef.current =
-// // //       setInterval(() => {
-// // //         count -= 1;
-
-// // //         if (count <= 0) {
-// // //           clearInterval(
-// // //             countdownTimerRef.current
-// // //           );
-
-// // //           countdownTimerRef.current = null;
-
-// // //           setCountdown(null);
-
-// // //           setGameStarted(true);
-
-// // //           setScore(0);
-
-// // //           setGameOver(false);
-
-// // //           setHasWon(false);
-
-// // //           setPlayerPositionX(
-// // //             GAME_WIDTH / 2 -
-// // //               PLAYER_SIZE / 2
-// // //           );
-
-// // //           setDebris(createDebris());
-
-// // //           Haptics.notificationAsync(
-// // //             Haptics.NotificationFeedbackType.Success
-// // //           );
-
-// // //           return;
-// // //         }
-
-// // //         setCountdown(count);
-// // //       }, 700);
-// // //   };
-
-// // //   /*
-// // //   |--------------------------------------------------------------------------
-// // //   | CLEAN COUNTDOWN
-// // //   |--------------------------------------------------------------------------
-// // //   */
-
-// // //   useEffect(() => {
-// // //     return () => {
-// // //       if (countdownTimerRef.current) {
+// // //       if (
+// // //         countdownTimerRef.current
+// // //       ) {
 // // //         clearInterval(
 // // //           countdownTimerRef.current
 // // //         );
+
+// // //         countdownTimerRef.current =
+// // //           null;
 // // //       }
-// // //     };
-// // //   }, []);
+
+// // //       /*
+// // //        * Reset gameplay state,
+// // //        * but keep the start screen hidden
+// // //        * while counting down.
+// // //        */
+
+// // //       stopGameLoop();
+// // //       stopSensor();
+
+// // //       playerXRef.current =
+// // //         INITIAL_PLAYER_X;
+
+// // //       debrisRef.current = [];
+
+// // //       scoreRef.current = 0;
+
+// // //       gameOverRef.current =
+// // //         false;
+
+// // //       hasWonRef.current =
+// // //         false;
+
+// // //       gameRunningRef.current =
+// // //         false;
+
+// // //       setPlayerPositionX(
+// // //         INITIAL_PLAYER_X
+// // //       );
+
+// // //       setDebris([]);
+
+// // //       setScore(0);
+
+// // //       setGameOver(false);
+
+// // //       setHasWon(false);
+
+// // //       setGameStarted(false);
+
+// // //       /*
+// // //        * Countdown.
+// // //        */
+
+// // //       let count = 3;
+
+// // //       setCountdown(count);
+
+// // //       safeImpact(
+// // //         Haptics.ImpactFeedbackStyle
+// // //           .Light
+// // //       );
+
+// // //       countdownTimerRef.current =
+// // //         setInterval(() => {
+// // //           count -= 1;
+
+// // //           if (count <= 0) {
+// // //             clearInterval(
+// // //               countdownTimerRef.current
+// // //             );
+
+// // //             countdownTimerRef.current =
+// // //               null;
+
+// // //             setCountdown(null);
+
+// // //             beginGame();
+
+// // //             return;
+// // //           }
+
+// // //           setCountdown(count);
+
+// // //           safeImpact(
+// // //             Haptics.ImpactFeedbackStyle
+// // //               .Light
+// // //           );
+// // //         }, 700);
+// // //     }, [
+// // //       beginGame,
+// // //       countdown,
+// // //       INITIAL_PLAYER_X,
+// // //       safeImpact,
+// // //       stopGameLoop,
+// // //       stopSensor,
+// // //     ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | TOUCH MOVEMENT
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   const movePlayer =
+// // //     useCallback(
+// // //       (direction) => {
+// // //         if (
+// // //           !gameRunningRef.current ||
+// // //           gameOverRef.current ||
+// // //           hasWonRef.current
+// // //         ) {
+// // //           return;
+// // //         }
+
+// // //         const amount =
+// // //           config.playerSpeed *
+// // //           TOUCH_MOVE_MULTIPLIER;
+
+// // //         let nextX =
+// // //           playerXRef.current;
+
+// // //         if (
+// // //           direction === 'left'
+// // //         ) {
+// // //           nextX -= amount;
+// // //         } else if (
+// // //           direction === 'right'
+// // //         ) {
+// // //           nextX += amount;
+// // //         }
+
+// // //         nextX =
+// // //           clampPlayerX(nextX);
+
+// // //         playerXRef.current =
+// // //           nextX;
+
+// // //         setPlayerPositionX(
+// // //           nextX
+// // //         );
+
+// // //         safeImpact(
+// // //           Haptics.ImpactFeedbackStyle
+// // //             .Light
+// // //         );
+// // //       },
+// // //       [
+// // //         clampPlayerX,
+// // //         config.playerSpeed,
+// // //         safeImpact,
+// // //       ]
+// // //     );
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
@@ -2021,367 +10383,196 @@
 // // //   */
 
 // // //   useEffect(() => {
-// // //     let subscription;
+// // //     let mounted = true;
 
-// // //     const setupAccelerometer = async () => {
-// // //       if (
-// // //         !visible ||
-// // //         !gameStarted ||
-// // //         gameOver ||
-// // //         hasWon
-// // //       ) {
-// // //         return;
-// // //       }
+// // //     const setupAccelerometer =
+// // //       async () => {
+// // //         /*
+// // //          * Only use the sensor while
+// // //          * the game is actually active.
+// // //          */
 
-// // //       try {
-// // //         const available =
-// // //           await Accelerometer.isAvailableAsync();
-
-// // //         if (!available) {
-// // //           setSensorAvailable(false);
+// // //         if (
+// // //           !gameStarted ||
+// // //           gameOver ||
+// // //           hasWon
+// // //         ) {
+// // //           stopSensor();
 // // //           return;
 // // //         }
 
-// // //         setSensorAvailable(true);
+// // //         try {
+// // //           const available =
+// // //             await Accelerometer.isAvailableAsync();
 
-// // //         Accelerometer.setUpdateInterval(50);
+// // //           if (!mounted) {
+// // //             return;
+// // //           }
 
-// // //         subscription =
-// // //           Accelerometer.addListener(
-// // //             (data) => {
-// // //               movementRef.current =
-// // //                 data.x;
-// // //             }
+// // //           if (!available) {
+// // //             setSensorAvailable(false);
+// // //             return;
+// // //           }
+
+// // //           setSensorAvailable(true);
+
+// // //           Accelerometer.setUpdateInterval(
+// // //             50
 // // //           );
-// // //       } catch (error) {
-// // //         console.log(
-// // //           'Accelerometer error:',
-// // //           error
-// // //         );
 
-// // //         setSensorAvailable(false);
-// // //       }
-// // //     };
+// // //           /*
+// // //            * Remove an older subscription
+// // //            * before creating another one.
+// // //            */
+
+// // //           stopSensor();
+
+// // //           sensorSubscriptionRef.current =
+// // //             Accelerometer.addListener(
+// // //               (data) => {
+// // //                 if (
+// // //                   !gameRunningRef.current
+// // //                 ) {
+// // //                   return;
+// // //                 }
+
+// // //                 /*
+// // //                  * X-axis is used for
+// // //                  * left/right movement.
+// // //                  */
+
+// // //                 const value =
+// // //                   Number(data?.x) || 0;
+
+// // //                 movementRef.current =
+// // //                   Math.max(
+// // //                     -1,
+// // //                     Math.min(
+// // //                       1,
+// // //                       value
+// // //                     )
+// // //                   );
+// // //               }
+// // //             );
+// // //         } catch (error) {
+// // //           console.log(
+// // //             'FloodRunner accelerometer error:',
+// // //             error
+// // //           );
+
+// // //           if (mounted) {
+// // //             setSensorAvailable(false);
+// // //           }
+// // //         }
+// // //       };
 
 // // //     setupAccelerometer();
 
 // // //     return () => {
-// // //       if (subscription) {
-// // //         subscription.remove();
-// // //       }
+// // //       mounted = false;
+// // //       stopSensor();
 // // //     };
 // // //   }, [
-// // //     visible,
 // // //     gameStarted,
 // // //     gameOver,
 // // //     hasWon,
+// // //     stopSensor,
 // // //   ]);
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
-// // //   | ACCELEROMETER MOVEMENT
+// // //   | BACK BUTTON
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
 // // //   useEffect(() => {
-// // //     if (
-// // //       !visible ||
-// // //       !gameStarted ||
-// // //       gameOver ||
-// // //       hasWon
-// // //     ) {
-// // //       return;
-// // //     }
+// // //     const subscription =
+// // //       BackHandler.addEventListener(
+// // //         'hardwareBackPress',
+// // //         () => {
+// // //           /*
+// // //            * Prevent leaving while the
+// // //            * game or countdown is active.
+// // //            */
 
-// // //     const movementInterval =
-// // //       setInterval(() => {
-// // //         const tilt =
-// // //           movementRef.current;
+// // //           if (
+// // //             gameRunningRef.current ||
+// // //             countdown !== null
+// // //           ) {
+// // //             return true;
+// // //           }
 
-// // //         if (Math.abs(tilt) < 0.05) {
-// // //           return;
+// // //           return false;
+// // //         }
+// // //       );
+
+// // //     return () => {
+// // //       subscription.remove();
+// // //     };
+// // //   }, [
+// // //     countdown,
+// // //   ]);
+
+// // //   /*
+// // //   |--------------------------------------------------------------------------
+// // //   | SCREEN CLEANUP
+// // //   |--------------------------------------------------------------------------
+// // //   */
+
+// // //   useEffect(() => {
+// // //     return () => {
+// // //       /*
+// // //        * Countdown.
+// // //        */
+
+// // //       if (
+// // //         countdownTimerRef.current
+// // //       ) {
+// // //         clearInterval(
+// // //           countdownTimerRef.current
+// // //         );
+
+// // //         countdownTimerRef.current =
+// // //           null;
+// // //       }
+
+// // //       /*
+// // //        * Animation.
+// // //        */
+
+// // //       if (
+// // //         animationFrameRef.current !==
+// // //         null
+// // //       ) {
+// // //         cancelAnimationFrame(
+// // //           animationFrameRef.current
+// // //         );
+
+// // //         animationFrameRef.current =
+// // //           null;
+// // //       }
+
+// // //       /*
+// // //        * Sensor.
+// // //        */
+
+// // //       if (
+// // //         sensorSubscriptionRef.current
+// // //       ) {
+// // //         try {
+// // //           sensorSubscriptionRef.current.remove();
+// // //         } catch (error) {
+// // //           // Ignore.
 // // //         }
 
-// // //         setPlayerPositionX(
-// // //           (previousX) => {
-// // //             let nextX =
-// // //               previousX +
-// // //               tilt * 12;
-
-// // //             nextX = Math.max(
-// // //               0,
-// // //               Math.min(
-// // //                 GAME_WIDTH -
-// // //                   PLAYER_SIZE,
-// // //                 nextX
-// // //               )
-// // //             );
-
-// // //             return nextX;
-// // //           }
-// // //         );
-// // //       }, 50);
-
-// // //     return () =>
-// // //       clearInterval(
-// // //         movementInterval
-// // //       );
-// // //   }, [
-// // //     visible,
-// // //     gameStarted,
-// // //     gameOver,
-// // //     hasWon,
-// // //     GAME_WIDTH,
-// // //   ]);
-
-// // //   /*
-// // //   |--------------------------------------------------------------------------
-// // //   | TOUCH MOVEMENT
-// // //   |--------------------------------------------------------------------------
-// // //   */
-
-// // //   const movePlayer = (direction) => {
-// // //     if (
-// // //       !gameStarted ||
-// // //       gameOver ||
-// // //       hasWon
-// // //     ) {
-// // //       return;
-// // //     }
-
-// // //     setPlayerPositionX(
-// // //       (previousX) => {
-// // //         const amount =
-// // //           config.playerSpeed;
-
-// // //         let nextX =
-// // //           direction === 'left'
-// // //             ? previousX - amount
-// // //             : previousX + amount;
-
-// // //         nextX = Math.max(
-// // //           0,
-// // //           Math.min(
-// // //             GAME_WIDTH -
-// // //               PLAYER_SIZE,
-// // //             nextX
-// // //           )
-// // //         );
-
-// // //         return nextX;
+// // //         sensorSubscriptionRef.current =
+// // //           null;
 // // //       }
-// // //     );
 
-// // //     Haptics.impactAsync(
-// // //       Haptics.ImpactFeedbackStyle.Light
-// // //     );
-// // //   };
-
-// // //   /*
-// // //   |--------------------------------------------------------------------------
-// // //   | GAME LOOP
-// // //   |--------------------------------------------------------------------------
-// // //   */
-
-// // //   useEffect(() => {
-// // //     if (
-// // //       !visible ||
-// // //       !gameStarted ||
-// // //       gameOver ||
-// // //       hasWon
-// // //     ) {
-// // //       return;
-// // //     }
-
-// // //     const gameInterval =
-// // //       setInterval(() => {
-// // //         setDebris(
-// // //           (previousDebris) => {
-// // //             let pointsEarned = 0;
-
-// // //             const updatedDebris =
-// // //               previousDebris.map(
-// // //                 (item) => ({
-// // //                   ...item,
-// // //                   y:
-// // //                     item.y +
-// // //                     config.debrisSpeed,
-// // //                 })
-// // //               );
-
-// // //             const activeDebris =
-// // //               updatedDebris.filter(
-// // //                 (item) => {
-// // //                   if (
-// // //                     item.y >
-// // //                     GAME_HEIGHT
-// // //                   ) {
-// // //                     pointsEarned += 10;
-
-// // //                     return false;
-// // //                   }
-
-// // //                   return true;
-// // //                 }
-// // //               );
-
-// // //             /*
-// // //              * A debris object reached the bottom.
-// // //              * Give the player points and respawn it.
-// // //              */
-// // //             if (pointsEarned > 0) {
-// // //               setScore(
-// // //                 (previousScore) => {
-// // //                   const newScore =
-// // //                     Math.min(
-// // //                       config.targetScore,
-// // //                       previousScore +
-// // //                         pointsEarned
-// // //                     );
-
-// // //                   if (
-// // //                     newScore >=
-// // //                     config.targetScore
-// // //                   ) {
-// // //                     setHasWon(true);
-
-// // //                     Haptics.notificationAsync(
-// // //                       Haptics.NotificationFeedbackType
-// // //                         .Success
-// // //                     );
-// // //                   }
-
-// // //                   return newScore;
-// // //                 }
-// // //               );
-
-// // //               /*
-// // //                * Keep the correct number
-// // //                * of hazards on screen.
-// // //                */
-// // //               while (
-// // //                 activeDebris.length <
-// // //                 config.spawnCount
-// // //               ) {
-// // //                 activeDebris.push({
-// // //                   id: `${Date.now()}-${Math.random()}`,
-
-// // //                   x:
-// // //                     Math.random() *
-// // //                     (GAME_WIDTH -
-// // //                       DEBRIS_SIZE),
-
-// // //                   y:
-// // //                     STARTING_DEBRIS_Y -
-// // //                     Math.random() * 80,
-// // //                 });
-// // //               }
-// // //             }
-
-// // //             return activeDebris;
-// // //           }
-// // //         );
-// // //       }, config.gameTick);
-
-// // //     return () =>
-// // //       clearInterval(
-// // //         gameInterval
-// // //       );
-// // //   }, [
-// // //     visible,
-// // //     gameStarted,
-// // //     gameOver,
-// // //     hasWon,
-// // //     GAME_WIDTH,
-// // //     GAME_HEIGHT,
-// // //     config,
-// // //   ]);
-
-// // //   /*
-// // //   |--------------------------------------------------------------------------
-// // //   | COLLISION
-// // //   |--------------------------------------------------------------------------
-// // //   */
-
-// // //   useEffect(() => {
-// // //     if (
-// // //       !gameStarted ||
-// // //       gameOver ||
-// // //       hasWon
-// // //     ) {
-// // //       return;
-// // //     }
-
-// // //     const playerLeft =
-// // //       playerPositionX;
-
-// // //     const playerRight =
-// // //       playerPositionX +
-// // //       PLAYER_SIZE;
-
-// // //     const playerTop =
-// // //       GAME_HEIGHT -
-// // //       PLAYER_SIZE -
-// // //       14;
-
-// // //     const playerBottom =
-// // //       playerTop +
-// // //       PLAYER_SIZE;
-
-// // //     const collision =
-// // //       debris.some((item) => {
-// // //         const debrisLeft =
-// // //           item.x;
-
-// // //         const debrisRight =
-// // //           item.x +
-// // //           DEBRIS_SIZE;
-
-// // //         const debrisTop =
-// // //           item.y;
-
-// // //         const debrisBottom =
-// // //           item.y +
-// // //           DEBRIS_SIZE;
-
-// // //         return (
-// // //           playerLeft <
-// // //             debrisRight &&
-// // //           playerRight >
-// // //             debrisLeft &&
-// // //           playerTop <
-// // //             debrisBottom &&
-// // //           playerBottom >
-// // //             debrisTop
-// // //         );
-// // //       });
-
-// // //     if (collision) {
-// // //       setGameOver(true);
-
-// // //       Haptics.impactAsync(
-// // //         Haptics.ImpactFeedbackStyle.Heavy
-// // //       );
-// // //     }
-// // //   }, [
-// // //     debris,
-// // //     playerPositionX,
-// // //     gameStarted,
-// // //     gameOver,
-// // //     hasWon,
-// // //     GAME_HEIGHT,
-// // //   ]);
-
-// // //   /*
-// // //   |--------------------------------------------------------------------------
-// // //   | CLOSE / RESET
-// // //   |--------------------------------------------------------------------------
-// // //   */
-
-// // //   const handleClose = () => {
-// // //     resetGame();
-// // //     onClose();
-// // //   };
+// // //       gameRunningRef.current =
+// // //         false;
+// // //     };
+// // //   }, []);
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
@@ -2389,18 +10580,30 @@
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
-// // //   const handleClaimReward = () => {
-// // //     onWin({
-// // //       xp: config.reward.xp,
-// // //       coins: config.reward.coins,
-// // //     });
+// // //   const handleClaimReward =
+// // //     useCallback(() => {
+// // //       if (
+// // //         !hasWonRef.current
+// // //       ) {
+// // //         return;
+// // //       }
 
-// // //     handleClose();
-// // //   };
+// // //       /*
+// // //        * Your XP/coins system can be
+// // //        * connected here later.
+// // //        */
+
+// // //       resetGame();
+
+// // //       navigation.goBack();
+// // //     }, [
+// // //       navigation,
+// // //       resetGame,
+// // //     ]);
 
 // // //   /*
 // // //   |--------------------------------------------------------------------------
-// // //   | GAME PROGRESS
+// // //   | PROGRESS
 // // //   |--------------------------------------------------------------------------
 // // //   */
 
@@ -2419,306 +10622,333 @@
 // // //   */
 
 // // //   return (
-// // //     <Modal
-// // //       visible={visible}
-// // //       animationType="slide"
-// // //       transparent
-// // //       onRequestClose={handleClose}
+// // //     <View
+// // //       style={styles.screen}
 // // //     >
-// // //       <View style={styles.modalOverlay}>
+// // //       <View
+// // //         style={[
+// // //           styles.modalContentCard,
+// // //           {
+// // //             width:
+// // //               Math.min(
+// // //                 GAME_WIDTH + 32,
+// // //                 SCREEN_WIDTH - 16
+// // //               ),
+// // //           },
+// // //         ]}
+// // //       >
+// // //         {/* HEADER */}
+
+// // //         <View
+// // //           style={styles.modalHeader}
+// // //         >
+// // //           <View
+// // //             style={
+// // //               styles.headerTitleArea
+// // //             }
+// // //           >
+// // //             <View
+// // //               style={
+// // //                 styles.headerIcon
+// // //               }
+// // //             >
+// // //               <Ionicons
+// // //                 name="water"
+// // //                 size={20}
+// // //                 color="#38BDF8"
+// // //               />
+// // //             </View>
+
+// // //             <View
+// // //               style={
+// // //                 styles.headerTextArea
+// // //               }
+// // //             >
+// // //               <Text
+// // //                 style={
+// // //                   styles.modalTitle
+// // //                 }
+// // //               >
+// // //                 {t(
+// // //                   'games.floodRunner.title'
+// // //                 )}
+// // //               </Text>
+
+// // //               <Text
+// // //                 style={
+// // //                   styles.levelLabel
+// // //                 }
+// // //               >
+// // //                 {t(
+// // //                   'games.floodRunner.level',
+// // //                   {
+// // //                     level:
+// // //                       selectedLevel,
+// // //                   }
+// // //                 )}{' '}
+// // //                 •{' '}
+// // //                 {t(
+// // //                   config.nameKey
+// // //                 )}
+// // //               </Text>
+// // //             </View>
+// // //           </View>
+// // //         </View>
+
+// // //         {/* OBJECTIVE */}
+
+// // //         <View
+// // //           style={
+// // //             styles.objectiveCard
+// // //           }
+// // //         >
+// // //           <View
+// // //             style={
+// // //               styles.objectiveIcon
+// // //             }
+// // //           >
+// // //             <Ionicons
+// // //               name="flag"
+// // //               size={18}
+// // //               color="#34D399"
+// // //             />
+// // //           </View>
+
+// // //           <View
+// // //             style={
+// // //               styles.objectiveTextArea
+// // //             }
+// // //           >
+// // //             <Text
+// // //               style={
+// // //                 styles.objectiveTitle
+// // //               }
+// // //             >
+// // //               {t(
+// // //                 'games.floodRunner.objective'
+// // //               )}
+// // //             </Text>
+
+// // //             <Text
+// // //               style={
+// // //                 styles.objectiveText
+// // //               }
+// // //             >
+// // //               {t(
+// // //                 'games.floodRunner.objectiveDescription'
+// // //               )}
+// // //             </Text>
+// // //           </View>
+// // //         </View>
+
+// // //         {/* INSTRUCTIONS */}
+
+// // //         {!gameStarted &&
+// // //           !gameOver &&
+// // //           !hasWon &&
+// // //           countdown === null && (
+// // //             <View
+// // //               style={
+// // //                 styles.instructionsCard
+// // //               }
+// // //             >
+// // //               <View
+// // //                 style={
+// // //                   styles.instructionsHeader
+// // //                 }
+// // //               >
+// // //                 <Ionicons
+// // //                   name="help-circle"
+// // //                   size={20}
+// // //                   color="#FBBF24"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.instructionsTitle
+// // //                   }
+// // //                 >
+// // //                   {t(
+// // //                     'games.floodRunner.howToPlay'
+// // //                   )}
+// // //                 </Text>
+// // //               </View>
+
+// // //               <InstructionRow
+// // //                 icon="swap-horizontal"
+// // //                 text={t(
+// // //                   'games.floodRunner.instructions.move'
+// // //                 )}
+// // //               />
+
+// // //               <InstructionRow
+// // //                 icon="warning"
+// // //                 text={t(
+// // //                   'games.floodRunner.instructions.avoid'
+// // //                 )}
+// // //               />
+
+// // //               <InstructionRow
+// // //                 icon="water"
+// // //                 text={t(
+// // //                   'games.floodRunner.instructions.flood'
+// // //                 )}
+// // //               />
+
+// // //               <InstructionRow
+// // //                 icon="flag"
+// // //                 text={t(
+// // //                   'games.floodRunner.instructions.finish',
+// // //                   {
+// // //                     score:
+// // //                       config.targetScore,
+// // //                   }
+// // //                 )}
+// // //               />
+// // //             </View>
+// // //           )}
+
+// // //         {/* SENSOR STATUS */}
+
+// // //         {gameStarted &&
+// // //           !gameOver &&
+// // //           !hasWon && (
+// // //             <View
+// // //               style={
+// // //                 styles.sensorStatus
+// // //               }
+// // //             >
+// // //               <Ionicons
+// // //                 name={
+// // //                   sensorAvailable
+// // //                     ? 'phone-portrait-outline'
+// // //                     : 'hand-left-outline'
+// // //                 }
+// // //                 size={15}
+// // //                 color={
+// // //                   sensorAvailable
+// // //                     ? '#34D399'
+// // //                     : '#FBBF24'
+// // //                 }
+// // //               />
+
+// // //               <Text
+// // //                 style={[
+// // //                   styles.sensorText,
+// // //                   {
+// // //                     color:
+// // //                       sensorAvailable
+// // //                         ? '#34D399'
+// // //                         : '#FBBF24',
+// // //                   },
+// // //                 ]}
+// // //               >
+// // //                 {sensorAvailable
+// // //                   ? t(
+// // //                       'games.floodRunner.tiltActive'
+// // //                     )
+// // //                   : t(
+// // //                       'games.floodRunner.touchActive'
+// // //                     )}
+// // //               </Text>
+// // //             </View>
+// // //           )}
+
+// // //         {/* GAME AREA */}
+
 // // //         <View
 // // //           style={[
-// // //             styles.modalContentCard,
+// // //             styles.gameCanvas,
 // // //             {
 // // //               width:
-// // //                 GAME_WIDTH + 32,
+// // //                 GAME_WIDTH,
+// // //               height:
+// // //                 GAME_HEIGHT,
 // // //             },
 // // //           ]}
 // // //         >
-// // //           {/* -------------------------------------------------------
-// // //               HEADER
-// // //           -------------------------------------------------------- */}
+// // //           {/* SAFE ZONE */}
 
-// // //           <View style={styles.modalHeader}>
-// // //             <View style={styles.headerTitleArea}>
-// // //               <View style={styles.headerIcon}>
-// // //                 <Ionicons
-// // //                   name="water"
-// // //                   size={20}
-// // //                   color="#38BDF8"
-// // //                 />
-// // //               </View>
-
-// // //               <View style={styles.headerTextArea}>
-// // //                 <Text
-// // //                   style={styles.modalTitle}
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.title'
-// // //                   )}
-// // //                 </Text>
-
-// // //                 <Text
-// // //                   style={styles.levelLabel}
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.level',
-// // //                     {
-// // //                       level:
-// // //                         selectedLevel,
-// // //                     }
-// // //                   )}{' '}
-// // //                   •{' '}
-// // //                   {t(
-// // //                     config.nameKey
-// // //                   )}
-// // //                 </Text>
-// // //               </View>
-// // //             </View>
-
-// // //             <TouchableOpacity
-// // //               onPress={handleClose}
-// // //               accessibilityRole="button"
-// // //               accessibilityLabel={t(
-// // //                 'common.close'
-// // //               )}
+// // //           <View
+// // //             style={
+// // //               styles.safeZone
+// // //             }
+// // //           >
+// // //             <View
+// // //               style={
+// // //                 styles.safeZoneIcon
+// // //               }
 // // //             >
 // // //               <Ionicons
-// // //                 name="close-circle"
-// // //                 size={30}
-// // //                 color="#64748B"
-// // //               />
-// // //             </TouchableOpacity>
-// // //           </View>
-
-// // //           {/* -------------------------------------------------------
-// // //               OBJECTIVE
-// // //           -------------------------------------------------------- */}
-
-// // //           <View style={styles.objectiveCard}>
-// // //             <View style={styles.objectiveIcon}>
-// // //               <Ionicons
-// // //                 name="flag"
+// // //                 name="shield-checkmark"
 // // //                 size={18}
 // // //                 color="#34D399"
 // // //               />
 // // //             </View>
 
-// // //             <View style={styles.objectiveTextArea}>
+// // //             <View>
 // // //               <Text
-// // //                 style={styles.objectiveTitle}
+// // //                 style={
+// // //                   styles.safeZoneTitle
+// // //                 }
 // // //               >
 // // //                 {t(
-// // //                   'games.floodRunner.objective'
+// // //                   'games.floodRunner.safeShelter'
 // // //                 )}
 // // //               </Text>
 
 // // //               <Text
-// // //                 style={styles.objectiveText}
+// // //                 style={
+// // //                   styles.safeZoneSub
+// // //                 }
 // // //               >
 // // //                 {t(
-// // //                   'games.floodRunner.objectiveDescription'
+// // //                   'games.floodRunner.highGround'
 // // //                 )}
 // // //               </Text>
 // // //             </View>
 // // //           </View>
 
-// // //           {/* -------------------------------------------------------
-// // //               HOW TO PLAY
-// // //           -------------------------------------------------------- */}
+// // //           {/* DANGER FIELD */}
 
-// // //           {!gameStarted &&
-// // //             !gameOver &&
-// // //             !hasWon && (
-// // //               <View
-// // //                 style={
-// // //                   styles.instructionsCard
-// // //                 }
-// // //               >
-// // //                 <View
-// // //                   style={
-// // //                     styles.instructionsHeader
-// // //                   }
-// // //                 >
-// // //                   <Ionicons
-// // //                     name="help-circle"
-// // //                     size={20}
-// // //                     color="#FBBF24"
-// // //                   />
+// // //           <View
+// // //             style={
+// // //               styles.dangerField
+// // //             }
+// // //           >
+// // //             <View
+// // //               style={
+// // //                 styles.routeLine
+// // //               }
+// // //             />
 
-// // //                   <Text
-// // //                     style={
-// // //                       styles.instructionsTitle
-// // //                     }
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.howToPlay'
-// // //                     )}
-// // //                   </Text>
-// // //                 </View>
+// // //             <Text
+// // //               style={
+// // //                 styles.dangerText
+// // //               }
+// // //             >
+// // //               {t(
+// // //                 'games.floodRunner.evacuationRoute'
+// // //               )}
+// // //             </Text>
+// // //           </View>
 
-// // //                 <InstructionRow
-// // //                   icon="swap-horizontal"
-// // //                   text={t(
-// // //                     'games.floodRunner.instructions.move'
-// // //                   )}
-// // //                 />
-
-// // //                 <InstructionRow
-// // //                   icon="warning"
-// // //                   text={t(
-// // //                     'games.floodRunner.instructions.avoid'
-// // //                   )}
-// // //                 />
-
-// // //                 <InstructionRow
-// // //                   icon="water"
-// // //                   text={t(
-// // //                     'games.floodRunner.instructions.flood'
-// // //                   )}
-// // //                 />
-
-// // //                 <InstructionRow
-// // //                   icon="flag"
-// // //                   text={t(
-// // //                     'games.floodRunner.instructions.finish',
-// // //                     {
-// // //                       score:
-// // //                         config.targetScore,
-// // //                     }
-// // //                   )}
-// // //                 />
-// // //               </View>
-// // //             )}
-
-// // //           {/* -------------------------------------------------------
-// // //               SENSOR STATUS
-// // //           -------------------------------------------------------- */}
+// // //           {/* DEBRIS */}
 
 // // //           {gameStarted &&
 // // //             !gameOver &&
-// // //             !hasWon && (
-// // //               <View
-// // //                 style={styles.sensorStatus}
-// // //               >
-// // //                 <Ionicons
-// // //                   name={
-// // //                     sensorAvailable
-// // //                       ? 'phone-portrait-outline'
-// // //                       : 'hand-left-outline'
-// // //                   }
-// // //                   size={15}
-// // //                   color={
-// // //                     sensorAvailable
-// // //                       ? '#34D399'
-// // //                       : '#FBBF24'
-// // //                   }
-// // //                 />
-
-// // //                 <Text
-// // //                   style={[
-// // //                     styles.sensorText,
-// // //                     {
-// // //                       color:
-// // //                         sensorAvailable
-// // //                           ? '#34D399'
-// // //                           : '#FBBF24',
-// // //                     },
-// // //                   ]}
-// // //                 >
-// // //                   {sensorAvailable
-// // //                     ? t(
-// // //                         'games.floodRunner.tiltActive'
-// // //                       )
-// // //                     : t(
-// // //                         'games.floodRunner.touchActive'
-// // //                       )}
-// // //                 </Text>
-// // //               </View>
-// // //             )}
-
-// // //           {/* -------------------------------------------------------
-// // //               GAME CANVAS
-// // //           -------------------------------------------------------- */}
-
-// // //           <View
-// // //             style={[
-// // //               styles.gameCanvas,
-// // //               {
-// // //                 width: GAME_WIDTH,
-// // //                 height: GAME_HEIGHT,
-// // //               },
-// // //             ]}
-// // //           >
-// // //             {/* SAFE ZONE */}
-
-// // //             <View
-// // //               style={styles.safeZone}
-// // //             >
-// // //               <View
-// // //                 style={styles.safeZoneIcon}
-// // //               >
-// // //                 <Ionicons
-// // //                   name="shield-checkmark"
-// // //                   size={18}
-// // //                   color="#34D399"
-// // //                 />
-// // //               </View>
-
-// // //               <View>
-// // //                 <Text
-// // //                   style={
-// // //                     styles.safeZoneTitle
-// // //                   }
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.safeShelter'
-// // //                   )}
-// // //                 </Text>
-
-// // //                 <Text
-// // //                   style={
-// // //                     styles.safeZoneSub
-// // //                   }
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.highGround'
-// // //                   )}
-// // //                 </Text>
-// // //               </View>
-// // //             </View>
-
-// // //             {/* DANGER FIELD */}
-
-// // //             <View
-// // //               style={styles.dangerField}
-// // //             >
-// // //               <View
-// // //                 style={styles.routeLine}
-// // //               />
-
-// // //               <Text
-// // //                 style={styles.dangerText}
-// // //               >
-// // //                 {t(
-// // //                   'games.floodRunner.evacuationRoute'
-// // //                 )}
-// // //               </Text>
-// // //             </View>
-
-// // //             {/* DEBRIS */}
-
-// // //             {gameStarted &&
-// // //               !gameOver &&
-// // //               !hasWon &&
-// // //               debris.map((item) => (
+// // //             !hasWon &&
+// // //             debris.map(
+// // //               (item) => (
 // // //                 <View
 // // //                   key={item.id}
 // // //                   style={[
 // // //                     styles.debrisNode,
 // // //                     {
-// // //                       left: item.x,
-// // //                       top: item.y,
+// // //                       left:
+// // //                         item.x,
+// // //                       top:
+// // //                         item.y,
 // // //                     },
 // // //                   ]}
 // // //                 >
@@ -2728,44 +10958,51 @@
 // // //                     color="#FCA5A5"
 // // //                   />
 // // //                 </View>
-// // //               ))}
+// // //               )
+// // //             )}
 
-// // //             {/* PLAYER */}
+// // //           {/* PLAYER */}
 
-// // //             {gameStarted &&
-// // //               !gameOver &&
-// // //               !hasWon && (
-// // //                 <View
-// // //                   style={[
-// // //                     styles.playerNode,
-// // //                     {
-// // //                       left:
-// // //                         playerPositionX,
-// // //                       bottom: 72,
-// // //                     },
-// // //                   ]}
-// // //                 >
-// // //                   <Ionicons
-// // //                     name="person"
-// // //                     size={25}
-// // //                     color="#FFFFFF"
-// // //                   />
-// // //                 </View>
-// // //               )}
-
-// // //             {/* FLOOD */}
-
-// // //             <View
-// // //               style={styles.floodLayer}
-// // //             >
+// // //           {gameStarted &&
+// // //             !gameOver &&
+// // //             !hasWon && (
 // // //               <View
-// // //                 style={
-// // //                   styles.waveContainer
-// // //                 }
+// // //                 style={[
+// // //                   styles.playerNode,
+// // //                   {
+// // //                     left:
+// // //                       playerPositionX,
+
+// // //                     bottom:
+// // //                       PLAYER_BOTTOM_OFFSET +
+// // //                       FLOOD_HEIGHT,
+// // //                   },
+// // //                 ]}
 // // //               >
-// // //                 {Array.from({
-// // //                   length: 12,
-// // //                 }).map((_, index) => (
+// // //                 <Ionicons
+// // //                   name="person"
+// // //                   size={25}
+// // //                   color="#FFFFFF"
+// // //                 />
+// // //               </View>
+// // //             )}
+
+// // //           {/* FLOOD */}
+
+// // //           <View
+// // //             style={
+// // //               styles.floodLayer
+// // //             }
+// // //           >
+// // //             <View
+// // //               style={
+// // //                 styles.waveContainer
+// // //               }
+// // //             >
+// // //               {Array.from({
+// // //                 length: 12,
+// // //               }).map(
+// // //                 (_, index) => (
 // // //                   <Text
 // // //                     key={index}
 // // //                     style={
@@ -2774,418 +11011,441 @@
 // // //                   >
 // // //                     ~
 // // //                   </Text>
-// // //                 ))}
-// // //               </View>
+// // //                 )
+// // //               )}
+// // //             </View>
+
+// // //             <Text
+// // //               style={
+// // //                 styles.floodLabel
+// // //               }
+// // //             >
+// // //               {t(
+// // //                 'games.floodRunner.floodZone'
+// // //               )}
+// // //             </Text>
+// // //           </View>
+
+// // //           {/* COUNTDOWN */}
+
+// // //           {countdown !== null && (
+// // //             <View
+// // //               style={
+// // //                 styles.countdownOverlay
+// // //               }
+// // //             >
+// // //               <Text
+// // //                 style={
+// // //                   styles.countdownNumber
+// // //                 }
+// // //               >
+// // //                 {countdown}
+// // //               </Text>
 
 // // //               <Text
-// // //                 style={styles.floodLabel}
+// // //                 style={
+// // //                   styles.countdownText
+// // //                 }
 // // //               >
 // // //                 {t(
-// // //                   'games.floodRunner.floodZone'
+// // //                   'games.floodRunner.getReady'
 // // //                 )}
 // // //               </Text>
 // // //             </View>
+// // //           )}
 
-// // //             {/* COUNTDOWN */}
+// // //           {/* START */}
 
-// // //             {countdown !== null && (
+// // //           {!gameStarted &&
+// // //             countdown === null &&
+// // //             !gameOver &&
+// // //             !hasWon && (
 // // //               <View
 // // //                 style={
-// // //                   styles.countdownOverlay
-// // //                 }
-// // //               >
-// // //                 <Text
-// // //                   style={
-// // //                     styles.countdownNumber
-// // //                   }
-// // //                 >
-// // //                   {countdown}
-// // //                 </Text>
-
-// // //                 <Text
-// // //                   style={
-// // //                     styles.countdownText
-// // //                   }
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.getReady'
-// // //                   )}
-// // //                 </Text>
-// // //               </View>
-// // //             )}
-
-// // //             {/* START SCREEN */}
-
-// // //             {!gameStarted &&
-// // //               countdown === null &&
-// // //               !gameOver &&
-// // //               !hasWon && (
-// // //                 <View
-// // //                   style={
-// // //                     styles.startOverlay
-// // //                   }
-// // //                 >
-// // //                   <View
-// // //                     style={
-// // //                       styles.startIcon
-// // //                     }
-// // //                   >
-// // //                     <Ionicons
-// // //                       name="walk"
-// // //                       size={34}
-// // //                       color="#38BDF8"
-// // //                     />
-// // //                   </View>
-
-// // //                   <Text
-// // //                     style={
-// // //                       styles.startTitle
-// // //                     }
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.ready'
-// // //                     )}
-// // //                   </Text>
-
-// // //                   <Text
-// // //                     style={
-// // //                       styles.startDescription
-// // //                     }
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.startDescription'
-// // //                     )}
-// // //                   </Text>
-
-// // //                   <TouchableOpacity
-// // //                     style={
-// // //                       styles.startButton
-// // //                     }
-// // //                     onPress={startGame}
-// // //                     activeOpacity={0.8}
-// // //                   >
-// // //                     <Ionicons
-// // //                       name="play"
-// // //                       size={18}
-// // //                       color="#FFFFFF"
-// // //                     />
-
-// // //                     <Text
-// // //                       style={
-// // //                         styles.startButtonText
-// // //                       }
-// // //                     >
-// // //                       {t(
-// // //                         'games.floodRunner.start'
-// // //                       )}
-// // //                     </Text>
-// // //                   </TouchableOpacity>
-// // //                 </View>
-// // //               )}
-
-// // //             {/* GAME OVER */}
-
-// // //             {gameOver && (
-// // //               <View
-// // //                 style={
-// // //                   styles.endGameOverlay
+// // //                   styles.startOverlay
 // // //                 }
 // // //               >
 // // //                 <View
-// // //                   style={[
-// // //                     styles.resultIcon,
-// // //                     {
-// // //                       backgroundColor:
-// // //                         '#450A0A',
-// // //                     },
-// // //                   ]}
+// // //                   style={
+// // //                     styles.startIcon
+// // //                   }
 // // //                 >
 // // //                   <Ionicons
-// // //                     name="warning"
+// // //                     name="walk"
 // // //                     size={34}
-// // //                     color="#EF4444"
+// // //                     color="#38BDF8"
 // // //                   />
 // // //                 </View>
 
 // // //                 <Text
 // // //                   style={
-// // //                     styles.gameOverTitle
+// // //                     styles.startTitle
 // // //                   }
 // // //                 >
 // // //                   {t(
-// // //                     'games.floodRunner.failed'
+// // //                     'games.floodRunner.ready'
 // // //                   )}
 // // //                 </Text>
 
 // // //                 <Text
 // // //                   style={
-// // //                     styles.gameOverText
+// // //                     styles.startDescription
 // // //                   }
 // // //                 >
 // // //                   {t(
-// // //                     'games.floodRunner.failedDescription'
+// // //                     'games.floodRunner.startDescription'
 // // //                   )}
-// // //                 </Text>
-
-// // //                 <Text
-// // //                   style={
-// // //                     styles.finalScore
-// // //                   }
-// // //                 >
-// // //                   {score} /{' '}
-// // //                   {config.targetScore}
 // // //                 </Text>
 
 // // //                 <TouchableOpacity
 // // //                   style={
-// // //                     styles.retryButton
+// // //                     styles.startButton
 // // //                   }
-// // //                   onPress={startGame}
+// // //                   onPress={
+// // //                     startGame
+// // //                   }
+// // //                   activeOpacity={0.8}
 // // //                 >
 // // //                   <Ionicons
-// // //                     name="refresh"
+// // //                     name="play"
 // // //                     size={18}
 // // //                     color="#FFFFFF"
 // // //                   />
 
 // // //                   <Text
 // // //                     style={
-// // //                       styles.buttonText
+// // //                       styles.startButtonText
 // // //                     }
 // // //                   >
 // // //                     {t(
-// // //                       'games.floodRunner.retry'
+// // //                       'games.floodRunner.start'
 // // //                     )}
 // // //                   </Text>
 // // //                 </TouchableOpacity>
 // // //               </View>
 // // //             )}
 
-// // //             {/* WIN */}
+// // //           {/* GAME OVER */}
 
-// // //             {hasWon && (
+// // //           {gameOver && (
+// // //             <View
+// // //               style={
+// // //                 styles.endGameOverlay
+// // //               }
+// // //             >
 // // //               <View
+// // //                 style={[
+// // //                   styles.resultIcon,
+// // //                   {
+// // //                     backgroundColor:
+// // //                       '#450A0A',
+// // //                   },
+// // //                 ]}
+// // //               >
+// // //                 <Ionicons
+// // //                   name="warning"
+// // //                   size={34}
+// // //                   color="#EF4444"
+// // //                 />
+// // //               </View>
+
+// // //               <Text
 // // //                 style={
-// // //                   styles.endGameOverlay
+// // //                   styles.gameOverTitle
 // // //                 }
 // // //               >
-// // //                 <View
-// // //                   style={[
-// // //                     styles.resultIcon,
-// // //                     {
-// // //                       backgroundColor:
-// // //                         '#064E3B',
-// // //                     },
-// // //                   ]}
-// // //                 >
-// // //                   <Ionicons
-// // //                     name="shield-checkmark"
-// // //                     size={36}
-// // //                     color="#10B981"
-// // //                   />
-// // //                 </View>
-
-// // //                 <Text
-// // //                   style={
-// // //                     styles.successTitle
-// // //                   }
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.success'
-// // //                   )}
-// // //                 </Text>
-
-// // //                 <Text
-// // //                   style={
-// // //                     styles.gameOverText
-// // //                   }
-// // //                 >
-// // //                   {t(
-// // //                     'games.floodRunner.successDescription'
-// // //                   )}
-// // //                 </Text>
-
-// // //                 <View
-// // //                   style={
-// // //                     styles.rewardRow
-// // //                   }
-// // //                 >
-// // //                   <Reward
-// // //                     icon="flash"
-// // //                     value={`+${config.reward.xp}`}
-// // //                     label={t(
-// // //                       'games.floodRunner.xp'
-// // //                     )}
-// // //                   />
-
-// // //                   <Reward
-// // //                     icon="cash"
-// // //                     value={`+${config.reward.coins}`}
-// // //                     label={t(
-// // //                       'games.floodRunner.coins'
-// // //                     )}
-// // //                   />
-// // //                 </View>
-
-// // //                 <TouchableOpacity
-// // //                   style={
-// // //                     styles.claimRewardButton
-// // //                   }
-// // //                   onPress={
-// // //                     handleClaimReward
-// // //                   }
-// // //                 >
-// // //                   <Text
-// // //                     style={
-// // //                       styles.buttonText
-// // //                     }
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.claimReward'
-// // //                     )}
-// // //                   </Text>
-// // //                 </TouchableOpacity>
-// // //               </View>
-// // //             )}
-// // //           </View>
-
-// // //           {/* -------------------------------------------------------
-// // //               SCORE
-// // //           -------------------------------------------------------- */}
-
-// // //           <View style={styles.gameHud}>
-// // //             <View
-// // //               style={styles.scoreHeader}
-// // //             >
-// // //               <Text
-// // //                 style={styles.scoreLabel}
-// // //               >
 // // //                 {t(
-// // //                   'games.floodRunner.score'
+// // //                   'games.floodRunner.failed'
 // // //                 )}
 // // //               </Text>
 
 // // //               <Text
-// // //                 style={styles.scoreValue}
+// // //                 style={
+// // //                   styles.gameOverText
+// // //                 }
+// // //               >
+// // //                 {t(
+// // //                   'games.floodRunner.failedDescription'
+// // //                 )}
+// // //               </Text>
+
+// // //               <Text
+// // //                 style={
+// // //                   styles.finalScore
+// // //                 }
 // // //               >
 // // //                 {score} /{' '}
 // // //                 {config.targetScore}
 // // //               </Text>
-// // //             </View>
 
+// // //               <TouchableOpacity
+// // //                 style={
+// // //                   styles.retryButton
+// // //                 }
+// // //                 onPress={
+// // //                   startGame
+// // //                 }
+// // //                 activeOpacity={0.8}
+// // //               >
+// // //                 <Ionicons
+// // //                   name="refresh"
+// // //                   size={18}
+// // //                   color="#FFFFFF"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.buttonText
+// // //                   }
+// // //                 >
+// // //                   {t(
+// // //                     'games.floodRunner.retry'
+// // //                   )}
+// // //                 </Text>
+// // //               </TouchableOpacity>
+// // //             </View>
+// // //           )}
+
+// // //           {/* WIN */}
+
+// // //           {hasWon && (
 // // //             <View
-// // //               style={styles.progressBackground}
+// // //               style={
+// // //                 styles.endGameOverlay
+// // //               }
 // // //             >
 // // //               <View
 // // //                 style={[
-// // //                   styles.progressFill,
+// // //                   styles.resultIcon,
 // // //                   {
-// // //                     width: `${progressPercentage}%`,
+// // //                     backgroundColor:
+// // //                       '#064E3B',
 // // //                   },
 // // //                 ]}
-// // //               />
+// // //               >
+// // //                 <Ionicons
+// // //                   name="shield-checkmark"
+// // //                   size={36}
+// // //                   color="#10B981"
+// // //                 />
+// // //               </View>
+
+// // //               <Text
+// // //                 style={
+// // //                   styles.successTitle
+// // //                 }
+// // //               >
+// // //                 {t(
+// // //                   'games.floodRunner.success'
+// // //                 )}
+// // //               </Text>
+
+// // //               <Text
+// // //                 style={
+// // //                   styles.gameOverText
+// // //                 }
+// // //               >
+// // //                 {t(
+// // //                   'games.floodRunner.successDescription'
+// // //                 )}
+// // //               </Text>
+
+// // //               <View
+// // //                 style={
+// // //                   styles.rewardRow
+// // //                 }
+// // //               >
+// // //                 <Reward
+// // //                   icon="flash"
+// // //                   value={`+${config.reward.xp}`}
+// // //                   label={t(
+// // //                     'games.floodRunner.xp'
+// // //                   )}
+// // //                 />
+
+// // //                 <Reward
+// // //                   icon="cash"
+// // //                   value={`+${config.reward.coins}`}
+// // //                   label={t(
+// // //                     'games.floodRunner.coins'
+// // //                   )}
+// // //                 />
+// // //               </View>
+
+// // //               <TouchableOpacity
+// // //                 style={
+// // //                   styles.claimRewardButton
+// // //                 }
+// // //                 onPress={
+// // //                   handleClaimReward
+// // //                 }
+// // //                 activeOpacity={0.8}
+// // //               >
+// // //                 <Ionicons
+// // //                   name="checkmark-circle"
+// // //                   size={18}
+// // //                   color="#FFFFFF"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.buttonText
+// // //                   }
+// // //                 >
+// // //                   {t(
+// // //                     'games.floodRunner.claimReward'
+// // //                   )}
+// // //                 </Text>
+// // //               </TouchableOpacity>
 // // //             </View>
+// // //           )}
+// // //         </View>
+
+// // //         {/* SCORE */}
+
+// // //         <View
+// // //           style={styles.gameHud}
+// // //         >
+// // //           <View
+// // //             style={
+// // //               styles.scoreHeader
+// // //             }
+// // //           >
+// // //             <Text
+// // //               style={
+// // //                 styles.scoreLabel
+// // //               }
+// // //             >
+// // //               {t(
+// // //                 'games.floodRunner.score'
+// // //               )}
+// // //             </Text>
+
+// // //             <Text
+// // //               style={
+// // //                 styles.scoreValue
+// // //               }
+// // //             >
+// // //               {score} /{' '}
+// // //               {config.targetScore}
+// // //             </Text>
 // // //           </View>
 
-// // //           {/* -------------------------------------------------------
-// // //               CONTROLS
-// // //           -------------------------------------------------------- */}
-
-// // //           {gameStarted &&
-// // //             !gameOver &&
-// // //             !hasWon && (
-// // //               <View
-// // //                 style={styles.controls}
-// // //               >
-// // //                 <TouchableOpacity
-// // //                   style={
-// // //                     styles.controlButton
-// // //                   }
-// // //                   onPress={() =>
-// // //                     movePlayer('left')
-// // //                   }
-// // //                   activeOpacity={0.7}
-// // //                 >
-// // //                   <Ionicons
-// // //                     name="arrow-back"
-// // //                     size={24}
-// // //                     color="#FFFFFF"
-// // //                   />
-
-// // //                   <Text
-// // //                     style={
-// // //                       styles.controlText
-// // //                     }
-// // //                     numberOfLines={2}
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.left'
-// // //                     )}
-// // //                   </Text>
-// // //                 </TouchableOpacity>
-
-// // //                 <View
-// // //                   style={
-// // //                     styles.controlHint
-// // //                   }
-// // //                 >
-// // //                   <Ionicons
-// // //                     name={
-// // //                       sensorAvailable
-// // //                         ? 'phone-portrait-outline'
-// // //                         : 'hand-left-outline'
-// // //                     }
-// // //                     size={21}
-// // //                     color="#38BDF8"
-// // //                   />
-
-// // //                   <Text
-// // //                     style={
-// // //                       styles.controlHintText
-// // //                     }
-// // //                     numberOfLines={2}
-// // //                   >
-// // //                     {sensorAvailable
-// // //                       ? t(
-// // //                           'games.floodRunner.tilt'
-// // //                         )
-// // //                       : t(
-// // //                           'games.floodRunner.touch'
-// // //                         )}
-// // //                   </Text>
-// // //                 </View>
-
-// // //                 <TouchableOpacity
-// // //                   style={
-// // //                     styles.controlButton
-// // //                   }
-// // //                   onPress={() =>
-// // //                     movePlayer('right')
-// // //                   }
-// // //                   activeOpacity={0.7}
-// // //                 >
-// // //                   <Ionicons
-// // //                     name="arrow-forward"
-// // //                     size={24}
-// // //                     color="#FFFFFF"
-// // //                   />
-
-// // //                   <Text
-// // //                     style={
-// // //                       styles.controlText
-// // //                     }
-// // //                     numberOfLines={2}
-// // //                   >
-// // //                     {t(
-// // //                       'games.floodRunner.right'
-// // //                     )}
-// // //                   </Text>
-// // //                 </TouchableOpacity>
-// // //               </View>
-// // //             )}
+// // //           <View
+// // //             style={
+// // //               styles.progressBackground
+// // //             }
+// // //           >
+// // //             <View
+// // //               style={[
+// // //                 styles.progressFill,
+// // //                 {
+// // //                   width:
+// // //                     `${progressPercentage}%`,
+// // //                 },
+// // //               ]}
+// // //             />
+// // //           </View>
 // // //         </View>
+
+// // //         {/* CONTROLS */}
+
+// // //         {gameStarted &&
+// // //           !gameOver &&
+// // //           !hasWon && (
+// // //             <View
+// // //               style={
+// // //                 styles.controls
+// // //               }
+// // //             >
+// // //               <TouchableOpacity
+// // //                 style={
+// // //                   styles.controlButton
+// // //                 }
+// // //                 onPress={() =>
+// // //                   movePlayer('left')
+// // //                 }
+// // //                 activeOpacity={0.7}
+// // //               >
+// // //                 <Ionicons
+// // //                   name="arrow-back"
+// // //                   size={24}
+// // //                   color="#FFFFFF"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.controlText
+// // //                   }
+// // //                   numberOfLines={2}
+// // //                 >
+// // //                   {t(
+// // //                     'games.floodRunner.left'
+// // //                   )}
+// // //                 </Text>
+// // //               </TouchableOpacity>
+
+// // //               <View
+// // //                 style={
+// // //                   styles.controlHint
+// // //                 }
+// // //               >
+// // //                 <Ionicons
+// // //                   name={
+// // //                     sensorAvailable
+// // //                       ? 'phone-portrait-outline'
+// // //                       : 'hand-left-outline'
+// // //                   }
+// // //                   size={21}
+// // //                   color="#38BDF8"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.controlHintText
+// // //                   }
+// // //                   numberOfLines={2}
+// // //                 >
+// // //                   {sensorAvailable
+// // //                     ? t(
+// // //                         'games.floodRunner.tilt'
+// // //                       )
+// // //                     : t(
+// // //                         'games.floodRunner.touch'
+// // //                       )}
+// // //                 </Text>
+// // //               </View>
+
+// // //               <TouchableOpacity
+// // //                 style={
+// // //                   styles.controlButton
+// // //                 }
+// // //                 onPress={() =>
+// // //                   movePlayer('right')
+// // //                 }
+// // //                 activeOpacity={0.7}
+// // //               >
+// // //                 <Ionicons
+// // //                   name="arrow-forward"
+// // //                   size={24}
+// // //                   color="#FFFFFF"
+// // //                 />
+
+// // //                 <Text
+// // //                   style={
+// // //                     styles.controlText
+// // //                   }
+// // //                   numberOfLines={2}
+// // //                 >
+// // //                   {t(
+// // //                     'games.floodRunner.right'
+// // //                   )}
+// // //                 </Text>
+// // //               </TouchableOpacity>
+// // //             </View>
+// // //           )}
 // // //       </View>
-// // //     </Modal>
+// // //     </View>
 // // //   );
 // // // }
 
@@ -3200,8 +11460,16 @@
 // // //   text,
 // // // }) {
 // // //   return (
-// // //     <View style={styles.instructionRow}>
-// // //       <View style={styles.instructionIcon}>
+// // //     <View
+// // //       style={
+// // //         styles.instructionRow
+// // //       }
+// // //     >
+// // //       <View
+// // //         style={
+// // //           styles.instructionIcon
+// // //         }
+// // //       >
 // // //         <Ionicons
 // // //           name={icon}
 // // //           size={16}
@@ -3210,7 +11478,9 @@
 // // //       </View>
 
 // // //       <Text
-// // //         style={styles.instructionText}
+// // //         style={
+// // //           styles.instructionText
+// // //         }
 // // //       >
 // // //         {text}
 // // //       </Text>
@@ -3230,18 +11500,28 @@
 // // //   label,
 // // // }) {
 // // //   return (
-// // //     <View style={styles.reward}>
+// // //     <View
+// // //       style={styles.reward}
+// // //     >
 // // //       <Ionicons
 // // //         name={icon}
 // // //         size={18}
 // // //         color="#FBBF24"
 // // //       />
 
-// // //       <Text style={styles.rewardValue}>
+// // //       <Text
+// // //         style={
+// // //           styles.rewardValue
+// // //         }
+// // //       >
 // // //         {value}
 // // //       </Text>
 
-// // //       <Text style={styles.rewardLabel}>
+// // //       <Text
+// // //         style={
+// // //           styles.rewardLabel
+// // //         }
+// // //       >
 // // //         {label}
 // // //       </Text>
 // // //     </View>
@@ -3255,13 +11535,12 @@
 // // // */
 
 // // // const styles = StyleSheet.create({
-// // //   modalOverlay: {
+// // //   screen: {
 // // //     flex: 1,
-// // //     backgroundColor:
-// // //       'rgba(2, 6, 23, 0.94)',
+// // //     backgroundColor: '#020617',
 // // //     justifyContent: 'center',
 // // //     alignItems: 'center',
-// // //     padding: 12,
+// // //     padding: 8,
 // // //   },
 
 // // //   modalContentCard: {
@@ -3269,9 +11548,9 @@
 // // //     borderWidth: 1,
 // // //     borderColor: '#1E293B',
 // // //     borderRadius: 22,
-// // //     padding: 16,
-// // //     maxWidth: 400,
-// // //     maxHeight: '96%',
+// // //     padding: 12,
+// // //     maxWidth: 430,
+// // //     maxHeight: '98%',
 // // //   },
 
 // // //   modalHeader: {
@@ -3285,7 +11564,6 @@
 // // //     flexDirection: 'row',
 // // //     alignItems: 'center',
 // // //     flex: 1,
-// // //     marginRight: 10,
 // // //   },
 
 // // //   headerIcon: {
@@ -3322,8 +11600,8 @@
 // // //     borderWidth: 1,
 // // //     borderColor: '#166534',
 // // //     borderRadius: 13,
-// // //     padding: 11,
-// // //     marginBottom: 10,
+// // //     padding: 10,
+// // //     marginBottom: 8,
 // // //   },
 
 // // //   objectiveIcon: {
@@ -3359,14 +11637,14 @@
 // // //     borderWidth: 1,
 // // //     borderColor: '#334155',
 // // //     borderRadius: 14,
-// // //     padding: 13,
-// // //     marginBottom: 10,
+// // //     padding: 11,
+// // //     marginBottom: 8,
 // // //   },
 
 // // //   instructionsHeader: {
 // // //     flexDirection: 'row',
 // // //     alignItems: 'center',
-// // //     marginBottom: 8,
+// // //     marginBottom: 6,
 // // //   },
 
 // // //   instructionsTitle: {
@@ -3379,7 +11657,7 @@
 // // //   instructionRow: {
 // // //     flexDirection: 'row',
 // // //     alignItems: 'flex-start',
-// // //     marginTop: 7,
+// // //     marginTop: 6,
 // // //   },
 
 // // //   instructionIcon: {
@@ -3396,7 +11674,7 @@
 // // //     flex: 1,
 // // //     color: '#CBD5E1',
 // // //     fontSize: 11,
-// // //     lineHeight: 17,
+// // //     lineHeight: 16,
 // // //     paddingTop: 3,
 // // //   },
 
@@ -3431,7 +11709,7 @@
 // // //     top: 0,
 // // //     left: 0,
 // // //     right: 0,
-// // //     height: 56,
+// // //     height: SAFE_ZONE_HEIGHT,
 // // //     backgroundColor: '#064E3B',
 // // //     borderBottomWidth: 1,
 // // //     borderBottomColor: '#10B981',
@@ -3467,8 +11745,8 @@
 
 // // //   dangerField: {
 // // //     position: 'absolute',
-// // //     top: 56,
-// // //     bottom: 64,
+// // //     top: SAFE_ZONE_HEIGHT,
+// // //     bottom: FLOOD_HEIGHT,
 // // //     left: 0,
 // // //     right: 0,
 // // //     alignItems: 'center',
@@ -3528,7 +11806,7 @@
 // // //     bottom: 0,
 // // //     left: 0,
 // // //     right: 0,
-// // //     height: 64,
+// // //     height: FLOOD_HEIGHT,
 // // //     backgroundColor: '#075985',
 // // //     borderTopWidth: 1,
 // // //     borderTopColor: '#38BDF8',
@@ -3562,15 +11840,15 @@
 
 // // //   startOverlay: {
 // // //     position: 'absolute',
-// // //     top: 56,
-// // //     bottom: 64,
+// // //     top: SAFE_ZONE_HEIGHT,
+// // //     bottom: FLOOD_HEIGHT,
 // // //     left: 0,
 // // //     right: 0,
 // // //     backgroundColor:
 // // //       'rgba(2, 6, 23, 0.94)',
 // // //     alignItems: 'center',
 // // //     justifyContent: 'center',
-// // //     padding: 24,
+// // //     padding: 20,
 // // //     zIndex: 20,
 // // //   },
 
@@ -3622,8 +11900,8 @@
 
 // // //   countdownOverlay: {
 // // //     position: 'absolute',
-// // //     top: 56,
-// // //     bottom: 64,
+// // //     top: SAFE_ZONE_HEIGHT,
+// // //     bottom: FLOOD_HEIGHT,
 // // //     left: 0,
 // // //     right: 0,
 // // //     backgroundColor:
@@ -3648,18 +11926,18 @@
 
 // // //   endGameOverlay: {
 // // //     position: 'absolute',
-// // //     top: 56,
-// // //     bottom: 64,
-// // //     left: 12,
-// // //     right: 12,
+// // //     top: SAFE_ZONE_HEIGHT + 8,
+// // //     bottom: FLOOD_HEIGHT + 8,
+// // //     left: 10,
+// // //     right: 10,
 // // //     backgroundColor:
-// // //       'rgba(15, 23, 42, 0.97)',
+// // //       'rgba(15, 23, 42, 0.98)',
 // // //     borderWidth: 1,
 // // //     borderColor: '#334155',
 // // //     borderRadius: 18,
 // // //     alignItems: 'center',
 // // //     justifyContent: 'center',
-// // //     padding: 20,
+// // //     padding: 18,
 // // //     zIndex: 30,
 // // //   },
 
@@ -3714,6 +11992,7 @@
 // // //   },
 
 // // //   claimRewardButton: {
+// // //     flexDirection: 'row',
 // // //     backgroundColor: '#059669',
 // // //     minHeight: 46,
 // // //     paddingHorizontal: 22,
@@ -3727,6 +12006,7 @@
 // // //     color: '#FFFFFF',
 // // //     fontWeight: '900',
 // // //     fontSize: 12,
+// // //     marginLeft: 6,
 // // //   },
 
 // // //   rewardRow: {
@@ -3761,7 +12041,7 @@
 // // //   },
 
 // // //   gameHud: {
-// // //     marginTop: 10,
+// // //     marginTop: 9,
 // // //   },
 
 // // //   scoreHeader: {
@@ -3802,7 +12082,7 @@
 // // //     flexDirection: 'row',
 // // //     alignItems: 'center',
 // // //     justifyContent: 'space-between',
-// // //     marginTop: 11,
+// // //     marginTop: 9,
 // // //     gap: 8,
 // // //   },
 
@@ -3845,6 +12125,7 @@
 // // import React, {
 // //   useCallback,
 // //   useEffect,
+// //   useMemo,
 // //   useRef,
 // //   useState,
 // // } from 'react';
@@ -3854,17 +12135,20 @@
 // //   Text,
 // //   StyleSheet,
 // //   TouchableOpacity,
-// //   Modal,
 // //   Dimensions,
+// //   BackHandler,
 // // } from 'react-native';
 
 // // import { Ionicons } from '@expo/vector-icons';
 // // import * as Haptics from 'expo-haptics';
 // // import { Accelerometer } from 'expo-sensors';
 // // import { useTranslation } from 'react-i18next';
+// // import { useNavigation, useRoute } from '@react-navigation/native';
+// // import { useUser } from '../contexts/UserContext';
 
-// // const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
-// //   Dimensions.get('window');
+// // const { width: SCREEN_WIDTH, 
+// //         height: SCREEN_HEIGHT 
+// //       } = Dimensions.get('window');
 
 // // /*
 // // |--------------------------------------------------------------------------
@@ -3875,11 +12159,11 @@
 // // const LEVEL_CONFIG = {
 // //   1: {
 // //     nameKey: 'games.floodRunner.levels.easy',
+
 // //     targetScore: 50,
 
 // //     debrisSpeed: 155,
 // //     spawnInterval: 1150,
-
 // //     spawnCount: 1,
 
 // //     playerSpeed: 300,
@@ -3892,11 +12176,11 @@
 
 // //   2: {
 // //     nameKey: 'games.floodRunner.levels.moderate',
+
 // //     targetScore: 75,
 
 // //     debrisSpeed: 205,
 // //     spawnInterval: 900,
-
 // //     spawnCount: 2,
 
 // //     playerSpeed: 340,
@@ -3909,11 +12193,11 @@
 
 // //   3: {
 // //     nameKey: 'games.floodRunner.levels.advanced',
+
 // //     targetScore: 100,
 
 // //     debrisSpeed: 255,
 // //     spawnInterval: 750,
-
 // //     spawnCount: 3,
 
 // //     playerSpeed: 380,
@@ -3925,6 +12209,12 @@
 // //   },
 // // };
 
+// // /*
+// // |--------------------------------------------------------------------------
+// // | GAME CONSTANTS
+// // |--------------------------------------------------------------------------
+// // */
+
 // // const PLAYER_SIZE = 36;
 // // const DEBRIS_SIZE = 28;
 
@@ -3933,7 +12223,216 @@
 
 // // const PLAYER_BOTTOM_OFFSET = 14;
 
-// // const COLLISION_PADDING = 4;
+// // const COLLISION_PADDING = 5;
+
+// // const TOUCH_MOVE_MULTIPLIER = 0.22;
+
+// // const SENSOR_DEAD_ZONE = 0.05;
+
+// // /*
+// // |--------------------------------------------------------------------------
+// // | ADAPTIVE SAFETY CONSTANTS
+// // |--------------------------------------------------------------------------
+// // |
+// // | This is the core of the Adaptive Safety-Aware Difficulty Algorithm.
+// // |
+// // | The algorithm keeps difficulty bounded between:
+// // |
+// // |   0.78 = substantially easier
+// // |   1.15 = moderately harder
+// // |
+// // | The player can therefore never be pushed into an unlimited
+// // | difficulty spiral.
+// // |--------------------------------------------------------------------------
+// // */
+
+// // const MIN_DIFFICULTY_FACTOR = 0.78;
+// // const MAX_DIFFICULTY_FACTOR = 1.15;
+
+// // const NEAR_MISS_DISTANCE = 34;
+
+// // const RISK_INCREASE_COLLISION = 28;
+// // const RISK_INCREASE_NEAR_MISS = 5;
+
+// // const RISK_DECREASE_SUCCESS = 1.5;
+// // const RISK_DECREASE_CORRECT_RESCUE = 12;
+
+// // const RISK_UPDATE_INTERVAL = 1000;
+
+// // /*
+// // |--------------------------------------------------------------------------
+// // | RESCUE SYSTEM
+// // |--------------------------------------------------------------------------
+// // */
+
+// // const MAX_RESCUE_LIVES = 1;
+
+// // const RESCUE_POINTS = 15;
+
+// // /*
+// // |--------------------------------------------------------------------------
+// // | RESCUE QUESTIONS
+// // |--------------------------------------------------------------------------
+// // */
+
+// // const RESCUE_QUESTIONS = [
+// //   {
+// //     id: 'q1',
+
+// //     questionKey:
+// //       'games.floodRunner.questions.q1.question',
+
+// //     options: [
+// //       {
+// //         id: 'a',
+// //         textKey:
+// //           'games.floodRunner.questions.q1.a',
+// //       },
+// //       {
+// //         id: 'b',
+// //         textKey:
+// //           'games.floodRunner.questions.q1.b',
+// //       },
+// //       {
+// //         id: 'c',
+// //         textKey:
+// //           'games.floodRunner.questions.q1.c',
+// //       },
+// //     ],
+
+// //     correct: 'b',
+// //   },
+
+// //   {
+// //     id: 'q2',
+
+// //     questionKey:
+// //       'games.floodRunner.questions.q2.question',
+
+// //     options: [
+// //       {
+// //         id: 'a',
+// //         textKey:
+// //           'games.floodRunner.questions.q2.a',
+// //       },
+// //       {
+// //         id: 'b',
+// //         textKey:
+// //           'games.floodRunner.questions.q2.b',
+// //       },
+// //       {
+// //         id: 'c',
+// //         textKey:
+// //           'games.floodRunner.questions.q2.c',
+// //       },
+// //     ],
+
+// //     correct: 'a',
+// //   },
+
+// //   {
+// //     id: 'q3',
+
+// //     questionKey:
+// //       'games.floodRunner.questions.q3.question',
+
+// //     options: [
+// //       {
+// //         id: 'a',
+// //         textKey:
+// //           'games.floodRunner.questions.q3.a',
+// //       },
+// //       {
+// //         id: 'b',
+// //         textKey:
+// //           'games.floodRunner.questions.q3.b',
+// //       },
+// //       {
+// //         id: 'c',
+// //         textKey:
+// //           'games.floodRunner.questions.q3.c',
+// //       },
+// //     ],
+
+// //     correct: 'c',
+// //   },
+
+// //   {
+// //     id: 'q4',
+
+// //     questionKey:
+// //       'games.floodRunner.questions.q4.question',
+
+// //     options: [
+// //       {
+// //         id: 'a',
+// //         textKey:
+// //           'games.floodRunner.questions.q4.a',
+// //       },
+// //       {
+// //         id: 'b',
+// //         textKey:
+// //           'games.floodRunner.questions.q4.b',
+// //       },
+// //       {
+// //         id: 'c',
+// //         textKey:
+// //           'games.floodRunner.questions.q4.c',
+// //       },
+// //     ],
+
+// //     correct: 'a',
+// //   },
+
+// //   {
+// //     id: 'q5',
+
+// //     questionKey:
+// //       'games.floodRunner.questions.q5.question',
+
+// //     options: [
+// //       {
+// //         id: 'a',
+// //         textKey:
+// //           'games.floodRunner.questions.q5.a',
+// //       },
+// //       {
+// //         id: 'b',
+// //         textKey:
+// //           'games.floodRunner.questions.q5.b',
+// //       },
+// //       {
+// //         id: 'c',
+// //         textKey:
+// //           'games.floodRunner.questions.q5.c',
+// //       },
+// //     ],
+
+// //     correct: 'b',
+// //   },
+// // ];
+
+// // /*
+// // |--------------------------------------------------------------------------
+// // | HELPERS
+// // |--------------------------------------------------------------------------
+// // */
+
+// // function clamp(value, min, max) {
+// //   return Math.max(
+// //     min,
+// //     Math.min(max, value)
+// //   );
+// // }
+
+// // function getRandomQuestion() {
+// //   const index = Math.floor(
+// //     Math.random() *
+// //       RESCUE_QUESTIONS.length
+// //   );
+
+// //   return RESCUE_QUESTIONS[index];
+// // }
 
 // // /*
 // // |--------------------------------------------------------------------------
@@ -3941,26 +12440,30 @@
 // // |--------------------------------------------------------------------------
 // // */
 
-// // export default function FloodRunnerGameModal({
-// //   visible,
-// //   onClose =() => {},
-// //   onWin = () => {},
-// //   level = 1,
-// // }) {
+// // export default function FloodRunnerGameModal() {
 // //   const { t } = useTranslation();
+// //   const { updatePoints, addPrepCoins, completeMission } = useUser();
+// //   const navigation = useNavigation(); 
+// //   const route = useRoute();
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | SAFE LEVEL
+// //   | LEVEL
 // //   |--------------------------------------------------------------------------
 // //   */
 
+// //   const routeLevel = route?.params?.level ?? 1;
+
 // //   const selectedLevel = Math.min(
 // //     3,
-// //     Math.max(1, Number(level) || 1)
+// //     Math.max(
+// //       1,
+// //       Number(routeLevel) || 1
+// //     )
 // //   );
 
-// //   const config = LEVEL_CONFIG[selectedLevel];
+// //   const config =
+// //     LEVEL_CONFIG[selectedLevel];
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -3969,18 +12472,22 @@
 // //   */
 
 // //   const GAME_WIDTH = Math.min(
-// //     SCREEN_WIDTH - 48,
-// //     360
+// //     SCREEN_WIDTH - 32,
+// //     390
 // //   );
 
 // //   const GAME_HEIGHT = Math.min(
-// //     SCREEN_HEIGHT * 0.43,
-// //     330
+// //     SCREEN_HEIGHT * 0.52,
+// //     430
 // //   );
+
+// //   const INITIAL_PLAYER_X =
+// //     GAME_WIDTH / 2 -
+// //     PLAYER_SIZE / 2;
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | REACT UI STATE
+// //   | STATE
 // //   |--------------------------------------------------------------------------
 // //   */
 
@@ -3991,10 +12498,7 @@
 // //     useState(null);
 
 // //   const [playerPositionX, setPlayerPositionX] =
-// //     useState(
-// //       GAME_WIDTH / 2 -
-// //         PLAYER_SIZE / 2
-// //     );
+// //     useState(INITIAL_PLAYER_X);
 
 // //   const [debris, setDebris] =
 // //     useState([]);
@@ -4011,34 +12515,53 @@
 // //   const [sensorAvailable, setSensorAvailable] =
 // //     useState(false);
 
+// //   const [rescueVisible, setRescueVisible] =
+// //     useState(false);
+
+// //   const [rescueQuestion, setRescueQuestion] =
+// //     useState(null);
+
+// //   const [rescueLives, setRescueLives] =
+// //     useState(MAX_RESCUE_LIVES);
+
+// //   const [selectedAnswer, setSelectedAnswer] =
+// //     useState(null);
+
+// //   const [answerFeedback, setAnswerFeedback] =
+// //     useState(null);
+
+// //   const [riskScore, setRiskScore] =
+// //     useState(50);
+
+// //   const [difficultyFactor, setDifficultyFactor] =
+// //     useState(1);
+
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | GAME REFS
+// //   | REFS
 // //   |--------------------------------------------------------------------------
-// //   |
-// //   | The actual game state lives in refs.
-// //   |
-// //   | This prevents the game loop from being recreated
-// //   | every time the player moves or debris changes.
-// //   |
 // //   */
 
-// //   const playerXRef = useRef(
-// //     GAME_WIDTH / 2 -
-// //       PLAYER_SIZE / 2
-// //   );
+// //   const playerXRef =
+// //     useRef(INITIAL_PLAYER_X);
 
-// //   const debrisRef = useRef([]);
+// //   const debrisRef =
+// //     useRef([]);
 
-// //   const scoreRef = useRef(0);
+// //   const scoreRef =
+// //     useRef(0);
 
-// //   const gameRunningRef = useRef(false);
+// //   const gameRunningRef =
+// //     useRef(false);
 
-// //   const gameOverRef = useRef(false);
+// //   const gameOverRef =
+// //     useRef(false);
 
-// //   const hasWonRef = useRef(false);
+// //   const hasWonRef =
+// //     useRef(false);
 
-// //   const movementRef = useRef(0);
+// //   const movementRef =
+// //     useRef(0);
 
 // //   const animationFrameRef =
 // //     useRef(null);
@@ -4055,43 +12578,214 @@
 // //   const sensorSubscriptionRef =
 // //     useRef(null);
 
+// //   const gameSessionRef =
+// //     useRef(0);
+
+// //   /*
+// //    * Adaptive algorithm state.
+// //    */
+// //   const adaptiveRef =
+// //     useRef({
+// //       riskScore: 50,
+
+// //       nearMisses: 0,
+
+// //       successfulDodges: 0,
+
+// //       collisions: 0,
+
+// //       correctRescues: 0,
+
+// //       lastRiskUpdate: 0,
+// //     });
+
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | HELPERS
+// //   | HAPTICS
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const clampPlayerX = useCallback(
-// //     (x) => {
-// //       return Math.max(
-// //         0,
-// //         Math.min(
-// //           GAME_WIDTH - PLAYER_SIZE,
-// //           x
-// //         )
-// //       );
-// //     },
-// //     [GAME_WIDTH]
-// //   );
+// //   const safeImpact =
+// //     useCallback(async (style) => {
+// //       try {
+// //         await Haptics.impactAsync(
+// //           style
+// //         );
+// //       } catch (error) {
+// //         // Ignore unavailable haptics.
+// //       }
+// //     }, []);
+
+// //   const safeNotification =
+// //     useCallback(async (type) => {
+// //       try {
+// //         await Haptics.notificationAsync(
+// //           type
+// //         );
+// //       } catch (error) {
+// //         // Ignore unavailable haptics.
+// //       }
+// //     }, []);
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | ADAPTIVE SAFETY ALGORITHM
+// //   |--------------------------------------------------------------------------
+// //   |
+// //   | riskScore:
+// //   |
+// //   | 0   = player appears comfortable
+// //   | 100 = player is struggling
+// //   |
+// //   | Difficulty is then inversely related
+// //   | to risk.
+// //   |
+// //   | High risk:
+// //   |     lower speed
+// //   |     longer spawn interval
+// //   |
+// //   | Low risk:
+// //   |     higher speed
+// //   |     shorter spawn interval
+// //   |
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const calculateAdaptiveDifficulty =
+// //     useCallback(
+// //       (timestamp) => {
+// //         const adaptive =
+// //           adaptiveRef.current;
+
+// //         if (
+// //           timestamp -
+// //             adaptive.lastRiskUpdate <
+// //           RISK_UPDATE_INTERVAL
+// //         ) {
+// //           return;
+// //         }
+
+// //         adaptive.lastRiskUpdate =
+// //           timestamp;
+
+// //         /*
+// //          * Successful play slowly reduces
+// //          * perceived difficulty pressure.
+// //          */
+// //         adaptive.riskScore -=
+// //           adaptive.successfulDodges *
+// //           RISK_DECREASE_SUCCESS;
+
+// //         adaptive.successfulDodges = 0;
+
+// //         /*
+// //          * Rescue questions are strong
+// //          * evidence that the player needs
+// //          * a little more breathing room.
+// //          */
+// //         adaptive.riskScore +=
+// //           adaptive.correctRescues *
+// //           2;
+
+// //         adaptive.correctRescues = 0;
+
+// //         adaptive.riskScore = clamp(
+// //           adaptive.riskScore,
+// //           0,
+// //           100
+// //         );
+
+// //         /*
+// //          * Difficulty factor.
+// //          *
+// //          * risk = 0   -> 1.15
+// //          * risk = 50  -> ~0.965
+// //          * risk = 100 -> 0.78
+// //          */
+// //         const nextFactor =
+// //           MAX_DIFFICULTY_FACTOR -
+// //           (adaptive.riskScore /
+// //             100) *
+// //             (
+// //               MAX_DIFFICULTY_FACTOR -
+// //               MIN_DIFFICULTY_FACTOR
+// //             );
+
+// //         const boundedFactor =
+// //           clamp(
+// //             nextFactor,
+// //             MIN_DIFFICULTY_FACTOR,
+// //             MAX_DIFFICULTY_FACTOR
+// //           );
+
+// //         setRiskScore(
+// //           Math.round(
+// //             adaptive.riskScore
+// //           )
+// //         );
+
+// //         setDifficultyFactor(
+// //           boundedFactor
+// //         );
+// //       },
+// //       []
+// //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | CLAMP PLAYER
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const clampPlayerX =
+// //     useCallback(
+// //       (x) => {
+// //         return Math.max(
+// //           0,
+// //           Math.min(
+// //             GAME_WIDTH -
+// //               PLAYER_SIZE,
+// //             x
+// //           )
+// //         );
+// //       },
+// //       [GAME_WIDTH]
+// //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | CREATE DEBRIS
+// //   |--------------------------------------------------------------------------
+// //   */
 
 // //   const createDebrisObject =
 // //     useCallback(
 // //       (y = -DEBRIS_SIZE) => {
 // //         return {
-// //           id: `${Date.now()}-${Math.random()}`,
+// //           id:
+// //             `${Date.now()}-${Math.random()}`,
 
 // //           x:
 // //             Math.random() *
 // //             Math.max(
 // //               1,
-// //               GAME_WIDTH - DEBRIS_SIZE
+// //               GAME_WIDTH -
+// //                 DEBRIS_SIZE
 // //             ),
 
 // //           y,
+
+// //           nearMissed: false,
 // //         };
 // //       },
 // //       [GAME_WIDTH]
 // //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | INITIAL DEBRIS
+// //   |--------------------------------------------------------------------------
+// //   */
 
 // //   const createInitialDebris =
 // //     useCallback(() => {
@@ -4099,23 +12793,28 @@
 
 // //       for (
 // //         let index = 0;
-// //         index < config.spawnCount;
+// //         index <
+// //         config.spawnCount;
 // //         index += 1
 // //       ) {
 // //         objects.push({
-// //           id: `${Date.now()}-${index}-${Math.random()}`,
+// //           id:
+// //             `${Date.now()}-${index}-${Math.random()}`,
 
 // //           x:
 // //             Math.random() *
 // //             Math.max(
 // //               1,
-// //               GAME_WIDTH - DEBRIS_SIZE
+// //               GAME_WIDTH -
+// //                 DEBRIS_SIZE
 // //             ),
 
 // //           y:
 // //             -DEBRIS_SIZE -
-// //             index * 105 -
-// //             Math.random() * 70,
+// //             index * 120 -
+// //             Math.random() * 100,
+
+// //           nearMissed: false,
 // //         });
 // //       }
 
@@ -4127,123 +12826,182 @@
 
 // //   /*
 // //   |--------------------------------------------------------------------------
+// //   | STOP SENSOR
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const stopSensor =
+// //     useCallback(() => {
+// //       if (
+// //         sensorSubscriptionRef.current
+// //       ) {
+// //         try {
+// //           sensorSubscriptionRef.current.remove();
+// //         } catch (error) {
+// //           // Ignore.
+// //         }
+
+// //         sensorSubscriptionRef.current =
+// //           null;
+// //       }
+
+// //       movementRef.current = 0;
+// //     }, []);
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | STOP GAME LOOP
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const stopGameLoop =
+// //     useCallback(() => {
+// //       gameRunningRef.current =
+// //         false;
+
+// //       gameSessionRef.current +=
+// //         1;
+
+// //       if (
+// //         animationFrameRef.current !==
+// //         null
+// //       ) {
+// //         cancelAnimationFrame(
+// //           animationFrameRef.current
+// //         );
+
+// //         animationFrameRef.current =
+// //           null;
+// //       }
+
+// //       lastFrameTimeRef.current =
+// //         null;
+// //     }, []);
+
+// //   /*
+// //   |--------------------------------------------------------------------------
 // //   | RESET GAME
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const resetGame = useCallback(() => {
-// //     if (countdownTimerRef.current) {
-// //       clearInterval(
+// //   const resetGame =
+// //     useCallback(() => {
+// //       if (
 // //         countdownTimerRef.current
+// //       ) {
+// //         clearInterval(
+// //           countdownTimerRef.current
+// //         );
+
+// //         countdownTimerRef.current =
+// //           null;
+// //       }
+
+// //       stopGameLoop();
+// //       stopSensor();
+
+// //       playerXRef.current =
+// //         INITIAL_PLAYER_X;
+
+// //       debrisRef.current = [];
+
+// //       scoreRef.current = 0;
+
+// //       gameRunningRef.current =
+// //         false;
+
+// //       gameOverRef.current =
+// //         false;
+
+// //       hasWonRef.current =
+// //         false;
+
+// //       movementRef.current = 0;
+
+// //       adaptiveRef.current = {
+// //         riskScore: 50,
+// //         nearMisses: 0,
+// //         successfulDodges: 0,
+// //         collisions: 0,
+// //         correctRescues: 0,
+// //         lastRiskUpdate: 0,
+// //       };
+
+// //       setGameStarted(false);
+// //       setCountdown(null);
+// //       setPlayerPositionX(
+// //         INITIAL_PLAYER_X
+// //       );
+// //       setDebris([]);
+// //       setScore(0);
+// //       setGameOver(false);
+// //       setHasWon(false);
+
+// //       setRescueVisible(false);
+// //       setRescueQuestion(null);
+// //       setSelectedAnswer(null);
+// //       setAnswerFeedback(null);
+
+// //       setRescueLives(
+// //         MAX_RESCUE_LIVES
 // //       );
 
-// //       countdownTimerRef.current = null;
-// //     }
-
-// //     if (animationFrameRef.current) {
-// //       cancelAnimationFrame(
-// //         animationFrameRef.current
-// //       );
-
-// //       animationFrameRef.current = null;
-// //     }
-
-// //     if (sensorSubscriptionRef.current) {
-// //       sensorSubscriptionRef.current.remove();
-
-// //       sensorSubscriptionRef.current = null;
-// //     }
-
-// //     const initialX =
-// //       GAME_WIDTH / 2 -
-// //       PLAYER_SIZE / 2;
-
-// //     playerXRef.current = initialX;
-
-// //     debrisRef.current = [];
-
-// //     scoreRef.current = 0;
-
-// //     movementRef.current = 0;
-
-// //     gameRunningRef.current = false;
-
-// //     gameOverRef.current = false;
-
-// //     hasWonRef.current = false;
-
-// //     lastFrameTimeRef.current = null;
-
-// //     lastSpawnTimeRef.current = 0;
-
-// //     setScore(0);
-
-// //     setGameOver(false);
-
-// //     setHasWon(false);
-
-// //     setGameStarted(false);
-
-// //     setCountdown(null);
-
-// //     setPlayerPositionX(initialX);
-
-// //     setDebris([]);
-// //   }, [GAME_WIDTH]);
+// //       setRiskScore(50);
+// //       setDifficultyFactor(1);
+// //     }, [
+// //       INITIAL_PLAYER_X,
+// //       stopGameLoop,
+// //       stopSensor,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | STOP GAME
+// //   | END GAME
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const stopGameLoop = useCallback(() => {
-// //     gameRunningRef.current = false;
+// //   const finishGame =
+// //     useCallback(() => {
+// //       if (
+// //         gameOverRef.current ||
+// //         hasWonRef.current
+// //       ) {
+// //         return;
+// //       }
 
-// //     if (animationFrameRef.current) {
-// //       cancelAnimationFrame(
-// //         animationFrameRef.current
+// //       gameRunningRef.current =
+// //         false;
+
+// //       gameOverRef.current =
+// //         true;
+
+// //       stopSensor();
+
+// //       if (
+// //         animationFrameRef.current !==
+// //         null
+// //       ) {
+// //         cancelAnimationFrame(
+// //           animationFrameRef.current
+// //         );
+
+// //         animationFrameRef.current =
+// //           null;
+// //       }
+
+// //       lastFrameTimeRef.current =
+// //         null;
+
+// //       setGameOver(true);
+
+// //       safeNotification(
+// //         Haptics.NotificationFeedbackType
+// //           .Error
 // //       );
-
-// //       animationFrameRef.current = null;
-// //     }
-
-// //     lastFrameTimeRef.current = null;
-// //   }, []);
-
-// //   /*
-// //   |--------------------------------------------------------------------------
-// //   | GAME OVER
-// //   |--------------------------------------------------------------------------
-// //   */
-
-// //   const finishGame = useCallback(() => {
-// //     if (
-// //       !gameRunningRef.current ||
-// //       gameOverRef.current ||
-// //       hasWonRef.current
-// //     ) {
-// //       return;
-// //     }
-
-// //     gameRunningRef.current = false;
-
-// //     gameOverRef.current = true;
-
-// //     setGameOver(true);
-
-// //     if (animationFrameRef.current) {
-// //       cancelAnimationFrame(
-// //         animationFrameRef.current
-// //       );
-
-// //       animationFrameRef.current = null;
-// //     }
-
-// //     Haptics.impactAsync(
-// //       Haptics.ImpactFeedbackStyle.Heavy
-// //     );
-// //   }, []);
+// //     }, [
+// //       safeNotification,
+// //       stopSensor,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4251,98 +13009,385 @@
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const winGame = useCallback(() => {
-// //     if (
-// //       hasWonRef.current ||
-// //       gameOverRef.current
-// //     ) {
-// //       return;
-// //     }
+// //   const winGame =
+// //     useCallback(() => {
+// //       if (
+// //         hasWonRef.current ||
+// //         gameOverRef.current
+// //       ) {
+// //         return;
+// //       }
 
-// //     gameRunningRef.current = false;
+// //       gameRunningRef.current =
+// //         false;
 
-// //     hasWonRef.current = true;
+// //       hasWonRef.current =
+// //         true;
 
-// //     scoreRef.current =
-// //       config.targetScore;
+// //       stopSensor();
 
-// //     setScore(config.targetScore);
+// //       scoreRef.current =
+// //         config.targetScore;
 
-// //     setHasWon(true);
-
-// //     if (animationFrameRef.current) {
-// //       cancelAnimationFrame(
-// //         animationFrameRef.current
+// //       setScore(
+// //         config.targetScore
 // //       );
 
-// //       animationFrameRef.current = null;
-// //     }
+// //       setHasWon(true);
 
-// //     Haptics.notificationAsync(
-// //       Haptics.NotificationFeedbackType
-// //         .Success
-// //     );
-// //   }, [config.targetScore]);
+// //       if (
+// //         animationFrameRef.current !==
+// //         null
+// //       ) {
+// //         cancelAnimationFrame(
+// //           animationFrameRef.current
+// //         );
+
+// //         animationFrameRef.current =
+// //           null;
+// //       }
+
+// //       lastFrameTimeRef.current =
+// //         null;
+
+// //       safeNotification(
+// //         Haptics.NotificationFeedbackType
+// //           .Success
+// //       );
+// //     }, [
+// //       config.targetScore,
+// //       safeNotification,
+// //       stopSensor,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | COLLISION DETECTION
+// //   | COLLISION
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const checkCollision = useCallback(
-// //     (playerX, debrisItem) => {
-// //       const playerLeft =
-// //         playerX +
-// //         COLLISION_PADDING;
+// //   const checkCollision =
+// //     useCallback(
+// //       (playerX, debrisItem) => {
+// //         const playerTop =
+// //           GAME_HEIGHT -
+// //           PLAYER_SIZE -
+// //           PLAYER_BOTTOM_OFFSET -
+// //           FLOOD_HEIGHT;
 
-// //       const playerRight =
-// //         playerX +
-// //         PLAYER_SIZE -
-// //         COLLISION_PADDING;
+// //         const playerLeft =
+// //           playerX +
+// //           COLLISION_PADDING;
 
-// //       const playerTop =
-// //         GAME_HEIGHT -
-// //         PLAYER_SIZE -
-// //         PLAYER_BOTTOM_OFFSET +
-// //         COLLISION_PADDING;
+// //         const playerRight =
+// //           playerX +
+// //           PLAYER_SIZE -
+// //           COLLISION_PADDING;
 
-// //       const playerBottom =
-// //         playerTop +
-// //         PLAYER_SIZE -
-// //         COLLISION_PADDING;
+// //         const playerCollisionTop =
+// //           playerTop +
+// //           COLLISION_PADDING;
 
-// //       const debrisLeft =
-// //         debrisItem.x +
-// //         COLLISION_PADDING;
+// //         const playerCollisionBottom =
+// //           playerTop +
+// //           PLAYER_SIZE -
+// //           COLLISION_PADDING;
 
-// //       const debrisRight =
-// //         debrisItem.x +
-// //         DEBRIS_SIZE -
-// //         COLLISION_PADDING;
+// //         const debrisLeft =
+// //           debrisItem.x +
+// //           COLLISION_PADDING;
 
-// //       const debrisTop =
-// //         debrisItem.y +
-// //         COLLISION_PADDING;
+// //         const debrisRight =
+// //           debrisItem.x +
+// //           DEBRIS_SIZE -
+// //           COLLISION_PADDING;
 
-// //       const debrisBottom =
-// //         debrisItem.y +
-// //         DEBRIS_SIZE -
-// //         COLLISION_PADDING;
+// //         const debrisTop =
+// //           debrisItem.y +
+// //           COLLISION_PADDING;
 
-// //       return (
-// //         playerLeft <
-// //           debrisRight &&
-// //         playerRight >
-// //           debrisLeft &&
-// //         playerTop <
-// //           debrisBottom &&
-// //         playerBottom >
-// //           debrisTop
+// //         const debrisBottom =
+// //           debrisItem.y +
+// //           DEBRIS_SIZE -
+// //           COLLISION_PADDING;
+
+// //         return (
+// //           playerLeft <
+// //             debrisRight &&
+// //           playerRight >
+// //             debrisLeft &&
+// //           playerCollisionTop <
+// //             debrisBottom &&
+// //           playerCollisionBottom >
+// //             debrisTop
+// //         );
+// //       },
+// //       [GAME_HEIGHT]
+// //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | HANDLE COLLISION / RESCUE
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const triggerRescueQuestion =
+// //     useCallback(() => {
+// //       if (
+// //         rescueLives <= 0
+// //       ) {
+// //         finishGame();
+// //         return;
+// //       }
+
+// //       gameRunningRef.current =
+// //         false;
+
+// //       stopSensor();
+
+// //       if (
+// //         animationFrameRef.current !==
+// //         null
+// //       ) {
+// //         cancelAnimationFrame(
+// //           animationFrameRef.current
+// //         );
+
+// //         animationFrameRef.current =
+// //           null;
+// //       }
+
+// //       adaptiveRef.current.collisions +=
+// //         1;
+
+// //       adaptiveRef.current.riskScore +=
+// //         RISK_INCREASE_COLLISION;
+
+// //       adaptiveRef.current.riskScore =
+// //         clamp(
+// //           adaptiveRef.current.riskScore,
+// //           0,
+// //           100
+// //         );
+
+// //       const question =
+// //         getRandomQuestion();
+
+// //       setRescueQuestion(
+// //         question
 // //       );
-// //     },
-// //     [GAME_HEIGHT]
-// //   );
+
+// //       setSelectedAnswer(null);
+// //       setAnswerFeedback(null);
+// //       setRescueVisible(true);
+
+// //       setRiskScore(
+// //         Math.round(
+// //           adaptiveRef.current
+// //             .riskScore
+// //         )
+// //       );
+
+// //       safeNotification(
+// //         Haptics.NotificationFeedbackType
+// //           .Warning
+// //       );
+// //     }, [
+// //       finishGame,
+// //       rescueLives,
+// //       safeNotification,
+// //       stopSensor,
+// //     ]);
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | RESCUE ANSWER
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const handleRescueAnswer =
+// //     useCallback(
+// //       (answerId) => {
+// //         if (
+// //           !rescueQuestion ||
+// //           selectedAnswer
+// //         ) {
+// //           return;
+// //         }
+
+// //         setSelectedAnswer(
+// //           answerId
+// //         );
+
+// //         const correct =
+// //           answerId ===
+// //           rescueQuestion.correct;
+
+// //         if (!correct) {
+// //           setAnswerFeedback(
+// //             'wrong'
+// //           );
+
+// //           safeNotification(
+// //             Haptics.NotificationFeedbackType
+// //               .Error
+// //           );
+
+// //           setTimeout(() => {
+// //             setRescueVisible(false);
+// //             setRescueQuestion(null);
+// //             finishGame();
+// //           }, 850);
+
+// //           return;
+// //         }
+
+// //         setAnswerFeedback(
+// //           'correct'
+// //         );
+
+// //         safeNotification(
+// //           Haptics.NotificationFeedbackType
+// //             .Success
+// //         );
+
+// //         /*
+// //          * The player earns a rescue.
+// //          *
+// //          * We also reduce adaptive risk,
+// //          * meaning the game gives them
+// //          * breathing room after learning.
+// //          */
+// //         adaptiveRef.current.correctRescues +=
+// //           1;
+
+// //         adaptiveRef.current.riskScore -=
+// //           RISK_DECREASE_CORRECT_RESCUE;
+
+// //         adaptiveRef.current.riskScore =
+// //           clamp(
+// //             adaptiveRef.current.riskScore,
+// //             0,
+// //             100
+// //           );
+
+// //         const nextScore =
+// //           Math.min(
+// //             config.targetScore,
+// //             scoreRef.current +
+// //               RESCUE_POINTS
+// //           );
+
+// //         scoreRef.current =
+// //           nextScore;
+
+// //         setScore(
+// //           nextScore
+// //         );
+
+// //         setRiskScore(
+// //           Math.round(
+// //             adaptiveRef.current
+// //               .riskScore
+// //           )
+// //         );
+
+// //         setDifficultyFactor(
+// //           MAX_DIFFICULTY_FACTOR -
+// //             (
+// //               adaptiveRef.current
+// //                 .riskScore /
+// //               100
+// //             ) *
+// //             (
+// //               MAX_DIFFICULTY_FACTOR -
+// //               MIN_DIFFICULTY_FACTOR
+// //             )
+// //         );
+
+// //         /*
+// //          * Consume the rescue life.
+// //          */
+// //         setRescueLives(
+// //           (value) =>
+// //             Math.max(
+// //               0,
+// //               value - 1
+// //             )
+// //         );
+
+// //         /*
+// //          * Give the player a short grace
+// //          * period by resetting obstacles.
+// //          */
+// //         debrisRef.current =
+// //           debrisRef.current.filter(
+// //             (item) =>
+// //               item.y <
+// //               GAME_HEIGHT * 0.35
+// //           );
+
+// //         setDebris(
+// //           debrisRef.current
+// //         );
+
+// //         setTimeout(() => {
+// //           setRescueVisible(false);
+// //           setRescueQuestion(null);
+// //           setSelectedAnswer(null);
+// //           setAnswerFeedback(null);
+
+// //           /*
+// //            * If rescue itself reached the
+// //            * target, the player wins.
+// //            */
+// //           if (
+// //             nextScore >=
+// //             config.targetScore
+// //           ) {
+// //             winGame();
+// //             return;
+// //           }
+
+// //           gameOverRef.current =
+// //             false;
+
+// //           hasWonRef.current =
+// //             false;
+
+// //           gameRunningRef.current =
+// //             true;
+
+// //           lastFrameTimeRef.current =
+// //             null;
+
+// //           lastSpawnTimeRef.current =
+// //             performance.now();
+
+// //           const sessionId =
+// //             gameSessionRef.current;
+
+// //           animationFrameRef.current =
+// //             requestAnimationFrame(
+// //               (timestamp) =>
+// //                 runGameLoop(
+// //                   timestamp,
+// //                   sessionId
+// //                 )
+// //             );
+// //         }, 700);
+// //       },
+// //       [
+// //         config.targetScore,
+// //         finishGame,
+// //         GAME_HEIGHT,
+// //         rescueQuestion,
+// //         runGameLoop,
+// //         safeNotification,
+// //         selectedAnswer,
+// //         winGame,
+// //       ]
+// //     );
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4350,378 +13395,582 @@
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const runGameLoop = useCallback(
-// //     (timestamp) => {
-// //       if (
-// //         !gameRunningRef.current ||
-// //         gameOverRef.current ||
-// //         hasWonRef.current
-// //       ) {
-// //         return;
-// //       }
-
-// //       if (
-// //         lastFrameTimeRef.current ===
-// //         null
-// //       ) {
-// //         lastFrameTimeRef.current =
-// //           timestamp;
-// //       }
-
-// //       const delta =
-// //         Math.min(
-// //           timestamp -
-// //             lastFrameTimeRef.current,
-// //           50
-// //         ) / 1000;
-
-// //       lastFrameTimeRef.current =
-// //         timestamp;
-
-// //       /*
-// //        * ------------------------------------------------------------
-// //        * PLAYER MOVEMENT
-// //        * ------------------------------------------------------------
-// //        */
-
-// //       const tilt =
-// //         movementRef.current;
-
-// //       let nextPlayerX =
-// //         playerXRef.current;
-
-// //       if (Math.abs(tilt) >= 0.04) {
-// //         /*
-// //          * Accelerometer values are normally
-// //          * around -1 to +1.
-// //          *
-// //          * Multiply by speed and delta
-// //          * so movement is frame-rate independent.
-// //          */
-// //         nextPlayerX +=
-// //           tilt *
-// //           config.playerSpeed *
-// //           delta;
-// //       }
-
-// //       nextPlayerX =
-// //         clampPlayerX(nextPlayerX);
-
-// //       playerXRef.current =
-// //         nextPlayerX;
-
-// //       /*
-// //        * Only update React UI when the
-// //        * actual position has changed.
-// //        */
-
-// //       setPlayerPositionX(
-// //         nextPlayerX
-// //       );
-
-// //       /*
-// //        * ------------------------------------------------------------
-// //        * MOVE DEBRIS
-// //        * ------------------------------------------------------------
-// //        */
-
-// //       const previousDebris =
-// //         debrisRef.current;
-
-// //       const movedDebris =
-// //         previousDebris.map(
-// //           (item) => ({
-// //             ...item,
-// //             y:
-// //               item.y +
-// //               config.debrisSpeed *
-// //                 delta,
-// //           })
-// //         );
-
-// //       /*
-// //        * ------------------------------------------------------------
-// //        * COLLISION
-// //        * ------------------------------------------------------------
-// //        */
-
-// //       const collision =
-// //         movedDebris.some(
-// //           (item) =>
-// //             checkCollision(
-// //               nextPlayerX,
-// //               item
-// //             )
-// //         );
-
-// //       if (collision) {
-// //         debrisRef.current =
-// //           movedDebris;
-
-// //         setDebris(
-// //           movedDebris
-// //         );
-
-// //         finishGame();
-
-// //         return;
-// //       }
-
-// //       /*
-// //        * ------------------------------------------------------------
-// //        * SCORE
-// //        * ------------------------------------------------------------
-// //        */
-
-// //       let passedCount = 0;
-
-// //       const survivingDebris =
-// //         movedDebris.filter(
-// //           (item) => {
-// //             if (
-// //               item.y >
-// //               GAME_HEIGHT
-// //             ) {
-// //               passedCount += 1;
-
-// //               return false;
-// //             }
-
-// //             return true;
-// //           }
-// //         );
-
-// //       /*
-// //        * Every debris item successfully
-// //        * passing the player gives 10 points.
-// //        */
-
-// //       if (passedCount > 0) {
-// //         const nextScore =
-// //           Math.min(
-// //             config.targetScore,
-// //             scoreRef.current +
-// //               passedCount * 10
-// //           );
-
-// //         scoreRef.current =
-// //           nextScore;
-
-// //         setScore(nextScore);
+// //   const runGameLoop =
+// //     useCallback(
+// //       (timestamp, sessionId) => {
+// //         if (
+// //           sessionId !==
+// //           gameSessionRef.current
+// //         ) {
+// //           return;
+// //         }
 
 // //         if (
-// //           nextScore >=
-// //           config.targetScore
+// //           !gameRunningRef.current ||
+// //           gameOverRef.current ||
+// //           hasWonRef.current ||
+// //           rescueVisible
 // //         ) {
-// //           debrisRef.current =
-// //             survivingDebris;
+// //           return;
+// //         }
 
-// //           setDebris(
-// //             survivingDebris
+// //         if (
+// //           lastFrameTimeRef.current ===
+// //           null
+// //         ) {
+// //           lastFrameTimeRef.current =
+// //             timestamp;
+// //         }
+
+// //         const delta =
+// //           Math.min(
+// //             timestamp -
+// //               lastFrameTimeRef.current,
+// //             50
+// //           ) / 1000;
+
+// //         lastFrameTimeRef.current =
+// //           timestamp;
+
+// //         /*
+// //          * Update adaptive difficulty.
+// //          */
+// //         calculateAdaptiveDifficulty(
+// //           timestamp
+// //         );
+
+// //         const adaptive =
+// //           adaptiveRef.current;
+
+// //         const factor =
+// //           clamp(
+// //             MAX_DIFFICULTY_FACTOR -
+// //               (
+// //                 adaptive.riskScore /
+// //                 100
+// //               ) *
+// //               (
+// //                 MAX_DIFFICULTY_FACTOR -
+// //                 MIN_DIFFICULTY_FACTOR
+// //               ),
+// //             MIN_DIFFICULTY_FACTOR,
+// //             MAX_DIFFICULTY_FACTOR
 // //           );
 
-// //           winGame();
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | PLAYER
+// //          |--------------------------------------------------------------------------
+// //          */
+
+// //         let nextPlayerX =
+// //           playerXRef.current;
+
+// //         const tilt =
+// //           movementRef.current;
+
+// //         if (
+// //           Math.abs(tilt) >=
+// //           SENSOR_DEAD_ZONE
+// //         ) {
+// //           nextPlayerX +=
+// //             tilt *
+// //             config.playerSpeed *
+// //             delta;
+// //         }
+
+// //         nextPlayerX =
+// //           clampPlayerX(
+// //             nextPlayerX
+// //           );
+
+// //         playerXRef.current =
+// //           nextPlayerX;
+
+// //         setPlayerPositionX(
+// //           nextPlayerX
+// //         );
+
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | DEBRIS
+// //          |--------------------------------------------------------------------------
+// //          */
+
+// //         const effectiveDebrisSpeed =
+// //           config.debrisSpeed *
+// //           factor;
+
+// //         const movedDebris =
+// //           debrisRef.current.map(
+// //             (item) => ({
+// //               ...item,
+
+// //               y:
+// //                 item.y +
+// //                 effectiveDebrisSpeed *
+// //                 delta,
+// //             })
+// //           );
+
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | COLLISION + NEAR MISS
+// //          |--------------------------------------------------------------------------
+// //          */
+
+// //         let collision = false;
+
+// //         const checkedDebris =
+// //           movedDebris.map(
+// //             (item) => {
+// //               if (
+// //                 checkCollision(
+// //                   nextPlayerX,
+// //                   item
+// //                 )
+// //               ) {
+// //                 collision = true;
+// //                 return item;
+// //               }
+
+// //               /*
+// //                * Near miss detection.
+// //                *
+// //                * If the obstacle comes close
+// //                * horizontally and vertically
+// //                * but doesn't collide, the player
+// //                * demonstrated useful avoidance.
+// //                */
+// //               if (
+// //                 !item.nearMissed &&
+// //                 item.y >
+// //                   GAME_HEIGHT -
+// //                   PLAYER_SIZE -
+// //                   PLAYER_BOTTOM_OFFSET -
+// //                   FLOOD_HEIGHT -
+// //                   45 &&
+// //                 item.y <
+// //                   GAME_HEIGHT -
+// //                   PLAYER_SIZE -
+// //                   PLAYER_BOTTOM_OFFSET -
+// //                   FLOOD_HEIGHT +
+// //                   55
+// //               ) {
+// //                 const horizontalGap =
+// //                   Math.abs(
+// //                     (
+// //                       item.x +
+// //                       DEBRIS_SIZE / 2
+// //                     ) -
+// //                     (
+// //                       nextPlayerX +
+// //                       PLAYER_SIZE / 2
+// //                     )
+// //                   );
+
+// //                 if (
+// //                   horizontalGap <=
+// //                   NEAR_MISS_DISTANCE
+// //                 ) {
+// //                   adaptive.nearMisses +=
+// //                     1;
+
+// //                   adaptive.riskScore +=
+// //                     RISK_INCREASE_NEAR_MISS;
+
+// //                   adaptive.riskScore =
+// //                     clamp(
+// //                       adaptive.riskScore,
+// //                       0,
+// //                       100
+// //                     );
+
+// //                   return {
+// //                     ...item,
+// //                     nearMissed: true,
+// //                   };
+// //                 }
+// //               }
+
+// //               return item;
+// //             }
+// //           );
+
+// //         if (collision) {
+// //           debrisRef.current =
+// //             checkedDebris;
+
+// //           setDebris(
+// //             checkedDebris
+// //           );
+
+// //           triggerRescueQuestion();
 
 // //           return;
 // //         }
-// //       }
 
-// //       /*
-// //        * ------------------------------------------------------------
-// //        * SPAWNING
-// //        * ------------------------------------------------------------
-// //        */
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | PASSED OBSTACLES
+// //          |--------------------------------------------------------------------------
+// //          */
 
-// //       if (
-// //         timestamp -
-// //           lastSpawnTimeRef.current >=
-// //         config.spawnInterval
-// //       ) {
-// //         lastSpawnTimeRef.current =
-// //           timestamp;
+// //         let passedCount = 0;
+
+// //         const survivingDebris =
+// //           checkedDebris.filter(
+// //             (item) => {
+// //               if (
+// //                 item.y >
+// //                 GAME_HEIGHT
+// //               ) {
+// //                 passedCount += 1;
+
+// //                 adaptive.successfulDodges +=
+// //                   1;
+
+// //                 return false;
+// //               }
+
+// //               return true;
+// //             }
+// //           );
+
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | SCORE
+// //          |--------------------------------------------------------------------------
+// //          */
 
 // //         if (
-// //           survivingDebris.length <
+// //           passedCount > 0
+// //         ) {
+// //           const nextScore =
+// //             Math.min(
+// //               config.targetScore,
+// //               scoreRef.current +
+// //                 passedCount * 10
+// //             );
+
+// //           scoreRef.current =
+// //             nextScore;
+
+// //           setScore(
+// //             nextScore
+// //           );
+
+// //           if (
+// //             nextScore >=
+// //             config.targetScore
+// //           ) {
+// //             debrisRef.current =
+// //               survivingDebris;
+
+// //             setDebris(
+// //               survivingDebris
+// //             );
+
+// //             winGame();
+
+// //             return;
+// //           }
+// //         }
+
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | ADAPTIVE SPAWN
+// //          |--------------------------------------------------------------------------
+// //          */
+
+// //         const effectiveSpawnInterval =
+// //           config.spawnInterval /
+// //           factor;
+
+// //         if (
+// //           timestamp -
+// //             lastSpawnTimeRef.current >=
+// //           effectiveSpawnInterval
+// //         ) {
+// //           lastSpawnTimeRef.current =
+// //             timestamp;
+
+// //           if (
+// //             survivingDebris.length <
+// //             config.spawnCount
+// //           ) {
+// //             survivingDebris.push(
+// //               createDebrisObject()
+// //             );
+// //           }
+// //         }
+
+// //         /*
+// //          * Safety limit.
+// //          */
+// //         while (
+// //           survivingDebris.length >
 // //           config.spawnCount
 // //         ) {
-// //           survivingDebris.push(
-// //             createDebrisObject()
-// //           );
+// //           survivingDebris.shift();
 // //         }
-// //       }
 
-// //       /*
-// //        * Keep debris within the intended
-// //        * maximum number.
-// //        */
+// //         debrisRef.current =
+// //           survivingDebris;
 
-// //       while (
-// //         survivingDebris.length >
-// //         config.spawnCount
+// //         setDebris(
+// //           survivingDebris
+// //         );
+
+// //         /*
+// //          |--------------------------------------------------------------------------
+// //          | NEXT FRAME
+// //          |--------------------------------------------------------------------------
+// //          */
+
+// //         animationFrameRef.current =
+// //           requestAnimationFrame(
+// //             (nextTimestamp) =>
+// //               runGameLoop(
+// //                 nextTimestamp,
+// //                 sessionId
+// //               )
+// //           );
+// //       },
+// //       [
+// //         calculateAdaptiveDifficulty,
+// //         checkCollision,
+// //         clampPlayerX,
+// //         config.debrisSpeed,
+// //         config.playerSpeed,
+// //         config.spawnCount,
+// //         config.spawnInterval,
+// //         config.targetScore,
+// //         createDebrisObject,
+// //         GAME_HEIGHT,
+// //         rescueVisible,
+// //         triggerRescueQuestion,
+// //         winGame,
+// //       ]
+// //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | BEGIN GAME
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const beginGame =
+// //     useCallback(() => {
+// //       const sessionId =
+// //         gameSessionRef.current +
+// //         1;
+
+// //       gameSessionRef.current =
+// //         sessionId;
+
+// //       if (
+// //         animationFrameRef.current !==
+// //         null
 // //       ) {
-// //         survivingDebris.shift();
+// //         cancelAnimationFrame(
+// //           animationFrameRef.current
+// //         );
+
+// //         animationFrameRef.current =
+// //           null;
 // //       }
+
+// //       playerXRef.current =
+// //         INITIAL_PLAYER_X;
+
+// //       const initialDebris =
+// //         createInitialDebris();
 
 // //       debrisRef.current =
-// //         survivingDebris;
+// //         initialDebris;
+
+// //       scoreRef.current = 0;
+
+// //       gameRunningRef.current =
+// //         true;
+
+// //       gameOverRef.current =
+// //         false;
+
+// //       hasWonRef.current =
+// //         false;
+
+// //       movementRef.current = 0;
+
+// //       lastFrameTimeRef.current =
+// //         null;
+
+// //       lastSpawnTimeRef.current =
+// //         performance.now();
+
+// //       adaptiveRef.current = {
+// //         riskScore: 50,
+// //         nearMisses: 0,
+// //         successfulDodges: 0,
+// //         collisions: 0,
+// //         correctRescues: 0,
+// //         lastRiskUpdate:
+// //           performance.now(),
+// //       };
+
+// //       setRiskScore(50);
+// //       setDifficultyFactor(1);
+
+// //       setPlayerPositionX(
+// //         INITIAL_PLAYER_X
+// //       );
 
 // //       setDebris(
-// //         survivingDebris
+// //         initialDebris
+// //       );
+
+// //       setScore(0);
+
+// //       setGameOver(false);
+// //       setHasWon(false);
+
+// //       setRescueLives(
+// //         MAX_RESCUE_LIVES
+// //       );
+
+// //       setGameStarted(true);
+
+// //       safeNotification(
+// //         Haptics.NotificationFeedbackType
+// //           .Success
 // //       );
 
 // //       animationFrameRef.current =
 // //         requestAnimationFrame(
-// //           runGameLoop
+// //           (timestamp) =>
+// //             runGameLoop(
+// //               timestamp,
+// //               sessionId
+// //             )
 // //         );
-// //     },
-// //     [
-// //       clampPlayerX,
-// //       config.debrisSpeed,
-// //       config.playerSpeed,
-// //       config.spawnCount,
-// //       config.spawnInterval,
-// //       config.targetScore,
-// //       createDebrisObject,
-// //       finishGame,
-// //       GAME_HEIGHT,
-// //       checkCollision,
-// //       winGame,
-// //     ]
-// //   );
+// //     }, [
+// //       INITIAL_PLAYER_X,
+// //       createInitialDebris,
+// //       runGameLoop,
+// //       safeNotification,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | START ACTUAL GAME
+// //   | START GAME
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const beginGame = useCallback(() => {
-// //     const initialX =
-// //       GAME_WIDTH / 2 -
-// //       PLAYER_SIZE / 2;
+// //   const startGame =
+// //     useCallback(() => {
+// //       if (
+// //         gameRunningRef.current ||
+// //         countdown !== null
+// //       ) {
+// //         return;
+// //       }
 
-// //     playerXRef.current =
-// //       initialX;
+// //       if (
+// //         countdownTimerRef.current
+// //       ) {
+// //         clearInterval(
+// //           countdownTimerRef.current
+// //         );
 
-// //     debrisRef.current =
-// //       createInitialDebris();
+// //         countdownTimerRef.current =
+// //           null;
+// //       }
 
-// //     scoreRef.current = 0;
+// //       stopGameLoop();
+// //       stopSensor();
 
-// //     gameRunningRef.current =
-// //       true;
+// //       playerXRef.current =
+// //         INITIAL_PLAYER_X;
 
-// //     gameOverRef.current =
-// //       false;
+// //       debrisRef.current = [];
 
-// //     hasWonRef.current =
-// //       false;
+// //       scoreRef.current = 0;
 
-// //     movementRef.current = 0;
+// //       gameOverRef.current =
+// //         false;
 
-// //     lastFrameTimeRef.current =
-// //       null;
+// //       hasWonRef.current =
+// //         false;
 
-// //     lastSpawnTimeRef.current =
-// //       performance.now();
+// //       gameRunningRef.current =
+// //         false;
 
-// //     setPlayerPositionX(
-// //       initialX
-// //     );
-
-// //     setDebris(
-// //       debrisRef.current
-// //     );
-
-// //     setScore(0);
-
-// //     setGameOver(false);
-
-// //     setHasWon(false);
-
-// //     setGameStarted(true);
-
-// //     Haptics.notificationAsync(
-// //       Haptics.NotificationFeedbackType
-// //         .Success
-// //     );
-
-// //     animationFrameRef.current =
-// //       requestAnimationFrame(
-// //         runGameLoop
+// //       setPlayerPositionX(
+// //         INITIAL_PLAYER_X
 // //       );
-// //   }, [
-// //     GAME_WIDTH,
-// //     createInitialDebris,
-// //     runGameLoop,
-// //   ]);
 
-// //   /*
-// //   |--------------------------------------------------------------------------
-// //   | START / COUNTDOWN
-// //   |--------------------------------------------------------------------------
-// //   */
+// //       setDebris([]);
 
-// //   const startGame = useCallback(() => {
-// //     if (
-// //       gameRunningRef.current ||
-// //       countdown !== null
-// //     ) {
-// //       return;
-// //     }
+// //       setScore(0);
 
-// //     /*
-// //      * If this is a retry, clear the
-// //      * previous game-over state.
-// //      */
+// //       setGameOver(false);
+// //       setHasWon(false);
 
-// //     setGameOver(false);
+// //       setRescueVisible(false);
+// //       setRescueQuestion(null);
 
-// //     setHasWon(false);
+// //       setRescueLives(
+// //         MAX_RESCUE_LIVES
+// //       );
 
-// //     gameOverRef.current =
-// //       false;
+// //       setGameStarted(false);
 
-// //     hasWonRef.current =
-// //       false;
+// //       let count = 3;
 
-// //     setCountdown(3);
+// //       setCountdown(count);
 
-// //     let count = 3;
+// //       safeImpact(
+// //         Haptics.ImpactFeedbackStyle
+// //           .Light
+// //       );
 
-// //     countdownTimerRef.current =
-// //       setInterval(() => {
-// //         count -= 1;
+// //       countdownTimerRef.current =
+// //         setInterval(() => {
+// //           count -= 1;
 
-// //         if (count <= 0) {
 // //           if (
-// //             countdownTimerRef.current
+// //             count <= 0
 // //           ) {
 // //             clearInterval(
 // //               countdownTimerRef.current
 // //             );
+
+// //             countdownTimerRef.current =
+// //               null;
+
+// //             setCountdown(null);
+
+// //             beginGame();
+
+// //             return;
 // //           }
 
-// //           countdownTimerRef.current =
-// //             null;
+// //           setCountdown(count);
 
-// //           setCountdown(null);
-
-// //           beginGame();
-
-// //           return;
-// //         }
-
-// //         setCountdown(count);
-
-// //         Haptics.impactAsync(
-// //           Haptics.ImpactFeedbackStyle.Light
-// //         );
-// //       }, 700);
-// //   }, [
-// //     beginGame,
-// //     countdown,
-// //   ]);
+// //           safeImpact(
+// //             Haptics.ImpactFeedbackStyle
+// //               .Light
+// //           );
+// //         }, 700);
+// //     }, [
+// //       beginGame,
+// //       countdown,
+// //       INITIAL_PLAYER_X,
+// //       safeImpact,
+// //       stopGameLoop,
+// //       stopSensor,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4729,48 +13978,57 @@
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const movePlayer = useCallback(
-// //     (direction) => {
-// //       if (
-// //         !gameRunningRef.current ||
-// //         gameOverRef.current ||
-// //         hasWonRef.current
-// //       ) {
-// //         return;
-// //       }
+// //   const movePlayer =
+// //     useCallback(
+// //       (direction) => {
+// //         if (
+// //           !gameRunningRef.current ||
+// //           gameOverRef.current ||
+// //           hasWonRef.current
+// //         ) {
+// //           return;
+// //         }
 
-// //       const amount =
-// //         config.playerSpeed *
-// //         0.18;
+// //         const amount =
+// //           config.playerSpeed *
+// //           TOUCH_MOVE_MULTIPLIER;
 
-// //       let nextX =
-// //         playerXRef.current;
+// //         let nextX =
+// //           playerXRef.current;
 
-// //       if (direction === 'left') {
-// //         nextX -= amount;
-// //       } else {
-// //         nextX += amount;
-// //       }
+// //         if (
+// //           direction === 'left'
+// //         ) {
+// //           nextX -= amount;
+// //         }
 
-// //       nextX =
-// //         clampPlayerX(nextX);
+// //         if (
+// //           direction === 'right'
+// //         ) {
+// //           nextX += amount;
+// //         }
 
-// //       playerXRef.current =
-// //         nextX;
+// //         nextX =
+// //           clampPlayerX(nextX);
 
-// //       setPlayerPositionX(
-// //         nextX
-// //       );
+// //         playerXRef.current =
+// //           nextX;
 
-// //       Haptics.impactAsync(
-// //         Haptics.ImpactFeedbackStyle.Light
-// //       );
-// //     },
-// //     [
-// //       clampPlayerX,
-// //       config.playerSpeed,
-// //     ]
-// //   );
+// //         setPlayerPositionX(
+// //           nextX
+// //         );
+
+// //         safeImpact(
+// //           Haptics.ImpactFeedbackStyle
+// //             .Light
+// //         );
+// //       },
+// //       [
+// //         clampPlayerX,
+// //         config.playerSpeed,
+// //         safeImpact,
+// //       ]
+// //     );
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4784,11 +14042,12 @@
 // //     const setupAccelerometer =
 // //       async () => {
 // //         if (
-// //           !visible ||
 // //           !gameStarted ||
 // //           gameOver ||
-// //           hasWon
+// //           hasWon ||
+// //           rescueVisible
 // //         ) {
+// //           stopSensor();
 // //           return;
 // //         }
 
@@ -4801,15 +14060,22 @@
 // //           }
 
 // //           if (!available) {
-// //             setSensorAvailable(false);
+// //             setSensorAvailable(
+// //               false
+// //             );
+
 // //             return;
 // //           }
 
-// //           setSensorAvailable(true);
+// //           setSensorAvailable(
+// //             true
+// //           );
 
 // //           Accelerometer.setUpdateInterval(
 // //             50
 // //           );
+
+// //           stopSensor();
 
 // //           sensorSubscriptionRef.current =
 // //             Accelerometer.addListener(
@@ -4820,23 +14086,29 @@
 // //                   return;
 // //                 }
 
-// //                 /*
-// //                  * Expo's accelerometer x axis
-// //                  * controls horizontal movement.
-// //                  */
+// //                 const value =
+// //                   Number(
+// //                     data?.x
+// //                   ) || 0;
 
 // //                 movementRef.current =
-// //                   data.x;
+// //                   clamp(
+// //                     value,
+// //                     -1,
+// //                     1
+// //                   );
 // //               }
 // //             );
 // //         } catch (error) {
 // //           console.log(
-// //             'Accelerometer error:',
+// //             'FloodRunner accelerometer error:',
 // //             error
 // //           );
 
 // //           if (mounted) {
-// //             setSensorAvailable(false);
+// //             setSensorAvailable(
+// //               false
+// //             );
 // //           }
 // //         }
 // //       };
@@ -4845,41 +14117,50 @@
 
 // //     return () => {
 // //       mounted = false;
-
-// //       if (
-// //         sensorSubscriptionRef.current
-// //       ) {
-// //         sensorSubscriptionRef.current.remove();
-
-// //         sensorSubscriptionRef.current =
-// //           null;
-// //       }
+// //       stopSensor();
 // //     };
 // //   }, [
-// //     visible,
 // //     gameStarted,
 // //     gameOver,
 // //     hasWon,
+// //     rescueVisible,
+// //     stopSensor,
 // //   ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | MODAL CLEANUP
+// //   | BACK BUTTON
 // //   |--------------------------------------------------------------------------
 // //   */
 
 // //   useEffect(() => {
-// //     if (!visible) {
-// //       resetGame();
-// //     }
+// //     const subscription =
+// //       BackHandler.addEventListener(
+// //         'hardwareBackPress',
+// //         () => {
+// //           if (
+// //             gameRunningRef.current ||
+// //             countdown !== null ||
+// //             rescueVisible
+// //           ) {
+// //             return true;
+// //           }
+
+// //           return false;
+// //         }
+// //       );
+
+// //     return () => {
+// //       subscription.remove();
+// //     };
 // //   }, [
-// //     visible,
-// //     resetGame,
+// //     countdown,
+// //     rescueVisible,
 // //   ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
-// //   | COMPONENT UNMOUNT CLEANUP
+// //   | CLEANUP
 // //   |--------------------------------------------------------------------------
 // //   */
 
@@ -4891,38 +14172,40 @@
 // //         clearInterval(
 // //           countdownTimerRef.current
 // //         );
+
+// //         countdownTimerRef.current =
+// //           null;
 // //       }
 
 // //       if (
-// //         animationFrameRef.current
+// //         animationFrameRef.current !==
+// //         null
 // //       ) {
 // //         cancelAnimationFrame(
 // //           animationFrameRef.current
 // //         );
+
+// //         animationFrameRef.current =
+// //           null;
 // //       }
 
 // //       if (
 // //         sensorSubscriptionRef.current
 // //       ) {
-// //         sensorSubscriptionRef.current.remove();
+// //         try {
+// //           sensorSubscriptionRef.current.remove();
+// //         } catch (error) {
+// //           // Ignore.
+// //         }
+
+// //         sensorSubscriptionRef.current =
+// //           null;
 // //       }
+
+// //       gameRunningRef.current =
+// //         false;
 // //     };
 // //   }, []);
-
-// //   /*
-// //   |--------------------------------------------------------------------------
-// //   | CLOSE
-// //   |--------------------------------------------------------------------------
-// //   */
-
-// //   const handleClose = useCallback(() => {
-// //     console.log('Closebuttonpressed');
-// //     console.log('FloodRunner: handleClose called');
-// //     resetGame();
-// //     console.log('Calling Parent onClose');
-// //     console.log('FloodRunner: calling onClose');
-// //     onClose();
-// //   },[resetGame, onClose]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4930,27 +14213,33 @@
 // //   |--------------------------------------------------------------------------
 // //   */
 
-// //   const handleClaimReward = () => {
+// //   const handleClaimReward =useCallback(() => {
 // //     if (!hasWonRef.current) {
 // //       return;
 // //     }
 
-// //     // onWin({
-// //     //   xp: config.reward.xp,
-// //     //   coins: config.reward.coins,
-// //     // });
-// //     if (typeof onWin === 'function') {
-// //       onWin({
-// //         xp: config.reward.xp,
-// //         coins: config.reward.coins,
-// //       });
-// //     } else {
-// //       console.warn(
-// //         'FloodRunnerGameModal: onWin callback was not provided.'
-// //       );
-// //     }
-// //     handleClose();
-// //   };
+// //       /*
+// //        * Connect your real XP/coins
+// //        * persistence here.
+// //        */
+// //     const reward = config.reward;
+
+// //   // Update mission/progression system here.
+// //   completeMission({
+// //     missionId: 'floodRunner',
+// //     level: selectedLevel,
+// //     score: scoreRef.current,
+// //     xp: reward.xp,
+// //     coins: reward.coins,
+// //   });
+
+// //     resetGame();
+
+// //       navigation.goBack();
+// //     }, [
+// //       navigation,
+// //       resetGame,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4961,10 +14250,44 @@
 // //   const progressPercentage =
 // //     Math.min(
 // //       100,
-// //       (score /
-// //         config.targetScore) *
-// //         100
+// //       (
+// //         score /
+// //         config.targetScore
+// //       ) *
+// //       100
 // //     );
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | CURRENT DIFFICULTY LABEL
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   const difficultyLabel =
+// //     useMemo(() => {
+// //       if (
+// //         difficultyFactor < 0.88
+// //       ) {
+// //         return t(
+// //           'games.floodRunner.adaptive.easier'
+// //         );
+// //       }
+
+// //       if (
+// //         difficultyFactor > 1.05
+// //       ) {
+// //         return t(
+// //           'games.floodRunner.adaptive.harder'
+// //         );
+// //       }
+
+// //       return t(
+// //         'games.floodRunner.adaptive.balanced'
+// //       );
+// //     }, [
+// //       difficultyFactor,
+// //       t,
+// //     ]);
 
 // //   /*
 // //   |--------------------------------------------------------------------------
@@ -4973,341 +14296,361 @@
 // //   */
 
 // //   return (
-// //     <Modal
-// //       visible={visible}
-// //       animationType="slide"
-// //       transparent
-// //       onRequestClose={handleClose}
+// //     <View
+// //       style={styles.screen}
 // //     >
-// //       <View style={styles.modalOverlay}>
-// //         <View
-// //           style={[
-// //             styles.modalContentCard,
-// //             {
-// //               width:
+// //       <View
+// //         style={[
+// //           styles.modalContentCard,
+// //           {
+// //             width:
+// //               Math.min(
 // //                 GAME_WIDTH + 32,
-// //             },
-// //           ]}
+// //                 SCREEN_WIDTH - 16
+// //               ),
+// //           },
+// //         ]}
+// //       >
+// //         {/* HEADER */}
+
+// //         <View
+// //           style={styles.modalHeader}
 // //         >
-// //           {/* HEADER */}
-
-// //           <View style={styles.modalHeader}>
-// //             <View
-// //               style={
-// //                 styles.headerTitleArea
-// //               }
-// //             >
-// //               <View
-// //                 style={
-// //                   styles.headerIcon
-// //                 }
-// //               >
-// //                 <Ionicons
-// //                   name="water"
-// //                   size={20}
-// //                   color="#38BDF8"
-// //                 />
-// //               </View>
-
-// //               <View
-// //                 style={
-// //                   styles.headerTextArea
-// //                 }
-// //               >
-// //                 <Text
-// //                   style={
-// //                     styles.modalTitle
-// //                   }
-// //                 >
-// //                   {t(
-// //                     'games.floodRunner.title'
-// //                   )}
-// //                 </Text>
-
-// //                 <Text
-// //                   style={
-// //                     styles.levelLabel
-// //                   }
-// //                 >
-// //                   {t(
-// //                     'games.floodRunner.level',
-// //                     {
-// //                       level:
-// //                         selectedLevel,
-// //                     }
-// //                   )}{' '}
-// //                   •{' '}
-// //                   {t(
-// //                     config.nameKey
-// //                   )}
-// //                 </Text>
-// //               </View>
-// //             </View>
-
-// //             <TouchableOpacity
-// //               onPress={handleClose}
-// //               accessibilityRole="button"
-// //               accessibilityLabel={t('common.close')}
-// //             >
-// //               <Ionicons
-// //                 name="close-circle"
-// //                 size={30}
-// //                 color="#64748B"
-// //               />
-// //             </TouchableOpacity>
-// //           </View>
-
-// //           {/* OBJECTIVE */}
-
 // //           <View
 // //             style={
-// //               styles.objectiveCard
+// //               styles.headerTitleArea
 // //             }
 // //           >
 // //             <View
 // //               style={
-// //                 styles.objectiveIcon
+// //                 styles.headerIcon
 // //               }
 // //             >
 // //               <Ionicons
-// //                 name="flag"
+// //                 name="water"
+// //                 size={20}
+// //                 color="#38BDF8"
+// //               />
+// //             </View>
+
+// //             <View
+// //               style={
+// //                 styles.headerTextArea
+// //               }
+// //             >
+// //               <Text
+// //                 style={
+// //                   styles.modalTitle
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.title'
+// //                 )}
+// //               </Text>
+
+// //               <Text
+// //                 style={
+// //                   styles.levelLabel
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.level',
+// //                   {
+// //                     level:
+// //                       selectedLevel,
+// //                   }
+// //                 )}{' '}
+// //                 •{' '}
+// //                 {t(
+// //                   config.nameKey
+// //                 )}
+// //               </Text>
+// //             </View>
+// //           </View>
+// //         </View>
+
+// //         {/* OBJECTIVE */}
+
+// //         <View
+// //           style={
+// //             styles.objectiveCard
+// //           }
+// //         >
+// //           <View
+// //             style={
+// //               styles.objectiveIcon
+// //             }
+// //           >
+// //             <Ionicons
+// //               name="flag"
+// //               size={18}
+// //               color="#34D399"
+// //             />
+// //           </View>
+
+// //           <View
+// //             style={
+// //               styles.objectiveTextArea
+// //             }
+// //           >
+// //             <Text
+// //               style={
+// //                 styles.objectiveTitle
+// //               }
+// //             >
+// //               {t(
+// //                 'games.floodRunner.objective'
+// //               )}
+// //             </Text>
+
+// //             <Text
+// //               style={
+// //                 styles.objectiveText
+// //               }
+// //             >
+// //               {t(
+// //                 'games.floodRunner.objectiveDescription'
+// //               )}
+// //             </Text>
+// //           </View>
+// //         </View>
+
+// //         {/* INSTRUCTIONS */}
+
+// //         {!gameStarted &&
+// //           !gameOver &&
+// //           !hasWon &&
+// //           countdown === null && (
+// //             <View
+// //               style={
+// //                 styles.instructionsCard
+// //               }
+// //             >
+// //               <View
+// //                 style={
+// //                   styles.instructionsHeader
+// //                 }
+// //               >
+// //                 <Ionicons
+// //                   name="help-circle"
+// //                   size={20}
+// //                   color="#FBBF24"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.instructionsTitle
+// //                   }
+// //                 >
+// //                   {t(
+// //                     'games.floodRunner.howToPlay'
+// //                   )}
+// //                 </Text>
+// //               </View>
+
+// //               <InstructionRow
+// //                 icon="swap-horizontal"
+// //                 text={t(
+// //                   'games.floodRunner.instructions.move'
+// //                 )}
+// //               />
+
+// //               <InstructionRow
+// //                 icon="warning"
+// //                 text={t(
+// //                   'games.floodRunner.instructions.avoid'
+// //                 )}
+// //               />
+
+// //               <InstructionRow
+// //                 icon="water"
+// //                 text={t(
+// //                   'games.floodRunner.instructions.flood'
+// //                 )}
+// //               />
+
+// //               <InstructionRow
+// //                 icon="flag"
+// //                 text={t(
+// //                   'games.floodRunner.instructions.finish',
+// //                   {
+// //                     score:
+// //                       config.targetScore,
+// //                   }
+// //                 )}
+// //               />
+
+// //               <InstructionRow
+// //                 icon="help-circle"
+// //                 text={t(
+// //                   'games.floodRunner.instructions.rescue'
+// //                 )}
+// //               />
+// //             </View>
+// //           )}
+
+// //         {/* SENSOR STATUS */}
+
+// //         {gameStarted &&
+// //           !gameOver &&
+// //           !hasWon &&
+// //           !rescueVisible && (
+// //             <View
+// //               style={
+// //                 styles.sensorStatus
+// //               }
+// //             >
+// //               <Ionicons
+// //                 name={
+// //                   sensorAvailable
+// //                     ? 'phone-portrait-outline'
+// //                     : 'hand-left-outline'
+// //                 }
+// //                 size={15}
+// //                 color={
+// //                   sensorAvailable
+// //                     ? '#34D399'
+// //                     : '#FBBF24'
+// //                 }
+// //               />
+
+// //               <Text
+// //                 style={[
+// //                   styles.sensorText,
+// //                   {
+// //                     color:
+// //                       sensorAvailable
+// //                         ? '#34D399'
+// //                         : '#FBBF24',
+// //                   },
+// //                 ]}
+// //               >
+// //                 {sensorAvailable
+// //                   ? t(
+// //                       'games.floodRunner.tiltActive'
+// //                     )
+// //                   : t(
+// //                       'games.floodRunner.touchActive'
+// //                     )}
+// //               </Text>
+
+// //               <View
+// //                 style={
+// //                   styles.lifeBadge
+// //                 }
+// //               >
+// //                 <Ionicons
+// //                   name="heart"
+// //                   size={12}
+// //                   color="#FB7185"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.lifeText
+// //                   }
+// //                 >
+// //                   {rescueLives}
+// //                 </Text>
+// //               </View>
+// //             </View>
+// //           )}
+
+// //         {/* GAME AREA */}
+
+// //         <View
+// //           style={[
+// //             styles.gameCanvas,
+// //             {
+// //               width:
+// //                 GAME_WIDTH,
+// //               height:
+// //                 GAME_HEIGHT,
+// //             },
+// //           ]}
+// //         >
+// //           {/* SAFE ZONE */}
+
+// //           <View
+// //             style={
+// //               styles.safeZone
+// //             }
+// //           >
+// //             <View
+// //               style={
+// //                 styles.safeZoneIcon
+// //               }
+// //             >
+// //               <Ionicons
+// //                 name="shield-checkmark"
 // //                 size={18}
 // //                 color="#34D399"
 // //               />
 // //             </View>
 
-// //             <View
-// //               style={
-// //                 styles.objectiveTextArea
-// //               }
-// //             >
+// //             <View>
 // //               <Text
 // //                 style={
-// //                   styles.objectiveTitle
+// //                   styles.safeZoneTitle
 // //                 }
 // //               >
 // //                 {t(
-// //                   'games.floodRunner.objective'
+// //                   'games.floodRunner.safeShelter'
 // //                 )}
 // //               </Text>
 
 // //               <Text
 // //                 style={
-// //                   styles.objectiveText
+// //                   styles.safeZoneSub
 // //                 }
 // //               >
 // //                 {t(
-// //                   'games.floodRunner.objectiveDescription'
+// //                   'games.floodRunner.highGround'
 // //                 )}
 // //               </Text>
 // //             </View>
 // //           </View>
 
-// //           {/* INSTRUCTIONS */}
+// //           {/* DANGER FIELD */}
 
-// //           {!gameStarted &&
-// //             !gameOver &&
-// //             !hasWon &&
-// //             countdown === null && (
-// //               <View
-// //                 style={
-// //                   styles.instructionsCard
-// //                 }
-// //               >
-// //                 <View
-// //                   style={
-// //                     styles.instructionsHeader
-// //                   }
-// //                 >
-// //                   <Ionicons
-// //                     name="help-circle"
-// //                     size={20}
-// //                     color="#FBBF24"
-// //                   />
+// //           <View
+// //             style={
+// //               styles.dangerField
+// //             }
+// //           >
+// //             <View
+// //               style={
+// //                 styles.routeLine
+// //               }
+// //             />
 
-// //                   <Text
-// //                     style={
-// //                       styles.instructionsTitle
-// //                     }
-// //                   >
-// //                     {t(
-// //                       'games.floodRunner.howToPlay'
-// //                     )}
-// //                   </Text>
-// //                 </View>
+// //             <Text
+// //               style={
+// //                 styles.dangerText
+// //               }
+// //             >
+// //               {t(
+// //                 'games.floodRunner.evacuationRoute'
+// //               )}
+// //             </Text>
+// //           </View>
 
-// //                 <InstructionRow
-// //                   icon="swap-horizontal"
-// //                   text={t(
-// //                     'games.floodRunner.instructions.move'
-// //                   )}
-// //                 />
-
-// //                 <InstructionRow
-// //                   icon="warning"
-// //                   text={t(
-// //                     'games.floodRunner.instructions.avoid'
-// //                   )}
-// //                 />
-
-// //                 <InstructionRow
-// //                   icon="water"
-// //                   text={t(
-// //                     'games.floodRunner.instructions.flood'
-// //                   )}
-// //                 />
-
-// //                 <InstructionRow
-// //                   icon="flag"
-// //                   text={t(
-// //                     'games.floodRunner.instructions.finish',
-// //                     {
-// //                       score:
-// //                         config.targetScore,
-// //                     }
-// //                   )}
-// //                 />
-// //               </View>
-// //             )}
-
-// //           {/* SENSOR STATUS */}
+// //           {/* DEBRIS */}
 
 // //           {gameStarted &&
 // //             !gameOver &&
-// //             !hasWon && (
-// //               <View
-// //                 style={
-// //                   styles.sensorStatus
-// //                 }
-// //               >
-// //                 <Ionicons
-// //                   name={
-// //                     sensorAvailable
-// //                       ? 'phone-portrait-outline'
-// //                       : 'hand-left-outline'
-// //                   }
-// //                   size={15}
-// //                   color={
-// //                     sensorAvailable
-// //                       ? '#34D399'
-// //                       : '#FBBF24'
-// //                   }
-// //                 />
-
-// //                 <Text
-// //                   style={[
-// //                     styles.sensorText,
-// //                     {
-// //                       color:
-// //                         sensorAvailable
-// //                           ? '#34D399'
-// //                           : '#FBBF24',
-// //                     },
-// //                   ]}
-// //                 >
-// //                   {sensorAvailable
-// //                     ? t(
-// //                         'games.floodRunner.tiltActive'
-// //                       )
-// //                     : t(
-// //                         'games.floodRunner.touchActive'
-// //                       )}
-// //                 </Text>
-// //               </View>
-// //             )}
-
-// //           {/* GAME CANVAS */}
-
-// //           <View
-// //             style={[
-// //               styles.gameCanvas,
-// //               {
-// //                 width:
-// //                   GAME_WIDTH,
-// //                 height:
-// //                   GAME_HEIGHT,
-// //               },
-// //             ]}
-// //           >
-// //             {/* SAFE ZONE */}
-
-// //             <View
-// //               style={
-// //                 styles.safeZone
-// //               }
-// //             >
-// //               <View
-// //                 style={
-// //                   styles.safeZoneIcon
-// //                 }
-// //               >
-// //                 <Ionicons
-// //                   name="shield-checkmark"
-// //                   size={18}
-// //                   color="#34D399"
-// //                 />
-// //               </View>
-
-// //               <View>
-// //                 <Text
-// //                   style={
-// //                     styles.safeZoneTitle
-// //                   }
-// //                 >
-// //                   {t(
-// //                     'games.floodRunner.safeShelter'
-// //                   )}
-// //                 </Text>
-
-// //                 <Text
-// //                   style={
-// //                     styles.safeZoneSub
-// //                   }
-// //                 >
-// //                   {t(
-// //                     'games.floodRunner.highGround'
-// //                   )}
-// //                 </Text>
-// //               </View>
-// //             </View>
-
-// //             {/* DANGER FIELD */}
-
-// //             <View
-// //               style={
-// //                 styles.dangerField
-// //               }
-// //             >
-// //               <View
-// //                 style={
-// //                   styles.routeLine
-// //                 }
-// //               />
-
-// //               <Text
-// //                 style={
-// //                   styles.dangerText
-// //                 }
-// //               >
-// //                 {t(
-// //                   'games.floodRunner.evacuationRoute'
-// //                 )}
-// //               </Text>
-// //             </View>
-
-// //             {/* DEBRIS */}
-
-// //             {gameStarted &&
-// //               !gameOver &&
-// //               !hasWon &&
-// //               debris.map((item) => (
+// //             !hasWon &&
+// //             debris.map(
+// //               (item) => (
 // //                 <View
 // //                   key={item.id}
 // //                   style={[
 // //                     styles.debrisNode,
 // //                     {
-// //                       left: item.x,
-// //                       top: item.y,
+// //                       left:
+// //                         item.x,
+// //                       top:
+// //                         item.y,
 // //                     },
 // //                   ]}
 // //                 >
@@ -5317,506 +14660,734 @@
 // //                     color="#FCA5A5"
 // //                   />
 // //                 </View>
-// //               ))}
+// //               )
+// //             )}
 
-// //             {/* PLAYER */}
+// //           {/* PLAYER */}
 
-// //             {gameStarted &&
-// //               !gameOver &&
-// //               !hasWon && (
-// //                 <View
-// //                   style={[
-// //                     styles.playerNode,
-// //                     {
-// //                       left:
-// //                         playerPositionX,
-// //                       bottom:
-// //                         PLAYER_BOTTOM_OFFSET +
-// //                         FLOOD_HEIGHT,
-// //                     },
-// //                   ]}
-// //                 >
-// //                   <Ionicons
-// //                     name="person"
-// //                     size={25}
-// //                     color="#FFFFFF"
-// //                   />
-// //                 </View>
-// //               )}
+// //           {gameStarted &&
+// //             !gameOver &&
+// //             !hasWon &&
+// //             !rescueVisible && (
+// //               <View
+// //                 style={[
+// //                   styles.playerNode,
+// //                   {
+// //                     left:
+// //                       playerPositionX,
 
-// //             {/* FLOOD */}
+// //                     bottom:
+// //                       PLAYER_BOTTOM_OFFSET +
+// //                       FLOOD_HEIGHT,
+// //                   },
+// //                 ]}
+// //               >
+// //                 <Ionicons
+// //                   name="person"
+// //                   size={25}
+// //                   color="#FFFFFF"
+// //                 />
+// //               </View>
+// //             )}
 
+// //           {/* FLOOD */}
+
+// //           <View
+// //             style={
+// //               styles.floodLayer
+// //             }
+// //           >
 // //             <View
 // //               style={
-// //                 styles.floodLayer
+// //                 styles.waveContainer
 // //               }
 // //             >
-// //               <View
-// //                 style={
-// //                   styles.waveContainer
-// //                 }
-// //               >
-// //                 {Array.from({
-// //                   length: 12,
-// //                 }).map(
-// //                   (_, index) => (
-// //                     <Text
-// //                       key={index}
-// //                       style={
-// //                         styles.wave
-// //                       }
-// //                     >
-// //                       ~
-// //                     </Text>
-// //                   )
-// //                 )}
-// //               </View>
-
-// //               <Text
-// //                 style={
-// //                   styles.floodLabel
-// //                 }
-// //               >
-// //                 {t(
-// //                   'games.floodRunner.floodZone'
-// //                 )}
-// //               </Text>
+// //               {Array.from({
+// //                 length: 12,
+// //               }).map(
+// //                 (_, index) => (
+// //                   <Text
+// //                     key={index}
+// //                     style={
+// //                       styles.wave
+// //                     }
+// //                   >
+// //                     ~
+// //                   </Text>
+// //                 )
+// //               )}
 // //             </View>
 
-// //             {/* COUNTDOWN */}
+// //             <Text
+// //               style={
+// //                 styles.floodLabel
+// //               }
+// //             >
+// //               {t(
+// //                 'games.floodRunner.floodZone'
+// //               )}
+// //             </Text>
+// //           </View>
 
-// //             {countdown !== null && (
+// //           {/* ADAPTIVE STATUS */}
+
+// //           {gameStarted &&
+// //             !gameOver &&
+// //             !hasWon &&
+// //             !rescueVisible && (
 // //               <View
 // //                 style={
-// //                   styles.countdownOverlay
+// //                   styles.adaptiveBadge
 // //                 }
 // //               >
-// //                 <Text
-// //                   style={
-// //                     styles.countdownNumber
-// //                   }
-// //                 >
-// //                   {countdown}
-// //                 </Text>
+// //                 <Ionicons
+// //                   name="pulse"
+// //                   size={11}
+// //                   color="#38BDF8"
+// //                 />
 
 // //                 <Text
 // //                   style={
-// //                     styles.countdownText
+// //                     styles.adaptiveText
 // //                   }
 // //                 >
-// //                   {t(
-// //                     'games.floodRunner.getReady'
-// //                   )}
+// //                   {difficultyLabel}
 // //                 </Text>
 // //               </View>
 // //             )}
 
-// //             {/* START SCREEN */}
+// //           {/* COUNTDOWN */}
 
-// //             {!gameStarted &&
-// //               countdown === null &&
-// //               !gameOver &&
-// //               !hasWon && (
-// //                 <View
-// //                   style={
-// //                     styles.startOverlay
-// //                   }
-// //                 >
-// //                   <View
-// //                     style={
-// //                       styles.startIcon
-// //                     }
-// //                   >
-// //                     <Ionicons
-// //                       name="walk"
-// //                       size={34}
-// //                       color="#38BDF8"
-// //                     />
-// //                   </View>
+// //           {countdown !== null && (
+// //             <View
+// //               style={
+// //                 styles.countdownOverlay
+// //               }
+// //             >
+// //               <Text
+// //                 style={
+// //                   styles.countdownNumber
+// //                 }
+// //               >
+// //                 {countdown}
+// //               </Text>
 
-// //                   <Text
-// //                     style={
-// //                       styles.startTitle
-// //                     }
-// //                   >
-// //                     {t(
-// //                       'games.floodRunner.ready'
-// //                     )}
-// //                   </Text>
+// //               <Text
+// //                 style={
+// //                   styles.countdownText
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.getReady'
+// //                 )}
+// //               </Text>
+// //             </View>
+// //           )}
 
-// //                   <Text
-// //                     style={
-// //                       styles.startDescription
-// //                     }
-// //                   >
-// //                     {t(
-// //                       'games.floodRunner.startDescription'
-// //                     )}
-// //                   </Text>
+// //           {/* START */}
 
-// //                   <TouchableOpacity
-// //                     style={
-// //                       styles.startButton
-// //                     }
-// //                     onPress={
-// //                       startGame
-// //                     }
-// //                     activeOpacity={
-// //                       0.8
-// //                     }
-// //                   >
-// //                     <Ionicons
-// //                       name="play"
-// //                       size={18}
-// //                       color="#FFFFFF"
-// //                     />
-
-// //                     <Text
-// //                       style={
-// //                         styles.startButtonText
-// //                       }
-// //                     >
-// //                       {t(
-// //                         'games.floodRunner.start'
-// //                       )}
-// //                     </Text>
-// //                   </TouchableOpacity>
-// //                 </View>
-// //               )}
-
-// //             {/* GAME OVER */}
-
-// //             {gameOver && (
+// //           {!gameStarted &&
+// //             countdown === null &&
+// //             !gameOver &&
+// //             !hasWon && (
 // //               <View
 // //                 style={
-// //                   styles.endGameOverlay
+// //                   styles.startOverlay
 // //                 }
 // //               >
 // //                 <View
-// //                   style={[
-// //                     styles.resultIcon,
-// //                     {
-// //                       backgroundColor:
-// //                         '#450A0A',
-// //                     },
-// //                   ]}
+// //                   style={
+// //                     styles.startIcon
+// //                   }
 // //                 >
 // //                   <Ionicons
-// //                     name="warning"
+// //                     name="walk"
 // //                     size={34}
-// //                     color="#EF4444"
+// //                     color="#38BDF8"
 // //                   />
 // //                 </View>
 
 // //                 <Text
 // //                   style={
-// //                     styles.gameOverTitle
+// //                     styles.startTitle
 // //                   }
 // //                 >
 // //                   {t(
-// //                     'games.floodRunner.failed'
+// //                     'games.floodRunner.ready'
 // //                   )}
 // //                 </Text>
 
 // //                 <Text
 // //                   style={
-// //                     styles.gameOverText
+// //                     styles.startDescription
 // //                   }
 // //                 >
 // //                   {t(
-// //                     'games.floodRunner.failedDescription'
+// //                     'games.floodRunner.startDescription'
 // //                   )}
-// //                 </Text>
-
-// //                 <Text
-// //                   style={
-// //                     styles.finalScore
-// //                   }
-// //                 >
-// //                   {score} /{' '}
-// //                   {config.targetScore}
 // //                 </Text>
 
 // //                 <TouchableOpacity
 // //                   style={
-// //                     styles.retryButton
+// //                     styles.startButton
 // //                   }
 // //                   onPress={
 // //                     startGame
 // //                   }
-// //                   activeOpacity={
-// //                     0.8
-// //                   }
+// //                   activeOpacity={0.8}
 // //                 >
 // //                   <Ionicons
-// //                     name="refresh"
+// //                     name="play"
 // //                     size={18}
 // //                     color="#FFFFFF"
 // //                   />
 
 // //                   <Text
 // //                     style={
-// //                       styles.buttonText
+// //                       styles.startButtonText
 // //                     }
 // //                   >
 // //                     {t(
-// //                       'games.floodRunner.retry'
+// //                       'games.floodRunner.start'
 // //                     )}
 // //                   </Text>
 // //                 </TouchableOpacity>
 // //               </View>
 // //             )}
 
-// //             {/* WIN */}
+// //           {/* RESCUE QUESTION */}
 
-// //             {hasWon && (
+// //           {rescueVisible &&
+// //             rescueQuestion && (
 // //               <View
 // //                 style={
-// //                   styles.endGameOverlay
+// //                   styles.rescueOverlay
 // //                 }
 // //               >
 // //                 <View
-// //                   style={[
-// //                     styles.resultIcon,
-// //                     {
-// //                       backgroundColor:
-// //                         '#064E3B',
-// //                     },
-// //                   ]}
+// //                   style={
+// //                     styles.rescueIcon
+// //                   }
 // //                 >
 // //                   <Ionicons
-// //                     name="shield-checkmark"
-// //                     size={36}
-// //                     color="#10B981"
+// //                     name="medkit"
+// //                     size={28}
+// //                     color="#FBBF24"
 // //                   />
 // //                 </View>
 
 // //                 <Text
 // //                   style={
-// //                     styles.successTitle
+// //                     styles.rescueTitle
 // //                   }
 // //                 >
 // //                   {t(
-// //                     'games.floodRunner.success'
+// //                     'games.floodRunner.rescueTitle'
 // //                   )}
 // //                 </Text>
 
 // //                 <Text
 // //                   style={
-// //                     styles.gameOverText
+// //                     styles.rescueDescription
 // //                   }
 // //                 >
 // //                   {t(
-// //                     'games.floodRunner.successDescription'
+// //                     'games.floodRunner.rescueDescription'
+// //                   )}
+// //                 </Text>
+
+// //                 <Text
+// //                   style={
+// //                     styles.rescueQuestion
+// //                   }
+// //                 >
+// //                   {t(
+// //                     rescueQuestion.questionKey
 // //                   )}
 // //                 </Text>
 
 // //                 <View
 // //                   style={
-// //                     styles.rewardRow
+// //                     styles.answerList
 // //                   }
 // //                 >
-// //                   <Reward
-// //                     icon="flash"
-// //                     value={`+${config.reward.xp}`}
-// //                     label={t(
-// //                       'games.floodRunner.xp'
-// //                     )}
-// //                   />
+// //                   {rescueQuestion.options.map(
+// //                     (option) => {
+// //                       const isSelected =
+// //                         selectedAnswer ===
+// //                         option.id;
 
-// //                   <Reward
-// //                     icon="cash"
-// //                     value={`+${config.reward.coins}`}
-// //                     label={t(
-// //                       'games.floodRunner.coins'
-// //                     )}
-// //                   />
+// //                       const isCorrect =
+// //                         rescueQuestion.correct ===
+// //                         option.id;
+
+// //                       let backgroundColor =
+// //                         '#172033';
+
+// //                       let borderColor =
+// //                         '#334155';
+
+// //                       if (
+// //                         isSelected &&
+// //                         answerFeedback ===
+// //                           'correct'
+// //                       ) {
+// //                         backgroundColor =
+// //                           '#064E3B';
+
+// //                         borderColor =
+// //                           '#10B981';
+// //                       }
+
+// //                       if (
+// //                         isSelected &&
+// //                         answerFeedback ===
+// //                           'wrong'
+// //                       ) {
+// //                         backgroundColor =
+// //                           '#450A0A';
+
+// //                         borderColor =
+// //                           '#EF4444';
+// //                       }
+
+// //                       if (
+// //                         selectedAnswer &&
+// //                         isCorrect &&
+// //                         answerFeedback ===
+// //                           'correct'
+// //                       ) {
+// //                         backgroundColor =
+// //                           '#064E3B';
+
+// //                         borderColor =
+// //                           '#10B981';
+// //                       }
+
+// //                       return (
+// //                         <TouchableOpacity
+// //                           key={
+// //                             option.id
+// //                           }
+// //                           disabled={
+// //                             !!selectedAnswer
+// //                           }
+// //                           style={[
+// //                             styles.answerButton,
+// //                             {
+// //                               backgroundColor,
+// //                               borderColor,
+// //                             },
+// //                           ]}
+// //                           onPress={() =>
+// //                             handleRescueAnswer(
+// //                               option.id
+// //                             )
+// //                           }
+// //                           activeOpacity={
+// //                             0.8
+// //                           }
+// //                         >
+// //                           <View
+// //                             style={
+// //                               styles.answerLetter
+// //                             }
+// //                           >
+// //                             <Text
+// //                               style={
+// //                                 styles.answerLetterText
+// //                               }
+// //                             >
+// //                               {option.id.toUpperCase()}
+// //                             </Text>
+// //                           </View>
+
+// //                           <Text
+// //                             style={
+// //                               styles.answerText
+// //                             }
+// //                           >
+// //                             {t(
+// //                               option.textKey
+// //                             )}
+// //                           </Text>
+// //                         </TouchableOpacity>
+// //                       );
+// //                     }
+// //                   )}
 // //                 </View>
 
-// //                 <TouchableOpacity
+// //                 <View
 // //                   style={
-// //                     styles.claimRewardButton
-// //                   }
-// //                   onPress={
-// //                     handleClaimReward
-// //                   }
-// //                   activeOpacity={
-// //                     0.8
+// //                     styles.rescueLifeNotice
 // //                   }
 // //                 >
+// //                   <Ionicons
+// //                     name="heart"
+// //                     size={13}
+// //                     color="#FB7185"
+// //                   />
+
 // //                   <Text
 // //                     style={
-// //                       styles.buttonText
+// //                       styles.rescueLifeText
 // //                     }
 // //                   >
 // //                     {t(
-// //                       'games.floodRunner.claimReward'
+// //                       'games.floodRunner.rescueLifeNotice'
 // //                     )}
 // //                   </Text>
-// //                 </TouchableOpacity>
+// //                 </View>
 // //               </View>
 // //             )}
-// //           </View>
 
-// //           {/* SCORE */}
+// //           {/* GAME OVER */}
 
-// //           <View
-// //             style={styles.gameHud}
-// //           >
+// //           {gameOver && (
 // //             <View
 // //               style={
-// //                 styles.scoreHeader
+// //                 styles.endGameOverlay
 // //               }
 // //             >
+// //               <View
+// //                 style={[
+// //                   styles.resultIcon,
+// //                   {
+// //                     backgroundColor:
+// //                       '#450A0A',
+// //                   },
+// //                 ]}
+// //               >
+// //                 <Ionicons
+// //                   name="warning"
+// //                   size={34}
+// //                   color="#EF4444"
+// //                 />
+// //               </View>
+
 // //               <Text
 // //                 style={
-// //                   styles.scoreLabel
+// //                   styles.gameOverTitle
 // //                 }
 // //               >
 // //                 {t(
-// //                   'games.floodRunner.score'
+// //                   'games.floodRunner.failed'
 // //                 )}
 // //               </Text>
 
 // //               <Text
 // //                 style={
-// //                   styles.scoreValue
+// //                   styles.gameOverText
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.failedDescription'
+// //                 )}
+// //               </Text>
+
+// //               <Text
+// //                 style={
+// //                   styles.finalScore
 // //                 }
 // //               >
 // //                 {score} /{' '}
 // //                 {config.targetScore}
 // //               </Text>
-// //             </View>
 
+// //               <TouchableOpacity
+// //                 style={
+// //                   styles.retryButton
+// //                 }
+// //                 onPress={
+// //                   startGame
+// //                 }
+// //                 activeOpacity={0.8}
+// //               >
+// //                 <Ionicons
+// //                   name="refresh"
+// //                   size={18}
+// //                   color="#FFFFFF"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.buttonText
+// //                   }
+// //                 >
+// //                   {t(
+// //                     'games.floodRunner.retry'
+// //                   )}
+// //                 </Text>
+// //               </TouchableOpacity>
+// //             </View>
+// //           )}
+
+// //           {/* WIN */}
+
+// //           {hasWon && (
 // //             <View
 // //               style={
-// //                 styles.progressBackground
+// //                 styles.endGameOverlay
 // //               }
 // //             >
 // //               <View
 // //                 style={[
-// //                   styles.progressFill,
+// //                   styles.resultIcon,
 // //                   {
-// //                     width: `${progressPercentage}%`,
+// //                     backgroundColor:
+// //                       '#064E3B',
 // //                   },
 // //                 ]}
-// //               />
+// //               >
+// //                 <Ionicons
+// //                   name="shield-checkmark"
+// //                   size={36}
+// //                   color="#10B981"
+// //                 />
+// //               </View>
+
+// //               <Text
+// //                 style={
+// //                   styles.successTitle
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.success'
+// //                 )}
+// //               </Text>
+
+// //               <Text
+// //                 style={
+// //                   styles.gameOverText
+// //                 }
+// //               >
+// //                 {t(
+// //                   'games.floodRunner.successDescription'
+// //                 )}
+// //               </Text>
+
+// //               <View
+// //                 style={
+// //                   styles.rewardRow
+// //                 }
+// //               >
+// //                 <Reward
+// //                   icon="flash"
+// //                   value={`+${config.reward.xp}`}
+// //                   label={t(
+// //                     'games.floodRunner.xp'
+// //                   )}
+// //                 />
+
+// //                 <Reward
+// //                   icon="cash"
+// //                   value={`+${config.reward.coins}`}
+// //                   label={t(
+// //                     'games.floodRunner.coins'
+// //                   )}
+// //                 />
+// //               </View>
+
+// //               <TouchableOpacity
+// //                 style={
+// //                   styles.claimRewardButton
+// //                 }
+// //                 onPress={
+// //                   handleClaimReward
+// //                 }
+// //                 activeOpacity={0.8}
+// //               >
+// //                 <Ionicons
+// //                   name="checkmark-circle"
+// //                   size={18}
+// //                   color="#FFFFFF"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.buttonText
+// //                   }
+// //                 >
+// //                   {t(
+// //                     'games.floodRunner.claimReward'
+// //                   )}
+// //                 </Text>
+// //               </TouchableOpacity>
 // //             </View>
+// //           )}
+// //         </View>
+
+// //         {/* SCORE */}
+
+// //         <View
+// //           style={styles.gameHud}
+// //         >
+// //           <View
+// //             style={
+// //               styles.scoreHeader
+// //             }
+// //           >
+// //             <Text
+// //               style={
+// //                 styles.scoreLabel
+// //               }
+// //             >
+// //               {t(
+// //                 'games.floodRunner.score'
+// //               )}
+// //             </Text>
+
+// //             <Text
+// //               style={
+// //                 styles.scoreValue
+// //               }
+// //             >
+// //               {score} /{' '}
+// //               {config.targetScore}
+// //             </Text>
 // //           </View>
 
-// //           {/* CONTROLS */}
+// //           <View
+// //             style={
+// //               styles.progressBackground
+// //             }
+// //           >
+// //             <View
+// //               style={[
+// //                 styles.progressFill,
+// //                 {
+// //                   width:
+// //                     `${progressPercentage}%`,
+// //                 },
+// //               ]}
+// //             />
+// //           </View>
 
 // //           {gameStarted &&
 // //             !gameOver &&
 // //             !hasWon && (
 // //               <View
 // //                 style={
-// //                   styles.controls
+// //                   styles.algorithmRow
 // //                 }
 // //               >
-// //                 <TouchableOpacity
+// //                 <Text
 // //                   style={
-// //                     styles.controlButton
-// //                   }
-// //                   onPress={() =>
-// //                     movePlayer(
-// //                       'left'
-// //                     )
-// //                   }
-// //                   activeOpacity={
-// //                     0.7
+// //                     styles.algorithmLabel
 // //                   }
 // //                 >
-// //                   <Ionicons
-// //                     name="arrow-back"
-// //                     size={24}
-// //                     color="#FFFFFF"
-// //                   />
+// //                   {t(
+// //                     'games.floodRunner.adaptive.safety'
+// //                   )}
+// //                 </Text>
 
-// //                   <Text
-// //                     style={
-// //                       styles.controlText
-// //                     }
-// //                     numberOfLines={
-// //                       2
-// //                     }
-// //                   >
-// //                     {t(
-// //                       'games.floodRunner.left'
-// //                     )}
-// //                   </Text>
-// //                 </TouchableOpacity>
-
-// //                 <View
+// //                 <Text
 // //                   style={
-// //                     styles.controlHint
+// //                     styles.algorithmValue
 // //                   }
 // //                 >
-// //                   <Ionicons
-// //                     name={
-// //                       sensorAvailable
-// //                         ? 'phone-portrait-outline'
-// //                         : 'hand-left-outline'
-// //                     }
-// //                     size={21}
-// //                     color="#38BDF8"
-// //                   />
-
-// //                   <Text
-// //                     style={
-// //                       styles.controlHintText
-// //                     }
-// //                     numberOfLines={
-// //                       2
-// //                     }
-// //                   >
-// //                     {sensorAvailable
-// //                       ? t(
-// //                           'games.floodRunner.tilt'
-// //                         )
-// //                       : t(
-// //                           'games.floodRunner.touch'
-// //                         )}
-// //                   </Text>
-// //                 </View>
-
-// //                 <TouchableOpacity
-// //                   style={
-// //                     styles.controlButton
-// //                   }
-// //                   onPress={() =>
-// //                     movePlayer(
-// //                       'right'
-// //                     )
-// //                   }
-// //                   activeOpacity={
-// //                     0.7
-// //                   }
-// //                 >
-// //                   <Ionicons
-// //                     name="arrow-forward"
-// //                     size={24}
-// //                     color="#FFFFFF"
-// //                   />
-
-// //                   <Text
-// //                     style={
-// //                       styles.controlText
-// //                     }
-// //                     numberOfLines={
-// //                       2
-// //                     }
-// //                   >
-// //                     {t(
-// //                       'games.floodRunner.right'
-// //                     )}
-// //                   </Text>
-// //                 </TouchableOpacity>
+// //                   {riskScore}
+// //                 </Text>
 // //               </View>
 // //             )}
 // //         </View>
+
+// //         {/* CONTROLS */}
+
+// //         {gameStarted &&
+// //           !gameOver &&
+// //           !hasWon &&
+// //           !rescueVisible && (
+// //             <View
+// //               style={
+// //                 styles.controls
+// //               }
+// //             >
+// //               <TouchableOpacity
+// //                 style={
+// //                   styles.controlButton
+// //                 }
+// //                 onPress={() =>
+// //                   movePlayer('left')
+// //                 }
+// //                 activeOpacity={0.7}
+// //               >
+// //                 <Ionicons
+// //                   name="arrow-back"
+// //                   size={24}
+// //                   color="#FFFFFF"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.controlText
+// //                   }
+// //                 >
+// //                   {t(
+// //                     'games.floodRunner.left'
+// //                   )}
+// //                 </Text>
+// //               </TouchableOpacity>
+
+// //               <View
+// //                 style={
+// //                   styles.controlHint
+// //                 }
+// //               >
+// //                 <Ionicons
+// //                   name={
+// //                     sensorAvailable
+// //                       ? 'phone-portrait-outline'
+// //                       : 'hand-left-outline'
+// //                   }
+// //                   size={21}
+// //                   color="#38BDF8"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.controlHintText
+// //                   }
+// //                 >
+// //                   {sensorAvailable
+// //                     ? t(
+// //                         'games.floodRunner.tilt'
+// //                       )
+// //                     : t(
+// //                         'games.floodRunner.touch'
+// //                       )}
+// //                 </Text>
+// //               </View>
+
+// //               <TouchableOpacity
+// //                 style={
+// //                   styles.controlButton
+// //                 }
+// //                 onPress={() =>
+// //                   movePlayer('right')
+// //                 }
+// //                 activeOpacity={0.7}
+// //               >
+// //                 <Ionicons
+// //                   name="arrow-forward"
+// //                   size={24}
+// //                   color="#FFFFFF"
+// //                 />
+
+// //                 <Text
+// //                   style={
+// //                     styles.controlText
+// //                   }
+// //                 >
+// //                   {t(
+// //                     'games.floodRunner.right'
+// //                   )}
+// //                 </Text>
+// //               </TouchableOpacity>
+// //             </View>
+// //           )}
 // //       </View>
-// //     </Modal>
+// //     </View>
 // //   );
 // // }
 
@@ -5906,13 +15477,12 @@
 // // */
 
 // // const styles = StyleSheet.create({
-// //   modalOverlay: {
+// //   screen: {
 // //     flex: 1,
-// //     backgroundColor:
-// //       'rgba(2, 6, 23, 0.94)',
+// //     backgroundColor: '#020617',
 // //     justifyContent: 'center',
 // //     alignItems: 'center',
-// //     padding: 12,
+// //     padding: 8,
 // //   },
 
 // //   modalContentCard: {
@@ -5920,15 +15490,13 @@
 // //     borderWidth: 1,
 // //     borderColor: '#1E293B',
 // //     borderRadius: 22,
-// //     padding: 16,
-// //     maxWidth: 400,
-// //     maxHeight: '96%',
+// //     padding: 12,
+// //     maxWidth: 430,
+// //     maxHeight: '98%',
 // //   },
 
 // //   modalHeader: {
 // //     flexDirection: 'row',
-// //     justifyContent:
-// //       'space-between',
 // //     alignItems: 'center',
 // //     marginBottom: 10,
 // //   },
@@ -5937,7 +15505,6 @@
 // //     flexDirection: 'row',
 // //     alignItems: 'center',
 // //     flex: 1,
-// //     marginRight: 10,
 // //   },
 
 // //   headerIcon: {
@@ -5974,8 +15541,8 @@
 // //     borderWidth: 1,
 // //     borderColor: '#166534',
 // //     borderRadius: 13,
-// //     padding: 11,
-// //     marginBottom: 10,
+// //     padding: 10,
+// //     marginBottom: 8,
 // //   },
 
 // //   objectiveIcon: {
@@ -6011,14 +15578,14 @@
 // //     borderWidth: 1,
 // //     borderColor: '#334155',
 // //     borderRadius: 14,
-// //     padding: 13,
-// //     marginBottom: 10,
+// //     padding: 11,
+// //     marginBottom: 8,
 // //   },
 
 // //   instructionsHeader: {
 // //     flexDirection: 'row',
 // //     alignItems: 'center',
-// //     marginBottom: 8,
+// //     marginBottom: 6,
 // //   },
 
 // //   instructionsTitle: {
@@ -6031,7 +15598,7 @@
 // //   instructionRow: {
 // //     flexDirection: 'row',
 // //     alignItems: 'flex-start',
-// //     marginTop: 7,
+// //     marginTop: 6,
 // //   },
 
 // //   instructionIcon: {
@@ -6048,7 +15615,7 @@
 // //     flex: 1,
 // //     color: '#CBD5E1',
 // //     fontSize: 11,
-// //     lineHeight: 17,
+// //     lineHeight: 16,
 // //     paddingTop: 3,
 // //   },
 
@@ -6067,6 +15634,22 @@
 // //     fontSize: 10,
 // //     fontWeight: '800',
 // //     marginLeft: 6,
+// //   },
+
+// //   lifeBadge: {
+// //     flexDirection: 'row',
+// //     alignItems: 'center',
+// //     marginLeft: 10,
+// //     paddingLeft: 8,
+// //     borderLeftWidth: 1,
+// //     borderLeftColor: '#334155',
+// //   },
+
+// //   lifeText: {
+// //     color: '#FB7185',
+// //     fontSize: 10,
+// //     fontWeight: '900',
+// //     marginLeft: 4,
 // //   },
 
 // //   gameCanvas: {
@@ -6195,8 +15778,7 @@
 // //     left: 0,
 // //     right: 0,
 // //     flexDirection: 'row',
-// //     justifyContent:
-// //       'space-around',
+// //     justifyContent: 'space-around',
 // //   },
 
 // //   wave: {
@@ -6213,6 +15795,28 @@
 // //     marginTop: 12,
 // //   },
 
+// //   adaptiveBadge: {
+// //     position: 'absolute',
+// //     top: SAFE_ZONE_HEIGHT + 8,
+// //     right: 8,
+// //     zIndex: 10,
+// //     flexDirection: 'row',
+// //     alignItems: 'center',
+// //     backgroundColor: 'rgba(2, 6, 23, 0.82)',
+// //     borderWidth: 1,
+// //     borderColor: '#164E63',
+// //     borderRadius: 8,
+// //     paddingHorizontal: 7,
+// //     paddingVertical: 4,
+// //   },
+
+// //   adaptiveText: {
+// //     color: '#7DD3FC',
+// //     fontSize: 8,
+// //     fontWeight: '900',
+// //     marginLeft: 4,
+// //   },
+
 // //   startOverlay: {
 // //     position: 'absolute',
 // //     top: SAFE_ZONE_HEIGHT,
@@ -6223,7 +15827,7 @@
 // //       'rgba(2, 6, 23, 0.94)',
 // //     alignItems: 'center',
 // //     justifyContent: 'center',
-// //     padding: 24,
+// //     padding: 20,
 // //     zIndex: 20,
 // //   },
 
@@ -6299,20 +15903,136 @@
 // //     marginTop: 2,
 // //   },
 
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | RESCUE QUESTION STYLES
+// //   |--------------------------------------------------------------------------
+// //   */
+
+// //   rescueOverlay: {
+// //     position: 'absolute',
+// //     top: SAFE_ZONE_HEIGHT + 5,
+// //     bottom: FLOOD_HEIGHT + 5,
+// //     left: 6,
+// //     right: 6,
+// //     backgroundColor:
+// //       'rgba(15, 23, 42, 0.985)',
+// //     borderWidth: 1,
+// //     borderColor: '#92400E',
+// //     borderRadius: 18,
+// //     alignItems: 'center',
+// //     justifyContent: 'center',
+// //     padding: 14,
+// //     zIndex: 40,
+// //   },
+
+// //   rescueIcon: {
+// //     width: 52,
+// //     height: 52,
+// //     borderRadius: 17,
+// //     backgroundColor: '#451A03',
+// //     alignItems: 'center',
+// //     justifyContent: 'center',
+// //     marginBottom: 7,
+// //   },
+
+// //   rescueTitle: {
+// //     color: '#FBBF24',
+// //     fontSize: 18,
+// //     fontWeight: '900',
+// //     textAlign: 'center',
+// //   },
+
+// //   rescueDescription: {
+// //     color: '#94A3B8',
+// //     fontSize: 10,
+// //     lineHeight: 15,
+// //     textAlign: 'center',
+// //     marginTop: 4,
+// //     maxWidth: 280,
+// //   },
+
+// //   rescueQuestion: {
+// //     color: '#FFFFFF',
+// //     fontSize: 13,
+// //     fontWeight: '900',
+// //     lineHeight: 19,
+// //     textAlign: 'center',
+// //     marginTop: 10,
+// //     marginBottom: 8,
+// //     maxWidth: 285,
+// //   },
+
+// //   answerList: {
+// //     width: '100%',
+// //   },
+
+// //   answerButton: {
+// //     minHeight: 38,
+// //     borderWidth: 1,
+// //     borderRadius: 10,
+// //     flexDirection: 'row',
+// //     alignItems: 'center',
+// //     paddingHorizontal: 8,
+// //     marginTop: 5,
+// //   },
+
+// //   answerLetter: {
+// //     width: 25,
+// //     height: 25,
+// //     borderRadius: 8,
+// //     backgroundColor: '#0F172A',
+// //     alignItems: 'center',
+// //     justifyContent: 'center',
+// //     marginRight: 8,
+// //   },
+
+// //   answerLetterText: {
+// //     color: '#38BDF8',
+// //     fontSize: 9,
+// //     fontWeight: '900',
+// //   },
+
+// //   answerText: {
+// //     flex: 1,
+// //     color: '#E2E8F0',
+// //     fontSize: 10,
+// //     fontWeight: '700',
+// //   },
+
+// //   rescueLifeNotice: {
+// //     flexDirection: 'row',
+// //     alignItems: 'center',
+// //     marginTop: 8,
+// //   },
+
+// //   rescueLifeText: {
+// //     color: '#64748B',
+// //     fontSize: 8,
+// //     fontWeight: '800',
+// //     marginLeft: 5,
+// //   },
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | END GAME
+// //   |--------------------------------------------------------------------------
+// //   */
+
 // //   endGameOverlay: {
 // //     position: 'absolute',
-// //     top: SAFE_ZONE_HEIGHT,
-// //     bottom: FLOOD_HEIGHT,
-// //     left: 12,
-// //     right: 12,
+// //     top: SAFE_ZONE_HEIGHT + 8,
+// //     bottom: FLOOD_HEIGHT + 8,
+// //     left: 10,
+// //     right: 10,
 // //     backgroundColor:
-// //       'rgba(15, 23, 42, 0.97)',
+// //       'rgba(15, 23, 42, 0.98)',
 // //     borderWidth: 1,
 // //     borderColor: '#334155',
 // //     borderRadius: 18,
 // //     alignItems: 'center',
 // //     justifyContent: 'center',
-// //     padding: 20,
+// //     padding: 18,
 // //     zIndex: 30,
 // //   },
 
@@ -6367,6 +16087,7 @@
 // //   },
 
 // //   claimRewardButton: {
+// //     flexDirection: 'row',
 // //     backgroundColor: '#059669',
 // //     minHeight: 46,
 // //     paddingHorizontal: 22,
@@ -6380,6 +16101,7 @@
 // //     color: '#FFFFFF',
 // //     fontWeight: '900',
 // //     fontSize: 12,
+// //     marginLeft: 6,
 // //   },
 
 // //   rewardRow: {
@@ -6413,15 +16135,20 @@
 // //     marginTop: 1,
 // //   },
 
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | HUD
+// //   |--------------------------------------------------------------------------
+// //   */
+
 // //   gameHud: {
-// //     marginTop: 10,
+// //     marginTop: 9,
 // //   },
 
 // //   scoreHeader: {
 // //     flexDirection: 'row',
 // //     alignItems: 'center',
-// //     justifyContent:
-// //       'space-between',
+// //     justifyContent: 'space-between',
 // //   },
 
 // //   scoreLabel: {
@@ -6452,12 +16179,37 @@
 // //     borderRadius: 3,
 // //   },
 
+// //   algorithmRow: {
+// //     flexDirection: 'row',
+// //     justifyContent: 'space-between',
+// //     alignItems: 'center',
+// //     marginTop: 4,
+// //   },
+
+// //   algorithmLabel: {
+// //     color: '#475569',
+// //     fontSize: 7,
+// //     fontWeight: '900',
+// //     letterSpacing: 0.5,
+// //   },
+
+// //   algorithmValue: {
+// //     color: '#38BDF8',
+// //     fontSize: 8,
+// //     fontWeight: '900',
+// //   },
+
+// //   /*
+// //   |--------------------------------------------------------------------------
+// //   | CONTROLS
+// //   |--------------------------------------------------------------------------
+// //   */
+
 // //   controls: {
 // //     flexDirection: 'row',
 // //     alignItems: 'center',
-// //     justifyContent:
-// //       'space-between',
-// //     marginTop: 11,
+// //     justifyContent: 'space-between',
+// //     marginTop: 9,
 // //     gap: 8,
 // //   },
 
@@ -6495,11 +16247,10 @@
 // //     textAlign: 'center',
 // //   },
 // // });
-
-
 // import React, {
 //   useCallback,
 //   useEffect,
+//   useMemo,
 //   useRef,
 //   useState,
 // } from 'react';
@@ -6517,20 +16268,26 @@
 // import * as Haptics from 'expo-haptics';
 // import { Accelerometer } from 'expo-sensors';
 // import { useTranslation } from 'react-i18next';
-// import { useNavigation, useRoute } from '@react-navigation/native';
+// import {
+//   useNavigation,
+//   useRoute,
+// } from '@react-navigation/native';
 
-// const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
-//   Dimensions.get('window');
+// import { useUser } from '../contexts/UserContext';
 
-// /*
-// |--------------------------------------------------------------------------
-// | LEVEL CONFIGURATION
-// |--------------------------------------------------------------------------
-// */
+// const {
+//   width: SCREEN_WIDTH,
+//   height: SCREEN_HEIGHT,
+// } = Dimensions.get('window');
+
+// /* ============================================================
+//    LEVEL CONFIG
+// ============================================================ */
 
 // const LEVEL_CONFIG = {
 //   1: {
 //     nameKey: 'games.floodRunner.levels.easy',
+
 //     targetScore: 50,
 
 //     debrisSpeed: 155,
@@ -6547,6 +16304,7 @@
 
 //   2: {
 //     nameKey: 'games.floodRunner.levels.moderate',
+
 //     targetScore: 75,
 
 //     debrisSpeed: 205,
@@ -6563,6 +16321,7 @@
 
 //   3: {
 //     nameKey: 'games.floodRunner.levels.advanced',
+
 //     targetScore: 100,
 
 //     debrisSpeed: 255,
@@ -6578,38 +16337,227 @@
 //   },
 // };
 
+// /* ============================================================
+//    GAME CONSTANTS
+// ============================================================ */
+
 // const PLAYER_SIZE = 36;
 // const DEBRIS_SIZE = 28;
 
-// const SAFE_ZONE_HEIGHT = 56;
 // const FLOOD_HEIGHT = 64;
-
 // const PLAYER_BOTTOM_OFFSET = 14;
 
-// const COLLISION_PADDING = 4;
+// const COLLISION_PADDING = 5;
 
-// /*
-// |--------------------------------------------------------------------------
-// | COMPONENT
-// |--------------------------------------------------------------------------
-// */
+// const TOUCH_MOVE_MULTIPLIER = 0.22;
+// const SENSOR_DEAD_ZONE = 0.05;
+
+// /* Adaptive difficulty */
+
+// const MIN_DIFFICULTY_FACTOR = 0.78;
+// const MAX_DIFFICULTY_FACTOR = 1.15;
+
+// const NEAR_MISS_DISTANCE = 34;
+
+// const RISK_INCREASE_COLLISION = 28;
+// const RISK_INCREASE_NEAR_MISS = 5;
+
+// const RISK_DECREASE_SUCCESS = 1.5;
+// const RISK_DECREASE_CORRECT_RESCUE = 12;
+
+// const RISK_UPDATE_INTERVAL = 1000;
+
+// /* Rescue */
+
+// const MAX_RESCUE_LIVES = 1;
+// const RESCUE_POINTS = 15;
+
+// /* ============================================================
+//    RESCUE QUESTIONS
+// ============================================================ */
+
+// const RESCUE_QUESTIONS = [
+//   {
+//     id: 'q1',
+
+//     questionKey:
+//       'games.floodRunner.questions.q1.question',
+
+//     options: [
+//       {
+//         id: 'a',
+//         textKey:
+//           'games.floodRunner.questions.q1.a',
+//       },
+//       {
+//         id: 'b',
+//         textKey:
+//           'games.floodRunner.questions.q1.b',
+//       },
+//       {
+//         id: 'c',
+//         textKey:
+//           'games.floodRunner.questions.q1.c',
+//       },
+//     ],
+
+//     correct: 'b',
+//   },
+
+//   {
+//     id: 'q2',
+
+//     questionKey:
+//       'games.floodRunner.questions.q2.question',
+
+//     options: [
+//       {
+//         id: 'a',
+//         textKey:
+//           'games.floodRunner.questions.q2.a',
+//       },
+//       {
+//         id: 'b',
+//         textKey:
+//           'games.floodRunner.questions.q2.b',
+//       },
+//       {
+//         id: 'c',
+//         textKey:
+//           'games.floodRunner.questions.q2.c',
+//       },
+//     ],
+
+//     correct: 'a',
+//   },
+
+//   {
+//     id: 'q3',
+
+//     questionKey:
+//       'games.floodRunner.questions.q3.question',
+
+//     options: [
+//       {
+//         id: 'a',
+//         textKey:
+//           'games.floodRunner.questions.q3.a',
+//       },
+//       {
+//         id: 'b',
+//         textKey:
+//           'games.floodRunner.questions.q3.b',
+//       },
+//       {
+//         id: 'c',
+//         textKey:
+//           'games.floodRunner.questions.q3.c',
+//       },
+//     ],
+
+//     correct: 'c',
+//   },
+
+//   {
+//     id: 'q4',
+
+//     questionKey:
+//       'games.floodRunner.questions.q4.question',
+
+//     options: [
+//       {
+//         id: 'a',
+//         textKey:
+//           'games.floodRunner.questions.q4.a',
+//       },
+//       {
+//         id: 'b',
+//         textKey:
+//           'games.floodRunner.questions.q4.b',
+//       },
+//       {
+//         id: 'c',
+//         textKey:
+//           'games.floodRunner.questions.q4.c',
+//       },
+//     ],
+
+//     correct: 'a',
+//   },
+
+//   {
+//     id: 'q5',
+
+//     questionKey:
+//       'games.floodRunner.questions.q5.question',
+
+//     options: [
+//       {
+//         id: 'a',
+//         textKey:
+//           'games.floodRunner.questions.q5.a',
+//       },
+//       {
+//         id: 'b',
+//         textKey:
+//           'games.floodRunner.questions.q5.b',
+//       },
+//       {
+//         id: 'c',
+//         textKey:
+//           'games.floodRunner.questions.q5.c',
+//       },
+//     ],
+
+//     correct: 'b',
+//   },
+// ];
+
+// /* ============================================================
+//    HELPERS
+// ============================================================ */
+
+// function clamp(value, min, max) {
+//   return Math.max(
+//     min,
+//     Math.min(max, value)
+//   );
+// }
+
+// function getRandomQuestion() {
+//   const index = Math.floor(
+//     Math.random() *
+//       RESCUE_QUESTIONS.length
+//   );
+
+//   return RESCUE_QUESTIONS[index];
+// }
+
+// /* ============================================================
+//    COMPONENT
+// ============================================================ */
 
 // export default function FloodRunnerGameModal() {
 //   const { t } = useTranslation();
 
-//   const navigation = useNavigation();
+//   /*
+//    * IMPORTANT:
+//    *
+//    * completeMission must come from UserContext.
+//    *
+//    * If your UserContext uses a different function name,
+//    * change it here.
+//    */
+//   const {
+//     completeMission,
+//   } = useUser();
 
+//   const navigation = useNavigation();
 //   const route = useRoute();
 
-//   /*
-//    * The game is now a normal React Navigation screen.
-//    *
-//    * MissionsScreen can open it with:
-//    *
-//    * navigation.navigate('FloodRunnerGameModal', {
-//    *   level: 1,
-//    * });
-//    */
+//   /* ==========================================================
+//      LEVEL
+//   ========================================================== */
 
 //   const routeLevel =
 //     route?.params?.level ?? 1;
@@ -6625,11 +16573,9 @@
 //   const config =
 //     LEVEL_CONFIG[selectedLevel];
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | GAME DIMENSIONS
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      DIMENSIONS
+//   ========================================================== */
 
 //   const GAME_WIDTH = Math.min(
 //     SCREEN_WIDTH - 32,
@@ -6641,11 +16587,13 @@
 //     430
 //   );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | REACT STATE
-//   |--------------------------------------------------------------------------
-//   */
+//   const INITIAL_PLAYER_X =
+//     GAME_WIDTH / 2 -
+//     PLAYER_SIZE / 2;
+
+//   /* ==========================================================
+//      STATE
+//   ========================================================== */
 
 //   const [gameStarted, setGameStarted] =
 //     useState(false);
@@ -6654,10 +16602,7 @@
 //     useState(null);
 
 //   const [playerPositionX, setPlayerPositionX] =
-//     useState(
-//       GAME_WIDTH / 2 -
-//         PLAYER_SIZE / 2
-//     );
+//     useState(INITIAL_PLAYER_X);
 
 //   const [debris, setDebris] =
 //     useState([]);
@@ -6674,20 +16619,45 @@
 //   const [sensorAvailable, setSensorAvailable] =
 //     useState(false);
 
+//   const [rescueVisible, setRescueVisible] =
+//     useState(false);
+
+//   const [rescueQuestion, setRescueQuestion] =
+//     useState(null);
+
+//   const [rescueLives, setRescueLives] =
+//     useState(MAX_RESCUE_LIVES);
+
+//   const [selectedAnswer, setSelectedAnswer] =
+//     useState(null);
+
+//   const [answerFeedback, setAnswerFeedback] =
+//     useState(null);
+
+//   const [riskScore, setRiskScore] =
+//     useState(50);
+
+//   const [difficultyFactor, setDifficultyFactor] =
+//     useState(1);
+
 //   /*
-//   |--------------------------------------------------------------------------
-//   | REFS
-//   |--------------------------------------------------------------------------
-//   */
+//    * Prevents the reward from being claimed twice.
+//    */
+//   const [rewardClaimed, setRewardClaimed] =
+//     useState(false);
 
-//   const playerXRef = useRef(
-//     GAME_WIDTH / 2 -
-//       PLAYER_SIZE / 2
-//   );
+//   /* ==========================================================
+//      REFS
+//   ========================================================== */
 
-//   const debrisRef = useRef([]);
+//   const playerXRef =
+//     useRef(INITIAL_PLAYER_X);
 
-//   const scoreRef = useRef(0);
+//   const debrisRef =
+//     useRef([]);
+
+//   const scoreRef =
+//     useRef(0);
 
 //   const gameRunningRef =
 //     useRef(false);
@@ -6696,6 +16666,9 @@
 //     useRef(false);
 
 //   const hasWonRef =
+//     useRef(false);
+
+//   const rewardClaimedRef =
 //     useRef(false);
 
 //   const movementRef =
@@ -6717,29 +16690,130 @@
 //     useRef(null);
 
 //   /*
-//   |--------------------------------------------------------------------------
-//   | CLAMP PLAYER
-//   |--------------------------------------------------------------------------
-//   */
-
-//   const clampPlayerX = useCallback(
-//     (x) => {
-//       return Math.max(
-//         0,
-//         Math.min(
-//           GAME_WIDTH - PLAYER_SIZE,
-//           x
-//         )
-//       );
-//     },
-//     [GAME_WIDTH]
-//   );
+//    * Each game gets its own session ID.
+//    * This prevents an old animation loop
+//    * from restarting after retry/rescue.
+//    */
+//   const gameSessionRef =
+//     useRef(0);
 
 //   /*
-//   |--------------------------------------------------------------------------
-//   | CREATE DEBRIS
-//   |--------------------------------------------------------------------------
-//   */
+//    * Adaptive difficulty data.
+//    */
+//   const adaptiveRef =
+//     useRef({
+//       riskScore: 50,
+//       nearMisses: 0,
+//       successfulDodges: 0,
+//       collisions: 0,
+//       correctRescues: 0,
+//       lastRiskUpdate: 0,
+//     });
+
+//   /* ==========================================================
+//      HAPTICS
+//   ========================================================== */
+
+//   const safeImpact =
+//     useCallback(async (style) => {
+//       try {
+//         await Haptics.impactAsync(style);
+//       } catch (error) {
+//         // Haptics unavailable.
+//       }
+//     }, []);
+
+//   const safeNotification =
+//     useCallback(async (type) => {
+//       try {
+//         await Haptics.notificationAsync(type);
+//       } catch (error) {
+//         // Haptics unavailable.
+//       }
+//     }, []);
+
+//   /* ==========================================================
+//      DIFFICULTY
+//   ========================================================== */
+
+//   const calculateAdaptiveDifficulty =
+//     useCallback(
+//       (timestamp) => {
+//         const adaptive =
+//           adaptiveRef.current;
+
+//         if (
+//           timestamp -
+//             adaptive.lastRiskUpdate <
+//           RISK_UPDATE_INTERVAL
+//         ) {
+//           return;
+//         }
+
+//         adaptive.lastRiskUpdate =
+//           timestamp;
+
+//         adaptive.riskScore -=
+//           adaptive.successfulDodges *
+//           RISK_DECREASE_SUCCESS;
+
+//         adaptive.successfulDodges = 0;
+
+//         adaptive.riskScore +=
+//           adaptive.correctRescues * 2;
+
+//         adaptive.correctRescues = 0;
+
+//         adaptive.riskScore = clamp(
+//           adaptive.riskScore,
+//           0,
+//           100
+//         );
+
+//         const nextFactor =
+//           MAX_DIFFICULTY_FACTOR -
+//           (adaptive.riskScore / 100) *
+//             (
+//               MAX_DIFFICULTY_FACTOR -
+//               MIN_DIFFICULTY_FACTOR
+//             );
+
+//         setRiskScore(
+//           Math.round(adaptive.riskScore)
+//         );
+
+//         setDifficultyFactor(
+//           clamp(
+//             nextFactor,
+//             MIN_DIFFICULTY_FACTOR,
+//             MAX_DIFFICULTY_FACTOR
+//           )
+//         );
+//       },
+//       []
+//     );
+
+//   /* ==========================================================
+//      CLAMP PLAYER
+//   ========================================================== */
+
+//   const clampPlayerX =
+//     useCallback(
+//       (x) => {
+//         return Math.max(
+//           0,
+//           Math.min(
+//             GAME_WIDTH - PLAYER_SIZE,
+//             x
+//           )
+//         );
+//       },
+//       [GAME_WIDTH]
+//     );
+
+//   /* ==========================================================
+//      CREATE DEBRIS
+//   ========================================================== */
 
 //   const createDebrisObject =
 //     useCallback(
@@ -6756,16 +16830,16 @@
 //             ),
 
 //           y,
+
+//           nearMissed: false,
 //         };
 //       },
 //       [GAME_WIDTH]
 //     );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | INITIAL DEBRIS
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      INITIAL DEBRIS
+//   ========================================================== */
 
 //   const createInitialDebris =
 //     useCallback(() => {
@@ -6789,8 +16863,10 @@
 
 //           y:
 //             -DEBRIS_SIZE -
-//             index * 115 -
-//             Math.random() * 90,
+//             index * 120 -
+//             Math.random() * 100,
+
+//           nearMissed: false,
 //         });
 //       }
 
@@ -6800,145 +16876,170 @@
 //       GAME_WIDTH,
 //     ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | STOP GAME LOOP
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      STOP SENSOR
+//   ========================================================== */
 
-//   const stopGameLoop = useCallback(() => {
-//     gameRunningRef.current =
-//       false;
+//   const stopSensor =
+//     useCallback(() => {
+//       if (
+//         sensorSubscriptionRef.current
+//       ) {
+//         try {
+//           sensorSubscriptionRef.current.remove();
+//         } catch (error) {
+//           // Ignore.
+//         }
 
-//     if (
-//       animationFrameRef.current
-//     ) {
-//       cancelAnimationFrame(
-//         animationFrameRef.current
-//       );
+//         sensorSubscriptionRef.current =
+//           null;
+//       }
 
-//       animationFrameRef.current =
-//         null;
-//     }
+//       movementRef.current = 0;
+//     }, []);
 
-//     lastFrameTimeRef.current =
-//       null;
-//   }, []);
+//   /* ==========================================================
+//      STOP GAME LOOP
+//   ========================================================== */
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | RESET GAME
-//   |--------------------------------------------------------------------------
-//   */
+//   const stopGameLoop =
+//     useCallback(() => {
+//       gameRunningRef.current = false;
 
-//   const resetGame = useCallback(() => {
-//     if (
-//       countdownTimerRef.current
-//     ) {
-//       clearInterval(
+//       gameSessionRef.current += 1;
+
+//       if (
+//         animationFrameRef.current !== null
+//       ) {
+//         cancelAnimationFrame(
+//           animationFrameRef.current
+//         );
+
+//         animationFrameRef.current = null;
+//       }
+
+//       lastFrameTimeRef.current = null;
+//     }, []);
+
+//   /* ==========================================================
+//      RESET
+//   ========================================================== */
+
+//   const resetGame =
+//     useCallback(() => {
+//       if (
 //         countdownTimerRef.current
+//       ) {
+//         clearInterval(
+//           countdownTimerRef.current
+//         );
+
+//         countdownTimerRef.current = null;
+//       }
+
+//       stopGameLoop();
+//       stopSensor();
+
+//       playerXRef.current =
+//         INITIAL_PLAYER_X;
+
+//       debrisRef.current = [];
+
+//       scoreRef.current = 0;
+
+//       gameRunningRef.current = false;
+//       gameOverRef.current = false;
+//       hasWonRef.current = false;
+
+//       rewardClaimedRef.current = false;
+
+//       movementRef.current = 0;
+
+//       adaptiveRef.current = {
+//         riskScore: 50,
+//         nearMisses: 0,
+//         successfulDodges: 0,
+//         collisions: 0,
+//         correctRescues: 0,
+//         lastRiskUpdate: 0,
+//       };
+
+//       setGameStarted(false);
+//       setCountdown(null);
+
+//       setPlayerPositionX(
+//         INITIAL_PLAYER_X
 //       );
 
-//       countdownTimerRef.current =
-//         null;
-//     }
+//       setDebris([]);
+//       setScore(0);
 
-//     stopGameLoop();
+//       setGameOver(false);
+//       setHasWon(false);
 
-//     if (
-//       sensorSubscriptionRef.current
-//     ) {
-//       sensorSubscriptionRef.current.remove();
+//       setRescueVisible(false);
+//       setRescueQuestion(null);
 
-//       sensorSubscriptionRef.current =
-//         null;
-//     }
+//       setSelectedAnswer(null);
+//       setAnswerFeedback(null);
 
-//     const initialX =
-//       GAME_WIDTH / 2 -
-//       PLAYER_SIZE / 2;
+//       setRescueLives(
+//         MAX_RESCUE_LIVES
+//       );
 
-//     playerXRef.current =
-//       initialX;
+//       setRiskScore(50);
+//       setDifficultyFactor(1);
 
-//     debrisRef.current = [];
+//       setRewardClaimed(false);
+//     }, [
+//       INITIAL_PLAYER_X,
+//       stopGameLoop,
+//       stopSensor,
+//     ]);
 
-//     scoreRef.current = 0;
-
-//     gameRunningRef.current =
-//       false;
-
-//     gameOverRef.current =
-//       false;
-
-//     hasWonRef.current =
-//       false;
-
-//     movementRef.current = 0;
-
-//     lastFrameTimeRef.current =
-//       null;
-
-//     lastSpawnTimeRef.current =
-//       0;
-
-//     setGameStarted(false);
-//     setCountdown(null);
-//     setPlayerPositionX(initialX);
-//     setDebris([]);
-//     setScore(0);
-//     setGameOver(false);
-//     setHasWon(false);
-//   }, [
-//     GAME_WIDTH,
-//     stopGameLoop,
-//   ]);
-
-//   /*
-//   |--------------------------------------------------------------------------
-//   | GAME OVER
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      FINISH / GAME OVER
+//   ========================================================== */
 
 //   const finishGame =
 //     useCallback(() => {
 //       if (
-//         !gameRunningRef.current ||
 //         gameOverRef.current ||
 //         hasWonRef.current
 //       ) {
 //         return;
 //       }
 
-//       gameRunningRef.current =
-//         false;
+//       gameRunningRef.current = false;
+//       gameOverRef.current = true;
 
-//       gameOverRef.current =
-//         true;
-
-//       setGameOver(true);
+//       stopSensor();
 
 //       if (
-//         animationFrameRef.current
+//         animationFrameRef.current !== null
 //       ) {
 //         cancelAnimationFrame(
 //           animationFrameRef.current
 //         );
 
-//         animationFrameRef.current =
-//           null;
+//         animationFrameRef.current = null;
 //       }
 
-//       Haptics.impactAsync(
-//         Haptics.ImpactFeedbackStyle.Heavy
-//       );
-//     }, []);
+//       lastFrameTimeRef.current = null;
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | WIN
-//   |--------------------------------------------------------------------------
-//   */
+//       setGameOver(true);
+
+//       safeNotification(
+//         Haptics.NotificationFeedbackType.Error
+//       );
+//     }, [
+//       safeNotification,
+//       stopSensor,
+//     ]);
+
+//   /* ==========================================================
+//      WIN
+//   ========================================================== */
 
 //   const winGame =
 //     useCallback(() => {
@@ -6949,11 +17050,10 @@
 //         return;
 //       }
 
-//       gameRunningRef.current =
-//         false;
+//       gameRunningRef.current = false;
+//       hasWonRef.current = true;
 
-//       hasWonRef.current =
-//         true;
+//       stopSensor();
 
 //       scoreRef.current =
 //         config.targetScore;
@@ -6965,33 +17065,39 @@
 //       setHasWon(true);
 
 //       if (
-//         animationFrameRef.current
+//         animationFrameRef.current !== null
 //       ) {
 //         cancelAnimationFrame(
 //           animationFrameRef.current
 //         );
 
-//         animationFrameRef.current =
-//           null;
+//         animationFrameRef.current = null;
 //       }
 
-//       Haptics.notificationAsync(
-//         Haptics.NotificationFeedbackType
-//           .Success
+//       lastFrameTimeRef.current = null;
+
+//       safeNotification(
+//         Haptics.NotificationFeedbackType.Success
 //       );
 //     }, [
 //       config.targetScore,
+//       safeNotification,
+//       stopSensor,
 //     ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | COLLISION
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      COLLISION
+//   ========================================================== */
 
 //   const checkCollision =
 //     useCallback(
 //       (playerX, debrisItem) => {
+//         const playerTop =
+//           GAME_HEIGHT -
+//           PLAYER_SIZE -
+//           PLAYER_BOTTOM_OFFSET -
+//           FLOOD_HEIGHT;
+
 //         const playerLeft =
 //           playerX +
 //           COLLISION_PADDING;
@@ -7001,14 +17107,11 @@
 //           PLAYER_SIZE -
 //           COLLISION_PADDING;
 
-//         const playerTop =
-//           GAME_HEIGHT -
-//           PLAYER_SIZE -
-//           PLAYER_BOTTOM_OFFSET -
-//           FLOOD_HEIGHT +
+//         const playerCollisionTop =
+//           playerTop +
 //           COLLISION_PADDING;
 
-//         const playerBottom =
+//         const playerCollisionBottom =
 //           playerTop +
 //           PLAYER_SIZE -
 //           COLLISION_PADDING;
@@ -7032,39 +17135,101 @@
 //           COLLISION_PADDING;
 
 //         return (
-//           playerLeft <
-//             debrisRight &&
-//           playerRight >
-//             debrisLeft &&
-//           playerTop <
-//             debrisBottom &&
-//           playerBottom >
-//             debrisTop
+//           playerLeft < debrisRight &&
+//           playerRight > debrisLeft &&
+//           playerCollisionTop < debrisBottom &&
+//           playerCollisionBottom > debrisTop
 //         );
 //       },
 //       [GAME_HEIGHT]
 //     );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | GAME LOOP
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      RESCUE QUESTION
+//   ========================================================== */
+
+//   const triggerRescueQuestion =
+//     useCallback(() => {
+//       if (rescueLives <= 0) {
+//         finishGame();
+//         return;
+//       }
+
+//       gameRunningRef.current = false;
+
+//       stopSensor();
+
+//       if (
+//         animationFrameRef.current !== null
+//       ) {
+//         cancelAnimationFrame(
+//           animationFrameRef.current
+//         );
+
+//         animationFrameRef.current = null;
+//       }
+
+//       adaptiveRef.current.collisions += 1;
+
+//       adaptiveRef.current.riskScore +=
+//         RISK_INCREASE_COLLISION;
+
+//       adaptiveRef.current.riskScore =
+//         clamp(
+//           adaptiveRef.current.riskScore,
+//           0,
+//           100
+//         );
+
+//       const question =
+//         getRandomQuestion();
+
+//       setRescueQuestion(question);
+//       setSelectedAnswer(null);
+//       setAnswerFeedback(null);
+//       setRescueVisible(true);
+
+//       setRiskScore(
+//         Math.round(
+//           adaptiveRef.current.riskScore
+//         )
+//       );
+
+//       safeNotification(
+//         Haptics.NotificationFeedbackType.Warning
+//       );
+//     }, [
+//       finishGame,
+//       rescueLives,
+//       safeNotification,
+//       stopSensor,
+//     ]);
+
+//   /* ==========================================================
+//      GAME LOOP
+//   ========================================================== */
 
 //   const runGameLoop =
 //     useCallback(
-//       (timestamp) => {
+//       (timestamp, sessionId) => {
 //         if (
-//           !gameRunningRef.current ||
-//           gameOverRef.current ||
-//           hasWonRef.current
+//           sessionId !==
+//           gameSessionRef.current
 //         ) {
 //           return;
 //         }
 
 //         if (
-//           lastFrameTimeRef.current ===
-//           null
+//           !gameRunningRef.current ||
+//           gameOverRef.current ||
+//           hasWonRef.current ||
+//           rescueVisible
+//         ) {
+//           return;
+//         }
+
+//         if (
+//           lastFrameTimeRef.current === null
 //         ) {
 //           lastFrameTimeRef.current =
 //             timestamp;
@@ -7080,18 +17245,38 @@
 //         lastFrameTimeRef.current =
 //           timestamp;
 
-//         /*
-//          * PLAYER
-//          */
+//         calculateAdaptiveDifficulty(
+//           timestamp
+//         );
 
-//         const tilt =
-//           movementRef.current;
+//         const adaptive =
+//           adaptiveRef.current;
+
+//         const factor =
+//           clamp(
+//             MAX_DIFFICULTY_FACTOR -
+//               (
+//                 adaptive.riskScore / 100
+//               ) *
+//               (
+//                 MAX_DIFFICULTY_FACTOR -
+//                 MIN_DIFFICULTY_FACTOR
+//               ),
+//             MIN_DIFFICULTY_FACTOR,
+//             MAX_DIFFICULTY_FACTOR
+//           );
+
+//         /* PLAYER */
 
 //         let nextPlayerX =
 //           playerXRef.current;
 
+//         const tilt =
+//           movementRef.current;
+
 //         if (
-//           Math.abs(tilt) >= 0.04
+//           Math.abs(tilt) >=
+//           SENSOR_DEAD_ZONE
 //         ) {
 //           nextPlayerX +=
 //             tilt *
@@ -7100,9 +17285,7 @@
 //         }
 
 //         nextPlayerX =
-//           clampPlayerX(
-//             nextPlayerX
-//           );
+//           clampPlayerX(nextPlayerX);
 
 //         playerXRef.current =
 //           nextPlayerX;
@@ -7111,71 +17294,135 @@
 //           nextPlayerX
 //         );
 
-//         /*
-//          * DEBRIS
-//          */
+//         /* DEBRIS */
 
-//         const previousDebris =
-//           debrisRef.current;
+//         const effectiveDebrisSpeed =
+//           config.debrisSpeed *
+//           factor;
 
 //         const movedDebris =
-//           previousDebris.map(
+//           debrisRef.current.map(
 //             (item) => ({
 //               ...item,
 
 //               y:
 //                 item.y +
-//                 config.debrisSpeed *
-//                   delta,
+//                 effectiveDebrisSpeed *
+//                 delta,
 //             })
 //           );
 
-//         /*
-//          * COLLISION
-//          */
+//         /* COLLISION */
 
-//         const collision =
-//           movedDebris.some(
-//             (item) =>
-//               checkCollision(
-//                 nextPlayerX,
-//                 item
-//               )
+//         let collision = false;
+
+//         const checkedDebris =
+//           movedDebris.map(
+//             (item) => {
+//               if (
+//                 checkCollision(
+//                   nextPlayerX,
+//                   item
+//                 )
+//               ) {
+//                 collision = true;
+//                 return item;
+//               }
+
+//               /*
+//                * Near miss.
+//                */
+//               if (
+//                 !item.nearMissed &&
+//                 item.y >
+//                   GAME_HEIGHT -
+//                   PLAYER_SIZE -
+//                   PLAYER_BOTTOM_OFFSET -
+//                   FLOOD_HEIGHT -
+//                   45 &&
+//                 item.y <
+//                   GAME_HEIGHT -
+//                   PLAYER_SIZE -
+//                   PLAYER_BOTTOM_OFFSET -
+//                   FLOOD_HEIGHT +
+//                   55
+//               ) {
+//                 const horizontalGap =
+//                   Math.abs(
+//                     (
+//                       item.x +
+//                       DEBRIS_SIZE / 2
+//                     ) -
+//                     (
+//                       nextPlayerX +
+//                       PLAYER_SIZE / 2
+//                     )
+//                   );
+
+//                 if (
+//                   horizontalGap <=
+//                   NEAR_MISS_DISTANCE
+//                 ) {
+//                   adaptive.nearMisses += 1;
+
+//                   adaptive.riskScore +=
+//                     RISK_INCREASE_NEAR_MISS;
+
+//                   adaptive.riskScore =
+//                     clamp(
+//                       adaptive.riskScore,
+//                       0,
+//                       100
+//                     );
+
+//                   return {
+//                     ...item,
+//                     nearMissed: true,
+//                   };
+//                 }
+//               }
+
+//               return item;
+//             }
 //           );
 
 //         if (collision) {
 //           debrisRef.current =
-//             movedDebris;
+//             checkedDebris;
 
 //           setDebris(
-//             movedDebris
+//             checkedDebris
 //           );
 
-//           finishGame();
+//           triggerRescueQuestion();
 
 //           return;
 //         }
 
-//         /*
-//          * SCORE
-//          */
+//         /* PASSED OBSTACLES */
 
 //         let passedCount = 0;
 
 //         const survivingDebris =
-//           movedDebris.filter(
+//           checkedDebris.filter(
 //             (item) => {
 //               if (
 //                 item.y >
 //                 GAME_HEIGHT
 //               ) {
 //                 passedCount += 1;
+
+//                 adaptive.successfulDodges +=
+//                   1;
+
 //                 return false;
 //               }
 
 //               return true;
 //             }
 //           );
+
+//         /* SCORE */
 
 //         if (passedCount > 0) {
 //           const nextScore =
@@ -7207,14 +17454,16 @@
 //           }
 //         }
 
-//         /*
-//          * SPAWN
-//          */
+//         /* SPAWN */
+
+//         const effectiveSpawnInterval =
+//           config.spawnInterval /
+//           factor;
 
 //         if (
 //           timestamp -
 //             lastSpawnTimeRef.current >=
-//           config.spawnInterval
+//           effectiveSpawnInterval
 //         ) {
 //           lastSpawnTimeRef.current =
 //             timestamp;
@@ -7229,6 +17478,9 @@
 //           }
 //         }
 
+//         /*
+//          * Safety limit.
+//          */
 //         while (
 //           survivingDebris.length >
 //           config.spawnCount
@@ -7245,10 +17497,16 @@
 
 //         animationFrameRef.current =
 //           requestAnimationFrame(
-//             runGameLoop
+//             (nextTimestamp) =>
+//               runGameLoop(
+//                 nextTimestamp,
+//                 sessionId
+//               )
 //           );
 //       },
 //       [
+//         calculateAdaptiveDifficulty,
+//         checkCollision,
 //         clampPlayerX,
 //         config.debrisSpeed,
 //         config.playerSpeed,
@@ -7256,86 +17514,275 @@
 //         config.spawnInterval,
 //         config.targetScore,
 //         createDebrisObject,
-//         finishGame,
 //         GAME_HEIGHT,
-//         checkCollision,
+//         rescueVisible,
+//         triggerRescueQuestion,
 //         winGame,
 //       ]
 //     );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | BEGIN GAME
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      RESCUE ANSWER
+//   ========================================================== */
+
+//   const handleRescueAnswer =
+//     useCallback(
+//       (answerId) => {
+//         if (
+//           !rescueQuestion ||
+//           selectedAnswer
+//         ) {
+//           return;
+//         }
+
+//         setSelectedAnswer(answerId);
+
+//         const correct =
+//           answerId ===
+//           rescueQuestion.correct;
+
+//         if (!correct) {
+//           setAnswerFeedback('wrong');
+
+//           safeNotification(
+//             Haptics.NotificationFeedbackType.Error
+//           );
+
+//           setTimeout(() => {
+//             setRescueVisible(false);
+//             setRescueQuestion(null);
+
+//             finishGame();
+//           }, 850);
+
+//           return;
+//         }
+
+//         setAnswerFeedback('correct');
+
+//         safeNotification(
+//           Haptics.NotificationFeedbackType.Success
+//         );
+
+//         adaptiveRef.current.correctRescues +=
+//           1;
+
+//         adaptiveRef.current.riskScore -=
+//           RISK_DECREASE_CORRECT_RESCUE;
+
+//         adaptiveRef.current.riskScore =
+//           clamp(
+//             adaptiveRef.current.riskScore,
+//             0,
+//             100
+//           );
+
+//         const nextScore =
+//           Math.min(
+//             config.targetScore,
+//             scoreRef.current +
+//               RESCUE_POINTS
+//           );
+
+//         scoreRef.current =
+//           nextScore;
+
+//         setScore(nextScore);
+
+//         setRiskScore(
+//           Math.round(
+//             adaptiveRef.current.riskScore
+//           )
+//         );
+
+//         setDifficultyFactor(
+//           MAX_DIFFICULTY_FACTOR -
+//             (
+//               adaptiveRef.current.riskScore /
+//               100
+//             ) *
+//             (
+//               MAX_DIFFICULTY_FACTOR -
+//               MIN_DIFFICULTY_FACTOR
+//             )
+//         );
+
+//         setRescueLives(
+//           (value) =>
+//             Math.max(0, value - 1)
+//         );
+
+//         /*
+//          * Remove nearby obstacles.
+//          */
+//         debrisRef.current =
+//           debrisRef.current.filter(
+//             (item) =>
+//               item.y <
+//               GAME_HEIGHT * 0.35
+//           );
+
+//         setDebris(
+//           debrisRef.current
+//         );
+
+//         /*
+//          * IMPORTANT:
+//          *
+//          * Capture the current session.
+//          * We create a fresh session after rescue
+//          * so the old animation loop cannot interfere.
+//          */
+//         const newSession =
+//           gameSessionRef.current + 1;
+
+//         gameSessionRef.current =
+//           newSession;
+
+//         setTimeout(() => {
+//           setRescueVisible(false);
+//           setRescueQuestion(null);
+//           setSelectedAnswer(null);
+//           setAnswerFeedback(null);
+
+//           if (
+//             nextScore >=
+//             config.targetScore
+//           ) {
+//             winGame();
+//             return;
+//           }
+
+//           gameOverRef.current = false;
+//           hasWonRef.current = false;
+//           gameRunningRef.current = true;
+
+//           lastFrameTimeRef.current = null;
+
+//           lastSpawnTimeRef.current =
+//             performance.now();
+
+//           animationFrameRef.current =
+//             requestAnimationFrame(
+//               (timestamp) =>
+//                 runGameLoop(
+//                   timestamp,
+//                   newSession
+//                 )
+//             );
+//         }, 700);
+//       },
+//       [
+//         config.targetScore,
+//         finishGame,
+//         GAME_HEIGHT,
+//         rescueQuestion,
+//         runGameLoop,
+//         safeNotification,
+//         selectedAnswer,
+//         winGame,
+//       ]
+//     );
+
+//   /* ==========================================================
+//      BEGIN GAME
+//   ========================================================== */
 
 //   const beginGame =
 //     useCallback(() => {
-//       const initialX =
-//         GAME_WIDTH / 2 -
-//         PLAYER_SIZE / 2;
+//       const sessionId =
+//         gameSessionRef.current + 1;
+
+//       gameSessionRef.current =
+//         sessionId;
+
+//       if (
+//         animationFrameRef.current !== null
+//       ) {
+//         cancelAnimationFrame(
+//           animationFrameRef.current
+//         );
+
+//         animationFrameRef.current = null;
+//       }
 
 //       playerXRef.current =
-//         initialX;
+//         INITIAL_PLAYER_X;
+
+//       const initialDebris =
+//         createInitialDebris();
 
 //       debrisRef.current =
-//         createInitialDebris();
+//         initialDebris;
 
 //       scoreRef.current = 0;
 
-//       gameRunningRef.current =
-//         true;
+//       gameRunningRef.current = true;
+//       gameOverRef.current = false;
+//       hasWonRef.current = false;
 
-//       gameOverRef.current =
-//         false;
-
-//       hasWonRef.current =
-//         false;
+//       rewardClaimedRef.current = false;
 
 //       movementRef.current = 0;
 
-//       lastFrameTimeRef.current =
-//         null;
+//       lastFrameTimeRef.current = null;
 
 //       lastSpawnTimeRef.current =
 //         performance.now();
 
+//       adaptiveRef.current = {
+//         riskScore: 50,
+//         nearMisses: 0,
+//         successfulDodges: 0,
+//         collisions: 0,
+//         correctRescues: 0,
+//         lastRiskUpdate:
+//           performance.now(),
+//       };
+
+//       setRiskScore(50);
+//       setDifficultyFactor(1);
+
 //       setPlayerPositionX(
-//         initialX
+//         INITIAL_PLAYER_X
 //       );
 
-//       setDebris(
-//         debrisRef.current
-//       );
-
+//       setDebris(initialDebris);
 //       setScore(0);
 
 //       setGameOver(false);
-
 //       setHasWon(false);
+
+//       setRewardClaimed(false);
+
+//       setRescueLives(
+//         MAX_RESCUE_LIVES
+//       );
 
 //       setGameStarted(true);
 
-//       Haptics.notificationAsync(
-//         Haptics.NotificationFeedbackType
-//           .Success
+//       safeNotification(
+//         Haptics.NotificationFeedbackType.Success
 //       );
 
 //       animationFrameRef.current =
 //         requestAnimationFrame(
-//           runGameLoop
+//           (timestamp) =>
+//             runGameLoop(
+//               timestamp,
+//               sessionId
+//             )
 //         );
 //     }, [
-//       GAME_WIDTH,
+//       INITIAL_PLAYER_X,
 //       createInitialDebris,
 //       runGameLoop,
+//       safeNotification,
 //     ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | START GAME
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      START GAME
+//   ========================================================== */
 
 //   const startGame =
 //     useCallback(() => {
@@ -7346,24 +17793,58 @@
 //         return;
 //       }
 
-//       /*
-//        * Reset retry state.
-//        */
+//       if (
+//         countdownTimerRef.current
+//       ) {
+//         clearInterval(
+//           countdownTimerRef.current
+//         );
+
+//         countdownTimerRef.current = null;
+//       }
+
+//       stopGameLoop();
+//       stopSensor();
+
+//       playerXRef.current =
+//         INITIAL_PLAYER_X;
+
+//       debrisRef.current = [];
+
+//       scoreRef.current = 0;
+
+//       gameOverRef.current = false;
+//       hasWonRef.current = false;
+//       gameRunningRef.current = false;
+
+//       rewardClaimedRef.current = false;
+
+//       setPlayerPositionX(
+//         INITIAL_PLAYER_X
+//       );
+
+//       setDebris([]);
+//       setScore(0);
 
 //       setGameOver(false);
 //       setHasWon(false);
 
-//       gameOverRef.current =
-//         false;
+//       setRescueVisible(false);
+//       setRescueQuestion(null);
 
-//       hasWonRef.current =
-//         false;
+//       setRescueLives(
+//         MAX_RESCUE_LIVES
+//       );
 
-//       setCountdown(3);
+//       setRewardClaimed(false);
+
+//       setGameStarted(false);
 
 //       let count = 3;
 
-//       Haptics.impactAsync(
+//       setCountdown(count);
+
+//       safeImpact(
 //         Haptics.ImpactFeedbackStyle.Light
 //       );
 
@@ -7372,16 +17853,11 @@
 //           count -= 1;
 
 //           if (count <= 0) {
-//             if (
+//             clearInterval(
 //               countdownTimerRef.current
-//             ) {
-//               clearInterval(
-//                 countdownTimerRef.current
-//               );
-//             }
+//             );
 
-//             countdownTimerRef.current =
-//               null;
+//             countdownTimerRef.current = null;
 
 //             setCountdown(null);
 
@@ -7392,20 +17868,22 @@
 
 //           setCountdown(count);
 
-//           Haptics.impactAsync(
+//           safeImpact(
 //             Haptics.ImpactFeedbackStyle.Light
 //           );
 //         }, 700);
 //     }, [
 //       beginGame,
 //       countdown,
+//       INITIAL_PLAYER_X,
+//       safeImpact,
+//       stopGameLoop,
+//       stopSensor,
 //     ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | TOUCH MOVEMENT
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      TOUCH
+//   ========================================================== */
 
 //   const movePlayer =
 //     useCallback(
@@ -7420,16 +17898,16 @@
 
 //         const amount =
 //           config.playerSpeed *
-//           0.18;
+//           TOUCH_MOVE_MULTIPLIER;
 
 //         let nextX =
 //           playerXRef.current;
 
-//         if (
-//           direction === 'left'
-//         ) {
+//         if (direction === 'left') {
 //           nextX -= amount;
-//         } else {
+//         }
+
+//         if (direction === 'right') {
 //           nextX += amount;
 //         }
 
@@ -7439,25 +17917,22 @@
 //         playerXRef.current =
 //           nextX;
 
-//         setPlayerPositionX(
-//           nextX
-//         );
+//         setPlayerPositionX(nextX);
 
-//         Haptics.impactAsync(
+//         safeImpact(
 //           Haptics.ImpactFeedbackStyle.Light
 //         );
 //       },
 //       [
 //         clampPlayerX,
 //         config.playerSpeed,
+//         safeImpact,
 //       ]
 //     );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | ACCELEROMETER
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      ACCELEROMETER
+//   ========================================================== */
 
 //   useEffect(() => {
 //     let mounted = true;
@@ -7467,8 +17942,10 @@
 //         if (
 //           !gameStarted ||
 //           gameOver ||
-//           hasWon
+//           hasWon ||
+//           rescueVisible
 //         ) {
+//           stopSensor();
 //           return;
 //         }
 
@@ -7487,9 +17964,9 @@
 
 //           setSensorAvailable(true);
 
-//           Accelerometer.setUpdateInterval(
-//             50
-//           );
+//           Accelerometer.setUpdateInterval(50);
+
+//           stopSensor();
 
 //           sensorSubscriptionRef.current =
 //             Accelerometer.addListener(
@@ -7500,8 +17977,15 @@
 //                   return;
 //                 }
 
+//                 const value =
+//                   Number(data?.x) || 0;
+
 //                 movementRef.current =
-//                   data.x;
+//                   clamp(
+//                     value,
+//                     -1,
+//                     1
+//                   );
 //               }
 //             );
 //         } catch (error) {
@@ -7520,31 +18004,19 @@
 
 //     return () => {
 //       mounted = false;
-
-//       if (
-//         sensorSubscriptionRef.current
-//       ) {
-//         sensorSubscriptionRef.current.remove();
-
-//         sensorSubscriptionRef.current =
-//           null;
-//       }
+//       stopSensor();
 //     };
 //   }, [
 //     gameStarted,
 //     gameOver,
 //     hasWon,
+//     rescueVisible,
+//     stopSensor,
 //   ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | BACK BUTTON
-//   |--------------------------------------------------------------------------
-//   |
-//   | Do not allow Android back to leave the
-//   | screen while the game is actively running.
-//   |
-//   */
+//   /* ==========================================================
+//      BACK BUTTON
+//   ========================================================== */
 
 //   useEffect(() => {
 //     const subscription =
@@ -7553,7 +18025,8 @@
 //         () => {
 //           if (
 //             gameRunningRef.current ||
-//             countdown !== null
+//             countdown !== null ||
+//             rescueVisible
 //           ) {
 //             return true;
 //           }
@@ -7567,13 +18040,12 @@
 //     };
 //   }, [
 //     countdown,
+//     rescueVisible,
 //   ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | CLEANUP
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      CLEANUP
+//   ========================================================== */
 
 //   useEffect(() => {
 //     return () => {
@@ -7586,7 +18058,7 @@
 //       }
 
 //       if (
-//         animationFrameRef.current
+//         animationFrameRef.current !== null
 //       ) {
 //         cancelAnimationFrame(
 //           animationFrameRef.current
@@ -7596,91 +18068,163 @@
 //       if (
 //         sensorSubscriptionRef.current
 //       ) {
-//         sensorSubscriptionRef.current.remove();
+//         try {
+//           sensorSubscriptionRef.current.remove();
+//         } catch (error) {
+//           // Ignore.
+//         }
 //       }
+
+//       gameRunningRef.current = false;
 //     };
 //   }, []);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | CLAIM REWARD
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      CLAIM REWARD
+//   ========================================================== */
 
 //   const handleClaimReward =
 //     useCallback(() => {
-//       if (
-//         !hasWonRef.current
-//       ) {
+//       /*
+//        * Must actually have won.
+//        */
+//       if (!hasWonRef.current) {
 //         return;
 //       }
 
 //       /*
-//        * For now we simply return to Missions.
-//        *
-//        * Later you can connect this to your
-//        * XP / coins system.
+//        * Prevent double tapping from
+//        * awarding the mission twice.
 //        */
+//       if (rewardClaimedRef.current) {
+//         return;
+//       }
 
-//       resetGame();
+//       rewardClaimedRef.current = true;
 
-//       navigation.goBack();
+//       setRewardClaimed(true);
+
+//       const reward = config.reward;
+
+//       /*
+//        * THIS is the important connection
+//        * to your UserContext.
+//        *
+//        * UserContext should update:
+//        *
+//        * - XP
+//        * - Prep Coins
+//        * - mission progress
+//        * - mission percentage
+//        * - completed levels
+//        */
+//       try {
+//         completeMission({
+//           missionId: 'floodRunner',
+//           level: selectedLevel,
+//           score: scoreRef.current,
+//           xp: reward.xp,
+//           coins: reward.coins,
+//         });
+//       } catch (error) {
+//         console.error(
+//           'FloodRunner completeMission error:',
+//           error
+//         );
+
+//         /*
+//          * Allow another attempt if persistence
+//          * actually failed.
+//          */
+//         rewardClaimedRef.current = false;
+//         setRewardClaimed(false);
+
+//         return;
+//       }
+
+//       /*
+//        * Give the context time to update,
+//        * then leave the modal.
+//        */
+//       setTimeout(() => {
+//         resetGame();
+//         navigation.goBack();
+//       }, 250);
 //     }, [
+//       completeMission,
+//       config.reward,
 //       navigation,
 //       resetGame,
+//       selectedLevel,
 //     ]);
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | PROGRESS
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      PROGRESS
+//   ========================================================== */
 
 //   const progressPercentage =
 //     Math.min(
 //       100,
-//       (score /
-//         config.targetScore) *
-//         100
+//       (
+//         score /
+//         config.targetScore
+//       ) * 100
 //     );
 
-//   /*
-//   |--------------------------------------------------------------------------
-//   | RENDER
-//   |--------------------------------------------------------------------------
-//   */
+//   /* ==========================================================
+//      DIFFICULTY LABEL
+//   ========================================================== */
+
+//   const difficultyLabel =
+//     useMemo(() => {
+//       if (
+//         difficultyFactor < 0.88
+//       ) {
+//         return t(
+//           'games.floodRunner.adaptive.easier'
+//         );
+//       }
+
+//       if (
+//         difficultyFactor > 1.05
+//       ) {
+//         return t(
+//           'games.floodRunner.adaptive.harder'
+//         );
+//       }
+
+//       return t(
+//         'games.floodRunner.adaptive.balanced'
+//       );
+//     }, [
+//       difficultyFactor,
+//       t,
+//     ]);
+
+//   /* ==========================================================
+//      RENDER
+//   ========================================================== */
 
 //   return (
-//     <View
-//       style={styles.screen}
-//     >
+//     <View style={styles.screen}>
 //       <View
 //         style={[
 //           styles.modalContentCard,
 //           {
-//             width:
-//               Math.min(
-//                 GAME_WIDTH + 32,
-//                 SCREEN_WIDTH - 16
-//               ),
+//             width: Math.min(
+//               GAME_WIDTH + 32,
+//               SCREEN_WIDTH - 16
+//             ),
 //           },
 //         ]}
 //       >
 //         {/* HEADER */}
 
-//         <View
-//           style={styles.modalHeader}
-//         >
+//         <View style={styles.modalHeader}>
 //           <View
-//             style={
-//               styles.headerTitleArea
-//             }
+//             style={styles.headerTitleArea}
 //           >
-//             <View
-//               style={
-//                 styles.headerIcon
-//               }
-//             >
+//             <View style={styles.headerIcon}>
 //               <Ionicons
 //                 name="water"
 //                 size={20}
@@ -7689,14 +18233,10 @@
 //             </View>
 
 //             <View
-//               style={
-//                 styles.headerTextArea
-//               }
+//               style={styles.headerTextArea}
 //             >
 //               <Text
-//                 style={
-//                   styles.modalTitle
-//                 }
+//                 style={styles.modalTitle}
 //               >
 //                 {t(
 //                   'games.floodRunner.title'
@@ -7704,9 +18244,7 @@
 //               </Text>
 
 //               <Text
-//                 style={
-//                   styles.levelLabel
-//                 }
+//                 style={styles.levelLabel}
 //               >
 //                 {t(
 //                   'games.floodRunner.level',
@@ -7716,9 +18254,7 @@
 //                   }
 //                 )}{' '}
 //                 •{' '}
-//                 {t(
-//                   config.nameKey
-//                 )}
+//                 {t(config.nameKey)}
 //               </Text>
 //             </View>
 //           </View>
@@ -7727,14 +18263,10 @@
 //         {/* OBJECTIVE */}
 
 //         <View
-//           style={
-//             styles.objectiveCard
-//           }
+//           style={styles.objectiveCard}
 //         >
 //           <View
-//             style={
-//               styles.objectiveIcon
-//             }
+//             style={styles.objectiveIcon}
 //           >
 //             <Ionicons
 //               name="flag"
@@ -7744,14 +18276,10 @@
 //           </View>
 
 //           <View
-//             style={
-//               styles.objectiveTextArea
-//             }
+//             style={styles.objectiveTextArea}
 //           >
 //             <Text
-//               style={
-//                 styles.objectiveTitle
-//               }
+//               style={styles.objectiveTitle}
 //             >
 //               {t(
 //                 'games.floodRunner.objective'
@@ -7759,9 +18287,7 @@
 //             </Text>
 
 //             <Text
-//               style={
-//                 styles.objectiveText
-//               }
+//               style={styles.objectiveText}
 //             >
 //               {t(
 //                 'games.floodRunner.objectiveDescription'
@@ -7834,18 +18360,24 @@
 //                   }
 //                 )}
 //               />
+
+//               <InstructionRow
+//                 icon="help-circle"
+//                 text={t(
+//                   'games.floodRunner.instructions.rescue'
+//                 )}
+//               />
 //             </View>
 //           )}
 
-//         {/* SENSOR STATUS */}
+//         {/* SENSOR */}
 
 //         {gameStarted &&
 //           !gameOver &&
-//           !hasWon && (
+//           !hasWon &&
+//           !rescueVisible && (
 //             <View
-//               style={
-//                 styles.sensorStatus
-//               }
+//               style={styles.sensorStatus}
 //             >
 //               <Ionicons
 //                 name={
@@ -7880,33 +18412,43 @@
 //                       'games.floodRunner.touchActive'
 //                     )}
 //               </Text>
+
+//               <View
+//                 style={styles.lifeBadge}
+//               >
+//                 <Ionicons
+//                   name="heart"
+//                   size={12}
+//                   color="#FB7185"
+//                 />
+
+//                 <Text
+//                   style={styles.lifeText}
+//                 >
+//                   {rescueLives}
+//                 </Text>
+//               </View>
 //             </View>
 //           )}
 
-//         {/* GAME AREA */}
+//         {/* GAME */}
 
 //         <View
 //           style={[
 //             styles.gameCanvas,
 //             {
-//               width:
-//                 GAME_WIDTH,
-//               height:
-//                 GAME_HEIGHT,
+//               width: GAME_WIDTH,
+//               height: GAME_HEIGHT,
 //             },
 //           ]}
 //         >
 //           {/* SAFE ZONE */}
 
 //           <View
-//             style={
-//               styles.safeZone
-//             }
+//             style={styles.safeZone}
 //           >
 //             <View
-//               style={
-//                 styles.safeZoneIcon
-//               }
+//               style={styles.safeZoneIcon}
 //             >
 //               <Ionicons
 //                 name="shield-checkmark"
@@ -7917,9 +18459,7 @@
 
 //             <View>
 //               <Text
-//                 style={
-//                   styles.safeZoneTitle
-//                 }
+//                 style={styles.safeZoneTitle}
 //               >
 //                 {t(
 //                   'games.floodRunner.safeShelter'
@@ -7927,9 +18467,7 @@
 //               </Text>
 
 //               <Text
-//                 style={
-//                   styles.safeZoneSub
-//                 }
+//                 style={styles.safeZoneSub}
 //               >
 //                 {t(
 //                   'games.floodRunner.highGround'
@@ -7941,20 +18479,14 @@
 //           {/* DANGER FIELD */}
 
 //           <View
-//             style={
-//               styles.dangerField
-//             }
+//             style={styles.dangerField}
 //           >
 //             <View
-//               style={
-//                 styles.routeLine
-//               }
+//               style={styles.routeLine}
 //             />
 
 //             <Text
-//               style={
-//                 styles.dangerText
-//               }
+//               style={styles.dangerText}
 //             >
 //               {t(
 //                 'games.floodRunner.evacuationRoute'
@@ -7967,34 +18499,31 @@
 //           {gameStarted &&
 //             !gameOver &&
 //             !hasWon &&
-//             debris.map(
-//               (item) => (
-//                 <View
-//                   key={item.id}
-//                   style={[
-//                     styles.debrisNode,
-//                     {
-//                       left:
-//                         item.x,
-//                       top:
-//                         item.y,
-//                     },
-//                   ]}
-//                 >
-//                   <Ionicons
-//                     name="warning"
-//                     size={20}
-//                     color="#FCA5A5"
-//                   />
-//                 </View>
-//               )
-//             )}
+//             debris.map((item) => (
+//               <View
+//                 key={item.id}
+//                 style={[
+//                   styles.debrisNode,
+//                   {
+//                     left: item.x,
+//                     top: item.y,
+//                   },
+//                 ]}
+//               >
+//                 <Ionicons
+//                   name="warning"
+//                   size={20}
+//                   color="#FCA5A5"
+//                 />
+//               </View>
+//             ))}
 
 //           {/* PLAYER */}
 
 //           {gameStarted &&
 //             !gameOver &&
-//             !hasWon && (
+//             !hasWon &&
+//             !rescueVisible && (
 //               <View
 //                 style={[
 //                   styles.playerNode,
@@ -8019,41 +18548,54 @@
 //           {/* FLOOD */}
 
 //           <View
-//             style={
-//               styles.floodLayer
-//             }
+//             style={styles.floodLayer}
 //           >
 //             <View
-//               style={
-//                 styles.waveContainer
-//               }
+//               style={styles.waveContainer}
 //             >
 //               {Array.from({
 //                 length: 12,
-//               }).map(
-//                 (_, index) => (
-//                   <Text
-//                     key={index}
-//                     style={
-//                       styles.wave
-//                     }
-//                   >
-//                     ~
-//                   </Text>
-//                 )
-//               )}
+//               }).map((_, index) => (
+//                 <Text
+//                   key={index}
+//                   style={styles.wave}
+//                 >
+//                   ~
+//                 </Text>
+//               ))}
 //             </View>
 
 //             <Text
-//               style={
-//                 styles.floodLabel
-//               }
+//               style={styles.floodLabel}
 //             >
 //               {t(
 //                 'games.floodRunner.floodZone'
 //               )}
 //             </Text>
 //           </View>
+
+//           {/* ADAPTIVE */}
+
+//           {gameStarted &&
+//             !gameOver &&
+//             !hasWon &&
+//             !rescueVisible && (
+//               <View
+//                 style={styles.adaptiveBadge}
+//               >
+//                 <Ionicons
+//                   name="pulse"
+//                   size={11}
+//                   color="#38BDF8"
+//                 />
+
+//                 <Text
+//                   style={styles.adaptiveText}
+//                 >
+//                   {difficultyLabel}
+//                 </Text>
+//               </View>
+//             )}
 
 //           {/* COUNTDOWN */}
 
@@ -8090,14 +18632,10 @@
 //             !gameOver &&
 //             !hasWon && (
 //               <View
-//                 style={
-//                   styles.startOverlay
-//                 }
+//                 style={styles.startOverlay}
 //               >
 //                 <View
-//                   style={
-//                     styles.startIcon
-//                   }
+//                   style={styles.startIcon}
 //                 >
 //                   <Ionicons
 //                     name="walk"
@@ -8107,9 +18645,7 @@
 //                 </View>
 
 //                 <Text
-//                   style={
-//                     styles.startTitle
-//                   }
+//                   style={styles.startTitle}
 //                 >
 //                   {t(
 //                     'games.floodRunner.ready'
@@ -8127,12 +18663,8 @@
 //                 </Text>
 
 //                 <TouchableOpacity
-//                   style={
-//                     styles.startButton
-//                   }
-//                   onPress={
-//                     startGame
-//                   }
+//                   style={styles.startButton}
+//                   onPress={startGame}
 //                   activeOpacity={0.8}
 //                 >
 //                   <Ionicons
@@ -8151,6 +18683,184 @@
 //                     )}
 //                   </Text>
 //                 </TouchableOpacity>
+//               </View>
+//             )}
+
+//           {/* RESCUE */}
+
+//           {rescueVisible &&
+//             rescueQuestion && (
+//               <View
+//                 style={
+//                   styles.rescueOverlay
+//                 }
+//               >
+//                 <View
+//                   style={styles.rescueIcon}
+//                 >
+//                   <Ionicons
+//                     name="medkit"
+//                     size={28}
+//                     color="#FBBF24"
+//                   />
+//                 </View>
+
+//                 <Text
+//                   style={styles.rescueTitle}
+//                 >
+//                   {t(
+//                     'games.floodRunner.rescueTitle'
+//                   )}
+//                 </Text>
+
+//                 <Text
+//                   style={
+//                     styles.rescueDescription
+//                   }
+//                 >
+//                   {t(
+//                     'games.floodRunner.rescueDescription'
+//                   )}
+//                 </Text>
+
+//                 <Text
+//                   style={
+//                     styles.rescueQuestion
+//                   }
+//                 >
+//                   {t(
+//                     rescueQuestion.questionKey
+//                   )}
+//                 </Text>
+
+//                 <View
+//                   style={
+//                     styles.answerList
+//                   }
+//                 >
+//                   {rescueQuestion.options.map(
+//                     (option) => {
+//                       const isSelected =
+//                         selectedAnswer ===
+//                         option.id;
+
+//                       const isCorrect =
+//                         rescueQuestion.correct ===
+//                         option.id;
+
+//                       let backgroundColor =
+//                         '#172033';
+
+//                       let borderColor =
+//                         '#334155';
+
+//                       if (
+//                         isSelected &&
+//                         answerFeedback ===
+//                           'correct'
+//                       ) {
+//                         backgroundColor =
+//                           '#064E3B';
+
+//                         borderColor =
+//                           '#10B981';
+//                       }
+
+//                       if (
+//                         isSelected &&
+//                         answerFeedback ===
+//                           'wrong'
+//                       ) {
+//                         backgroundColor =
+//                           '#450A0A';
+
+//                         borderColor =
+//                           '#EF4444';
+//                       }
+
+//                       if (
+//                         selectedAnswer &&
+//                         isCorrect &&
+//                         answerFeedback ===
+//                           'correct'
+//                       ) {
+//                         backgroundColor =
+//                           '#064E3B';
+
+//                         borderColor =
+//                           '#10B981';
+//                       }
+
+//                       return (
+//                         <TouchableOpacity
+//                           key={option.id}
+//                           disabled={
+//                             !!selectedAnswer
+//                           }
+//                           style={[
+//                             styles.answerButton,
+//                             {
+//                               backgroundColor,
+//                               borderColor,
+//                             },
+//                           ]}
+//                           onPress={() =>
+//                             handleRescueAnswer(
+//                               option.id
+//                             )
+//                           }
+//                           activeOpacity={0.8}
+//                         >
+//                           <View
+//                             style={
+//                               styles.answerLetter
+//                             }
+//                           >
+//                             <Text
+//                               style={
+//                                 styles.answerLetterText
+//                               }
+//                             >
+//                               {option.id.toUpperCase()}
+//                             </Text>
+//                           </View>
+
+//                           <Text
+//                             style={
+//                               styles.answerText
+//                             }
+//                           >
+//                             {t(
+//                               option.textKey
+//                             )}
+//                           </Text>
+//                         </TouchableOpacity>
+//                       );
+//                     }
+//                   )}
+//                 </View>
+
+//                 <View
+//                   style={
+//                     styles.rescueLifeNotice
+//                   }
+//                 >
+//                   <Ionicons
+//                     name="heart"
+//                     size={13}
+//                     color="#FB7185"
+//                   />
+
+//                   <Text
+//                     style={
+//                       styles.rescueLifeText
+//                     }
+//                   >
+//                     {t(
+//                       'games.floodRunner.rescueLifeNotice'
+//                     )}
+//                   </Text>
+//                 </View>
 //               </View>
 //             )}
 
@@ -8199,9 +18909,7 @@
 //               </Text>
 
 //               <Text
-//                 style={
-//                   styles.finalScore
-//                 }
+//                 style={styles.finalScore}
 //               >
 //                 {score} /{' '}
 //                 {config.targetScore}
@@ -8211,9 +18919,7 @@
 //                 style={
 //                   styles.retryButton
 //                 }
-//                 onPress={
-//                   startGame
-//                 }
+//                 onPress={startGame}
 //                 activeOpacity={0.8}
 //               >
 //                 <Ionicons
@@ -8223,9 +18929,7 @@
 //                 />
 
 //                 <Text
-//                   style={
-//                     styles.buttonText
-//                   }
+//                   style={styles.buttonText}
 //                 >
 //                   {t(
 //                     'games.floodRunner.retry'
@@ -8280,9 +18984,7 @@
 //               </Text>
 
 //               <View
-//                 style={
-//                   styles.rewardRow
-//                 }
+//                 style={styles.rewardRow}
 //               >
 //                 <Reward
 //                   icon="flash"
@@ -8302,9 +19004,12 @@
 //               </View>
 
 //               <TouchableOpacity
-//                 style={
-//                   styles.claimRewardButton
-//                 }
+//                 style={[
+//                   styles.claimRewardButton,
+//                   rewardClaimed &&
+//                     styles.claimDisabled,
+//                 ]}
+//                 disabled={rewardClaimed}
 //                 onPress={
 //                   handleClaimReward
 //                 }
@@ -8317,13 +19022,15 @@
 //                 />
 
 //                 <Text
-//                   style={
-//                     styles.buttonText
-//                   }
+//                   style={styles.buttonText}
 //                 >
-//                   {t(
-//                     'games.floodRunner.claimReward'
-//                   )}
+//                   {rewardClaimed
+//                     ? t(
+//                         'games.floodRunner.rewardClaimed'
+//                       )
+//                     : t(
+//                         'games.floodRunner.claimReward'
+//                       )}
 //                 </Text>
 //               </TouchableOpacity>
 //             </View>
@@ -8336,14 +19043,10 @@
 //           style={styles.gameHud}
 //         >
 //           <View
-//             style={
-//               styles.scoreHeader
-//             }
+//             style={styles.scoreHeader}
 //           >
 //             <Text
-//               style={
-//                 styles.scoreLabel
-//               }
+//               style={styles.scoreLabel}
 //             >
 //               {t(
 //                 'games.floodRunner.score'
@@ -8351,9 +19054,7 @@
 //             </Text>
 
 //             <Text
-//               style={
-//                 styles.scoreValue
-//               }
+//               style={styles.scoreValue}
 //             >
 //               {score} /{' '}
 //               {config.targetScore}
@@ -8375,26 +19076,51 @@
 //               ]}
 //             />
 //           </View>
+
+//           {gameStarted &&
+//             !gameOver &&
+//             !hasWon && (
+//               <View
+//                 style={
+//                   styles.algorithmRow
+//                 }
+//               >
+//                 <Text
+//                   style={
+//                     styles.algorithmLabel
+//                   }
+//                 >
+//                   {t(
+//                     'games.floodRunner.adaptive.safety'
+//                   )}
+//                 </Text>
+
+//                 <Text
+//                   style={
+//                     styles.algorithmValue
+//                   }
+//                 >
+//                   {riskScore}
+//                 </Text>
+//               </View>
+//             )}
 //         </View>
 
 //         {/* CONTROLS */}
 
 //         {gameStarted &&
 //           !gameOver &&
-//           !hasWon && (
+//           !hasWon &&
+//           !rescueVisible && (
 //             <View
-//               style={
-//                 styles.controls
-//               }
+//               style={styles.controls}
 //             >
 //               <TouchableOpacity
 //                 style={
 //                   styles.controlButton
 //                 }
 //                 onPress={() =>
-//                   movePlayer(
-//                     'left'
-//                   )
+//                   movePlayer('left')
 //                 }
 //                 activeOpacity={0.7}
 //               >
@@ -8408,7 +19134,6 @@
 //                   style={
 //                     styles.controlText
 //                   }
-//                   numberOfLines={2}
 //                 >
 //                   {t(
 //                     'games.floodRunner.left'
@@ -8435,7 +19160,6 @@
 //                   style={
 //                     styles.controlHintText
 //                   }
-//                   numberOfLines={2}
 //                 >
 //                   {sensorAvailable
 //                     ? t(
@@ -8452,9 +19176,7 @@
 //                   styles.controlButton
 //                 }
 //                 onPress={() =>
-//                   movePlayer(
-//                     'right'
-//                   )
+//                   movePlayer('right')
 //                 }
 //                 activeOpacity={0.7}
 //               >
@@ -8468,7 +19190,6 @@
 //                   style={
 //                     styles.controlText
 //                   }
-//                   numberOfLines={2}
 //                 >
 //                   {t(
 //                     'games.floodRunner.right'
@@ -8482,11 +19203,9 @@
 //   );
 // }
 
-// /*
-// |--------------------------------------------------------------------------
-// | INSTRUCTION ROW
-// |--------------------------------------------------------------------------
-// */
+// /* ============================================================
+//    INSTRUCTION ROW
+// ============================================================ */
 
 // function InstructionRow({
 //   icon,
@@ -8494,14 +19213,10 @@
 // }) {
 //   return (
 //     <View
-//       style={
-//         styles.instructionRow
-//       }
+//       style={styles.instructionRow}
 //     >
 //       <View
-//         style={
-//           styles.instructionIcon
-//         }
+//         style={styles.instructionIcon}
 //       >
 //         <Ionicons
 //           name={icon}
@@ -8511,9 +19226,7 @@
 //       </View>
 
 //       <Text
-//         style={
-//           styles.instructionText
-//         }
+//         style={styles.instructionText}
 //       >
 //         {text}
 //       </Text>
@@ -8521,11 +19234,9 @@
 //   );
 // }
 
-// /*
-// |--------------------------------------------------------------------------
-// | REWARD
-// |--------------------------------------------------------------------------
-// */
+// /* ============================================================
+//    REWARD
+// ============================================================ */
 
 // function Reward({
 //   icon,
@@ -8533,9 +19244,7 @@
 //   label,
 // }) {
 //   return (
-//     <View
-//       style={styles.reward}
-//     >
+//     <View style={styles.reward}>
 //       <Ionicons
 //         name={icon}
 //         size={18}
@@ -8543,17 +19252,13 @@
 //       />
 
 //       <Text
-//         style={
-//           styles.rewardValue
-//         }
+//         style={styles.rewardValue}
 //       >
 //         {value}
 //       </Text>
 
 //       <Text
-//         style={
-//           styles.rewardLabel
-//         }
+//         style={styles.rewardLabel}
 //       >
 //         {label}
 //       </Text>
@@ -8561,48 +19266,41 @@
 //   );
 // }
 
-// /*
-// |--------------------------------------------------------------------------
-// | STYLES
-// |--------------------------------------------------------------------------
-// */
+// /* ============================================================
+//    STYLES
+// ============================================================ */
 
 // const styles = StyleSheet.create({
 //   screen: {
 //     flex: 1,
 //     backgroundColor: '#020617',
-//     justifyContent: 'center',
 //     alignItems: 'center',
+//     justifyContent: 'center',
 //     padding: 8,
 //   },
 
 //   modalContentCard: {
 //     backgroundColor: '#0F172A',
+//     borderRadius: 24,
+//     padding: 12,
 //     borderWidth: 1,
 //     borderColor: '#1E293B',
-//     borderRadius: 22,
-//     padding: 12,
-//     maxWidth: 430,
-//     maxHeight: '98%',
+//     maxHeight: '96%',
 //   },
 
 //   modalHeader: {
-//     flexDirection: 'row',
-//     justifyContent: 'space-between',
-//     alignItems: 'center',
 //     marginBottom: 10,
 //   },
 
 //   headerTitleArea: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     flex: 1,
 //   },
 
 //   headerIcon: {
-//     width: 38,
-//     height: 38,
-//     borderRadius: 12,
+//     width: 42,
+//     height: 42,
+//     borderRadius: 14,
 //     backgroundColor: '#082F49',
 //     alignItems: 'center',
 //     justifyContent: 'center',
@@ -8615,36 +19313,34 @@
 
 //   modalTitle: {
 //     color: '#FFFFFF',
-//     fontSize: 17,
-//     fontWeight: '900',
+//     fontSize: 20,
+//     fontWeight: '800',
 //   },
 
 //   levelLabel: {
-//     color: '#38BDF8',
-//     fontSize: 11,
-//     fontWeight: '800',
-//     marginTop: 3,
+//     color: '#94A3B8',
+//     fontSize: 12,
+//     marginTop: 2,
 //   },
 
 //   objectiveCard: {
 //     flexDirection: 'row',
-//     alignItems: 'center',
-//     backgroundColor: '#052E16',
+//     backgroundColor: '#0B1F1A',
 //     borderWidth: 1,
-//     borderColor: '#166534',
-//     borderRadius: 13,
+//     borderColor: '#064E3B',
+//     borderRadius: 14,
 //     padding: 10,
-//     marginBottom: 8,
+//     marginBottom: 10,
 //   },
 
 //   objectiveIcon: {
-//     width: 32,
-//     height: 32,
+//     width: 34,
+//     height: 34,
 //     borderRadius: 10,
-//     backgroundColor: '#064E3B',
+//     backgroundColor: '#052E25',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     marginRight: 10,
+//     marginRight: 9,
 //   },
 
 //   objectiveTextArea: {
@@ -8653,44 +19349,43 @@
 
 //   objectiveTitle: {
 //     color: '#34D399',
-//     fontSize: 11,
-//     fontWeight: '900',
-//     textTransform: 'uppercase',
+//     fontWeight: '800',
+//     fontSize: 13,
 //   },
 
 //   objectiveText: {
 //     color: '#A7F3D0',
 //     fontSize: 11,
-//     lineHeight: 16,
 //     marginTop: 2,
+//     lineHeight: 16,
 //   },
 
 //   instructionsCard: {
 //     backgroundColor: '#111827',
-//     borderWidth: 1,
-//     borderColor: '#334155',
 //     borderRadius: 14,
-//     padding: 11,
-//     marginBottom: 8,
+//     borderWidth: 1,
+//     borderColor: '#1E293B',
+//     padding: 10,
+//     marginBottom: 10,
 //   },
 
 //   instructionsHeader: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     marginBottom: 6,
+//     marginBottom: 8,
 //   },
 
 //   instructionsTitle: {
 //     color: '#FFFFFF',
-//     fontSize: 13,
-//     fontWeight: '900',
+//     fontWeight: '800',
 //     marginLeft: 7,
+//     fontSize: 13,
 //   },
 
 //   instructionRow: {
 //     flexDirection: 'row',
-//     alignItems: 'flex-start',
-//     marginTop: 6,
+//     alignItems: 'center',
+//     marginVertical: 3,
 //   },
 
 //   instructionIcon: {
@@ -8700,41 +19395,52 @@
 //     backgroundColor: '#082F49',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     marginRight: 8,
+//     marginRight: 7,
 //   },
 
 //   instructionText: {
-//     flex: 1,
 //     color: '#CBD5E1',
 //     fontSize: 11,
-//     lineHeight: 16,
-//     paddingTop: 3,
+//     flex: 1,
 //   },
 
 //   sensorStatus: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     alignSelf: 'flex-start',
-//     backgroundColor: '#020617',
-//     paddingHorizontal: 9,
-//     paddingVertical: 5,
-//     borderRadius: 8,
-//     marginBottom: 8,
+//     marginBottom: 7,
+//     paddingHorizontal: 4,
 //   },
 
 //   sensorText: {
-//     fontSize: 10,
+//     fontSize: 11,
+//     fontWeight: '700',
+//     marginLeft: 5,
+//     flex: 1,
+//   },
+
+//   lifeBadge: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     backgroundColor: '#3F1722',
+//     borderRadius: 10,
+//     paddingHorizontal: 8,
+//     paddingVertical: 4,
+//   },
+
+//   lifeText: {
+//     color: '#FFFFFF',
 //     fontWeight: '800',
-//     marginLeft: 6,
+//     marginLeft: 4,
+//     fontSize: 11,
 //   },
 
 //   gameCanvas: {
-//     backgroundColor: '#020617',
-//     borderRadius: 16,
-//     borderWidth: 1,
-//     borderColor: '#1E293B',
-//     position: 'relative',
+//     backgroundColor: '#07111F',
+//     borderRadius: 18,
 //     overflow: 'hidden',
+//     borderWidth: 1,
+//     borderColor: '#1E3A5F',
+//     position: 'relative',
 //   },
 
 //   safeZone: {
@@ -8742,156 +19448,183 @@
 //     top: 0,
 //     left: 0,
 //     right: 0,
-//     height: SAFE_ZONE_HEIGHT,
-//     backgroundColor: '#064E3B',
+//     height: 56,
+//     backgroundColor: '#052E25',
 //     borderBottomWidth: 1,
-//     borderBottomColor: '#10B981',
+//     borderBottomColor: '#065F46',
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     paddingHorizontal: 14,
-//     zIndex: 4,
+//     paddingHorizontal: 12,
+//     zIndex: 2,
 //   },
 
 //   safeZoneIcon: {
-//     width: 34,
-//     height: 34,
+//     width: 32,
+//     height: 32,
 //     borderRadius: 10,
-//     backgroundColor: '#065F46',
+//     backgroundColor: '#064E3B',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     marginRight: 9,
+//     marginRight: 8,
 //   },
 
 //   safeZoneTitle: {
-//     color: '#D1FAE5',
-//     fontSize: 11,
-//     fontWeight: '900',
-//     letterSpacing: 0.5,
+//     color: '#6EE7B7',
+//     fontSize: 12,
+//     fontWeight: '800',
 //   },
 
 //   safeZoneSub: {
-//     color: '#6EE7B7',
+//     color: '#A7F3D0',
 //     fontSize: 9,
-//     fontWeight: '700',
-//     marginTop: 2,
+//     marginTop: 1,
 //   },
 
 //   dangerField: {
 //     position: 'absolute',
-//     top: SAFE_ZONE_HEIGHT,
-//     bottom: FLOOD_HEIGHT,
+//     top: 56,
 //     left: 0,
 //     right: 0,
-//     alignItems: 'center',
-//     justifyContent: 'center',
+//     bottom: FLOOD_HEIGHT,
+//     backgroundColor: '#0B1626',
 //   },
 
 //   routeLine: {
 //     position: 'absolute',
-//     width: 2,
-//     height: '100%',
-//     backgroundColor: '#1E293B',
-//     opacity: 0.8,
+//     left: '50%',
+//     top: 0,
+//     bottom: 0,
+//     width: 1,
+//     backgroundColor: '#1E3A5F',
+//     opacity: 0.7,
 //   },
 
 //   dangerText: {
 //     color: '#334155',
-//     fontSize: 8,
-//     fontWeight: '900',
-//     letterSpacing: 1.5,
-//     transform: [
-//       {
-//         rotate: '-90deg',
-//       },
-//     ],
+//     fontSize: 9,
+//     position: 'absolute',
+//     top: 10,
+//     left: 12,
+//     textTransform: 'uppercase',
+//     letterSpacing: 1,
 //   },
 
 //   debrisNode: {
 //     position: 'absolute',
 //     width: DEBRIS_SIZE,
 //     height: DEBRIS_SIZE,
-//     borderRadius:
-//       DEBRIS_SIZE / 2,
-//     backgroundColor: '#450A0A',
+//     borderRadius: 9,
+//     backgroundColor: '#451A1A',
 //     borderWidth: 1,
-//     borderColor: '#EF4444',
+//     borderColor: '#7F1D1D',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     zIndex: 5,
+//     zIndex: 4,
 //   },
 
 //   playerNode: {
 //     position: 'absolute',
 //     width: PLAYER_SIZE,
 //     height: PLAYER_SIZE,
-//     borderRadius:
-//       PLAYER_SIZE / 2,
-//     backgroundColor: '#2563EB',
+//     borderRadius: 12,
+//     backgroundColor: '#0284C7',
 //     borderWidth: 2,
-//     borderColor: '#60A5FA',
+//     borderColor: '#7DD3FC',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     zIndex: 6,
+//     zIndex: 5,
 //   },
 
 //   floodLayer: {
 //     position: 'absolute',
-//     bottom: 0,
 //     left: 0,
 //     right: 0,
+//     bottom: 0,
 //     height: FLOOD_HEIGHT,
 //     backgroundColor: '#075985',
-//     borderTopWidth: 1,
+//     borderTopWidth: 2,
 //     borderTopColor: '#38BDF8',
-//     justifyContent: 'center',
-//     alignItems: 'center',
 //     zIndex: 3,
 //   },
 
 //   waveContainer: {
-//     position: 'absolute',
-//     top: -13,
-//     left: 0,
-//     right: 0,
 //     flexDirection: 'row',
 //     justifyContent: 'space-around',
+//     position: 'absolute',
+//     top: -11,
+//     left: 0,
+//     right: 0,
 //   },
 
 //   wave: {
-//     color: '#38BDF8',
-//     fontSize: 24,
+//     color: '#7DD3FC',
+//     fontSize: 18,
 //     fontWeight: '900',
 //   },
 
 //   floodLabel: {
 //     color: '#BAE6FD',
 //     fontSize: 9,
-//     fontWeight: '900',
-//     letterSpacing: 2,
-//     marginTop: 12,
+//     fontWeight: '800',
+//     textAlign: 'center',
+//     marginTop: 25,
+//     letterSpacing: 1,
 //   },
 
-//   startOverlay: {
+//   adaptiveBadge: {
 //     position: 'absolute',
-//     top: SAFE_ZONE_HEIGHT,
-//     bottom: FLOOD_HEIGHT,
-//     left: 0,
-//     right: 0,
-//     backgroundColor:
-//       'rgba(2, 6, 23, 0.94)',
+//     top: 66,
+//     right: 8,
+//     backgroundColor: '#082F49',
+//     borderRadius: 10,
+//     paddingHorizontal: 7,
+//     paddingVertical: 4,
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     zIndex: 8,
+//   },
+
+//   adaptiveText: {
+//     color: '#7DD3FC',
+//     fontSize: 8,
+//     fontWeight: '700',
+//     marginLeft: 4,
+//   },
+
+//   countdownOverlay: {
+//     ...StyleSheet.absoluteFillObject,
+//     backgroundColor: 'rgba(2,6,23,0.85)',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     padding: 20,
 //     zIndex: 20,
 //   },
 
+//   countdownNumber: {
+//     color: '#FFFFFF',
+//     fontSize: 72,
+//     fontWeight: '900',
+//   },
+
+//   countdownText: {
+//     color: '#7DD3FC',
+//     fontSize: 13,
+//     marginTop: 4,
+//   },
+
+//   startOverlay: {
+//     ...StyleSheet.absoluteFillObject,
+//     backgroundColor: 'rgba(2,6,23,0.88)',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     padding: 24,
+//     zIndex: 15,
+//   },
+
 //   startIcon: {
-//     width: 62,
-//     height: 62,
-//     borderRadius: 20,
+//     width: 70,
+//     height: 70,
+//     borderRadius: 24,
 //     backgroundColor: '#082F49',
-//     borderWidth: 1,
-//     borderColor: '#0369A1',
 //     alignItems: 'center',
 //     justifyContent: 'center',
 //     marginBottom: 12,
@@ -8899,102 +19632,152 @@
 
 //   startTitle: {
 //     color: '#FFFFFF',
-//     fontSize: 20,
+//     fontSize: 23,
 //     fontWeight: '900',
-//     textAlign: 'center',
 //   },
 
 //   startDescription: {
 //     color: '#94A3B8',
-//     fontSize: 12,
-//     lineHeight: 18,
 //     textAlign: 'center',
+//     fontSize: 11,
+//     lineHeight: 17,
 //     marginTop: 6,
-//     maxWidth: 250,
+//     maxWidth: 280,
 //   },
 
 //   startButton: {
+//     marginTop: 18,
+//     backgroundColor: '#0284C7',
+//     borderRadius: 13,
+//     paddingHorizontal: 20,
+//     paddingVertical: 11,
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: '#0284C7',
-//     borderRadius: 12,
-//     minHeight: 48,
-//     paddingHorizontal: 22,
-//     marginTop: 16,
 //   },
 
 //   startButtonText: {
 //     color: '#FFFFFF',
-//     fontSize: 13,
-//     fontWeight: '900',
+//     fontWeight: '800',
 //     marginLeft: 7,
 //   },
 
-//   countdownOverlay: {
-//     position: 'absolute',
-//     top: SAFE_ZONE_HEIGHT,
-//     bottom: FLOOD_HEIGHT,
-//     left: 0,
-//     right: 0,
-//     backgroundColor:
-//       'rgba(2, 6, 23, 0.85)',
+//   rescueOverlay: {
+//     ...StyleSheet.absoluteFillObject,
+//     backgroundColor: 'rgba(2,6,23,0.97)',
 //     alignItems: 'center',
-//     justifyContent: 'center',
+//     padding: 16,
 //     zIndex: 30,
 //   },
 
-//   countdownNumber: {
-//     color: '#38BDF8',
-//     fontSize: 64,
+//   rescueIcon: {
+//     width: 54,
+//     height: 54,
+//     borderRadius: 18,
+//     backgroundColor: '#422006',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     marginBottom: 8,
+//   },
+
+//   rescueTitle: {
+//     color: '#FBBF24',
+//     fontSize: 19,
 //     fontWeight: '900',
 //   },
 
-//   countdownText: {
+//   rescueDescription: {
 //     color: '#CBD5E1',
-//     fontSize: 12,
-//     fontWeight: '800',
-//     marginTop: 2,
-//   },
-
-//   endGameOverlay: {
-//     position: 'absolute',
-//     top: SAFE_ZONE_HEIGHT + 8,
-//     bottom: FLOOD_HEIGHT + 8,
-//     left: 10,
-//     right: 10,
-//     backgroundColor:
-//       'rgba(15, 23, 42, 0.98)',
-//     borderWidth: 1,
-//     borderColor: '#334155',
-//     borderRadius: 18,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     padding: 18,
-//     zIndex: 30,
-//   },
-
-//   resultIcon: {
-//     width: 64,
-//     height: 64,
-//     borderRadius: 20,
-//     alignItems: 'center',
-//     justifyContent: 'center',
+//     fontSize: 10,
+//     textAlign: 'center',
+//     marginTop: 4,
 //     marginBottom: 10,
 //   },
 
-//   gameOverTitle: {
-//     color: '#EF4444',
-//     fontWeight: '900',
-//     fontSize: 20,
+//   rescueQuestion: {
+//     color: '#FFFFFF',
+//     fontSize: 13,
+//     fontWeight: '800',
 //     textAlign: 'center',
+//     lineHeight: 18,
+//     marginBottom: 10,
+//   },
+
+//   answerList: {
+//     width: '100%',
+//   },
+
+//   answerButton: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     borderWidth: 1,
+//     borderRadius: 11,
+//     padding: 8,
+//     marginBottom: 7,
+//   },
+
+//   answerLetter: {
+//     width: 27,
+//     height: 27,
+//     borderRadius: 9,
+//     backgroundColor: '#334155',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     marginRight: 8,
+//   },
+
+//   answerLetterText: {
+//     color: '#FFFFFF',
+//     fontSize: 10,
+//     fontWeight: '900',
+//   },
+
+//   answerText: {
+//     color: '#E2E8F0',
+//     fontSize: 10,
+//     lineHeight: 15,
+//     flex: 1,
+//   },
+
+//   rescueLifeNotice: {
+//     flexDirection: 'row',
+//     alignItems: 'center',
+//     marginTop: 2,
+//   },
+
+//   rescueLifeText: {
+//     color: '#94A3B8',
+//     fontSize: 9,
+//     marginLeft: 4,
+//   },
+
+//   endGameOverlay: {
+//     ...StyleSheet.absoluteFillObject,
+//     backgroundColor: 'rgba(2,6,23,0.96)',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     padding: 20,
+//     zIndex: 25,
+//   },
+
+//   resultIcon: {
+//     width: 68,
+//     height: 68,
+//     borderRadius: 23,
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     marginBottom: 12,
+//   },
+
+//   gameOverTitle: {
+//     color: '#F87171',
+//     fontSize: 22,
+//     fontWeight: '900',
 //   },
 
 //   successTitle: {
-//     color: '#10B981',
+//     color: '#34D399',
+//     fontSize: 22,
 //     fontWeight: '900',
-//     fontSize: 20,
-//     textAlign: 'center',
 //   },
 
 //   gameOverText: {
@@ -9002,60 +19785,55 @@
 //     fontSize: 11,
 //     textAlign: 'center',
 //     lineHeight: 17,
-//     marginTop: 7,
-//     maxWidth: 250,
+//     marginTop: 5,
+//     maxWidth: 280,
 //   },
 
 //   finalScore: {
 //     color: '#FFFFFF',
-//     fontSize: 24,
+//     fontSize: 25,
 //     fontWeight: '900',
 //     marginTop: 12,
 //   },
 
 //   retryButton: {
+//     marginTop: 15,
+//     backgroundColor: '#DC2626',
+//     borderRadius: 12,
+//     paddingHorizontal: 18,
+//     paddingVertical: 10,
 //     flexDirection: 'row',
 //     alignItems: 'center',
-//     justifyContent: 'center',
-//     backgroundColor: '#DC2626',
-//     minHeight: 44,
-//     paddingHorizontal: 20,
-//     borderRadius: 11,
-//     marginTop: 14,
 //   },
 
 //   claimRewardButton: {
-//     flexDirection: 'row',
+//     marginTop: 15,
 //     backgroundColor: '#059669',
-//     minHeight: 46,
-//     paddingHorizontal: 22,
-//     borderRadius: 11,
+//     borderRadius: 12,
+//     paddingHorizontal: 18,
+//     paddingVertical: 10,
+//     flexDirection: 'row',
 //     alignItems: 'center',
-//     justifyContent: 'center',
-//     marginTop: 14,
+//   },
+
+//   claimDisabled: {
+//     opacity: 0.6,
 //   },
 
 //   buttonText: {
 //     color: '#FFFFFF',
-//     fontWeight: '900',
+//     fontWeight: '800',
+//     marginLeft: 7,
 //     fontSize: 12,
-//     marginLeft: 6,
 //   },
 
 //   rewardRow: {
 //     flexDirection: 'row',
-//     marginTop: 14,
-//     gap: 10,
+//     marginTop: 13,
+//     gap: 22,
 //   },
 
 //   reward: {
-//     minWidth: 78,
-//     backgroundColor: '#111827',
-//     borderWidth: 1,
-//     borderColor: '#334155',
-//     borderRadius: 10,
-//     paddingVertical: 8,
-//     paddingHorizontal: 10,
 //     alignItems: 'center',
 //   },
 
@@ -9067,40 +19845,38 @@
 //   },
 
 //   rewardLabel: {
-//     color: '#64748B',
-//     fontSize: 8,
-//     fontWeight: '800',
+//     color: '#94A3B8',
+//     fontSize: 9,
 //     marginTop: 1,
 //   },
 
 //   gameHud: {
-//     marginTop: 9,
+//     marginTop: 10,
 //   },
 
 //   scoreHeader: {
 //     flexDirection: 'row',
-//     alignItems: 'center',
 //     justifyContent: 'space-between',
+//     alignItems: 'center',
 //   },
 
 //   scoreLabel: {
-//     color: '#64748B',
-//     fontSize: 9,
-//     fontWeight: '900',
-//     letterSpacing: 1,
+//     color: '#94A3B8',
+//     fontSize: 10,
+//     fontWeight: '700',
+//     textTransform: 'uppercase',
 //   },
 
 //   scoreValue: {
 //     color: '#FFFFFF',
-//     fontSize: 16,
+//     fontSize: 13,
 //     fontWeight: '900',
 //   },
 
 //   progressBackground: {
-//     height: 6,
-//     width: '100%',
+//     height: 7,
 //     backgroundColor: '#1E293B',
-//     borderRadius: 3,
+//     borderRadius: 5,
 //     overflow: 'hidden',
 //     marginTop: 5,
 //   },
@@ -9108,60 +19884,68 @@
 //   progressFill: {
 //     height: '100%',
 //     backgroundColor: '#38BDF8',
-//     borderRadius: 3,
+//     borderRadius: 5,
+//   },
+
+//   algorithmRow: {
+//     flexDirection: 'row',
+//     justifyContent: 'space-between',
+//     marginTop: 4,
+//   },
+
+//   algorithmLabel: {
+//     color: '#64748B',
+//     fontSize: 8,
+//   },
+
+//   algorithmValue: {
+//     color: '#38BDF8',
+//     fontSize: 8,
+//     fontWeight: '800',
 //   },
 
 //   controls: {
 //     flexDirection: 'row',
 //     alignItems: 'center',
 //     justifyContent: 'space-between',
-//     marginTop: 9,
-//     gap: 8,
+//     marginTop: 10,
 //   },
 
 //   controlButton: {
-//     flex: 1,
-//     minHeight: 54,
-//     backgroundColor: '#1E3A8A',
-//     borderWidth: 1,
-//     borderColor: '#3B82F6',
+//     width: 82,
+//     height: 46,
 //     borderRadius: 13,
+//     backgroundColor: '#172033',
+//     borderWidth: 1,
+//     borderColor: '#334155',
 //     alignItems: 'center',
 //     justifyContent: 'center',
-//     paddingHorizontal: 5,
 //   },
 
 //   controlText: {
-//     color: '#BFDBFE',
+//     color: '#CBD5E1',
 //     fontSize: 8,
-//     fontWeight: '900',
-//     marginTop: 2,
-//     textAlign: 'center',
+//     marginTop: 1,
+//     fontWeight: '700',
 //   },
 
 //   controlHint: {
-//     width: 54,
+//     flex: 1,
 //     alignItems: 'center',
 //     justifyContent: 'center',
 //   },
 
 //   controlHintText: {
-//     color: '#38BDF8',
-//     fontSize: 7,
-//     fontWeight: '900',
-//     marginTop: 3,
-//     textAlign: 'center',
+//     color: '#64748B',
+//     fontSize: 8,
+//     marginTop: 2,
 //   },
 // });
-
-
-
-
-// FloodRunnerGameModal.js
 
 import React, {
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -9171,39 +19955,65 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
+  ScrollView,
   BackHandler,
+  useWindowDimensions,
+  Platform,
 } from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons';
 import * as Haptics from 'expo-haptics';
 import { Accelerometer } from 'expo-sensors';
-import { useTranslation } from 'react-i18next';
 import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } =
-  Dimensions.get('window');
+import { useUser } from '../contexts/UserContext';
 
-/*
-|--------------------------------------------------------------------------
-| LEVEL CONFIGURATION
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   FLOOD RUNNER
 
-const LEVEL_CONFIG = {
+   CAMPAIGN MAPPING
+
+   MissionsScreen contains:
+
+   level-2 -> FloodRunnerGameModal
+   level-5 -> FloodRunnerGameModal
+   level-8 -> FloodRunnerGameModal
+
+   These map to:
+
+   level-2 -> Flood Runner Easy
+   level-5 -> Flood Runner Moderate
+   level-8 -> Flood Runner Advanced
+
+   Flood Runner reports the CAMPAIGN MISSION ID back to
+   UserContext, NOT "floodRunner".
+
+   This is what allows MissionsScreen to unlock the next
+   campaign mission.
+============================================================ */
+
+const CAMPAIGN_TO_GAME_LEVEL = {
+  2: 1,
+  5: 2,
+  8: 3,
+};
+
+const GAME_LEVELS = {
   1: {
     nameKey: 'games.floodRunner.levels.easy',
 
     targetScore: 50,
 
-    debrisSpeed: 155,
-    spawnInterval: 1150,
+    debrisSpeed: 150,
+    spawnInterval: 1200,
     spawnCount: 1,
 
-    playerSpeed: 300,
+    playerSpeed: 285,
 
     reward: {
       xp: 100,
@@ -9220,7 +20030,7 @@ const LEVEL_CONFIG = {
     spawnInterval: 900,
     spawnCount: 2,
 
-    playerSpeed: 340,
+    playerSpeed: 325,
 
     reward: {
       xp: 150,
@@ -9234,10 +20044,10 @@ const LEVEL_CONFIG = {
     targetScore: 100,
 
     debrisSpeed: 255,
-    spawnInterval: 750,
+    spawnInterval: 720,
     spawnCount: 3,
 
-    playerSpeed: 380,
+    playerSpeed: 370,
 
     reward: {
       xp: 200,
@@ -9246,31 +20056,218 @@ const LEVEL_CONFIG = {
   },
 };
 
-/*
-|--------------------------------------------------------------------------
-| GAME CONSTANTS
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   GAME CONSTANTS
+============================================================ */
 
 const PLAYER_SIZE = 36;
 const DEBRIS_SIZE = 28;
 
-const SAFE_ZONE_HEIGHT = 56;
-const FLOOD_HEIGHT = 64;
-
+const FLOOD_HEIGHT = 62;
 const PLAYER_BOTTOM_OFFSET = 14;
 
 const COLLISION_PADDING = 5;
 
 const TOUCH_MOVE_MULTIPLIER = 0.22;
-
 const SENSOR_DEAD_ZONE = 0.05;
 
-/*
-|--------------------------------------------------------------------------
-| COMPONENT
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   ADAPTIVE DIFFICULTY
+
+   riskScore:
+
+   0   = player coping well
+   50  = balanced
+   100 = player struggling
+
+   When player performs well:
+   risk decreases
+   difficulty increases
+
+   When player struggles:
+   risk increases
+   difficulty decreases
+============================================================ */
+
+const MIN_DIFFICULTY_FACTOR = 0.76;
+const MAX_DIFFICULTY_FACTOR = 1.18;
+
+const NEAR_MISS_DISTANCE = 34;
+
+const RISK_INCREASE_COLLISION = 28;
+const RISK_INCREASE_NEAR_MISS = 5;
+
+const RISK_DECREASE_SUCCESS = 1.5;
+const RISK_DECREASE_CORRECT_RESCUE = 12;
+
+const RISK_UPDATE_INTERVAL = 1000;
+
+/* ============================================================
+   RESCUE
+============================================================ */
+
+const MAX_RESCUE_LIVES = 1;
+const RESCUE_POINTS = 15;
+
+/* ============================================================
+   RESCUE QUESTIONS
+============================================================ */
+
+const RESCUE_QUESTIONS = [
+  {
+    id: 'q1',
+    questionKey:
+      'games.floodRunner.questions.q1.question',
+
+    options: [
+      {
+        id: 'a',
+        textKey:
+          'games.floodRunner.questions.q1.a',
+      },
+      {
+        id: 'b',
+        textKey:
+          'games.floodRunner.questions.q1.b',
+      },
+      {
+        id: 'c',
+        textKey:
+          'games.floodRunner.questions.q1.c',
+      },
+    ],
+
+    correct: 'b',
+  },
+
+  {
+    id: 'q2',
+    questionKey:
+      'games.floodRunner.questions.q2.question',
+
+    options: [
+      {
+        id: 'a',
+        textKey:
+          'games.floodRunner.questions.q2.a',
+      },
+      {
+        id: 'b',
+        textKey:
+          'games.floodRunner.questions.q2.b',
+      },
+      {
+        id: 'c',
+        textKey:
+          'games.floodRunner.questions.q2.c',
+      },
+    ],
+
+    correct: 'a',
+  },
+
+  {
+    id: 'q3',
+    questionKey:
+      'games.floodRunner.questions.q3.question',
+
+    options: [
+      {
+        id: 'a',
+        textKey:
+          'games.floodRunner.questions.q3.a',
+      },
+      {
+        id: 'b',
+        textKey:
+          'games.floodRunner.questions.q3.b',
+      },
+      {
+        id: 'c',
+        textKey:
+          'games.floodRunner.questions.q3.c',
+      },
+    ],
+
+    correct: 'c',
+  },
+
+  {
+    id: 'q4',
+    questionKey:
+      'games.floodRunner.questions.q4.question',
+
+    options: [
+      {
+        id: 'a',
+        textKey:
+          'games.floodRunner.questions.q4.a',
+      },
+      {
+        id: 'b',
+        textKey:
+          'games.floodRunner.questions.q4.b',
+      },
+      {
+        id: 'c',
+        textKey:
+          'games.floodRunner.questions.q4.c',
+      },
+    ],
+
+    correct: 'a',
+  },
+
+  {
+    id: 'q5',
+    questionKey:
+      'games.floodRunner.questions.q5.question',
+
+    options: [
+      {
+        id: 'a',
+        textKey:
+          'games.floodRunner.questions.q5.a',
+      },
+      {
+        id: 'b',
+        textKey:
+          'games.floodRunner.questions.q5.b',
+      },
+      {
+        id: 'c',
+        textKey:
+          'games.floodRunner.questions.q5.c',
+      },
+    ],
+
+    correct: 'b',
+  },
+];
+
+/* ============================================================
+   HELPERS
+============================================================ */
+
+function clamp(value, min, max) {
+  return Math.max(
+    min,
+    Math.min(max, value)
+  );
+}
+
+function getRandomQuestion() {
+  const index = Math.floor(
+    Math.random() *
+      RESCUE_QUESTIONS.length
+  );
+
+  return RESCUE_QUESTIONS[index];
+}
+
+/* ============================================================
+   COMPONENT
+============================================================ */
 
 export default function FloodRunnerGameModal() {
   const { t } = useTranslation();
@@ -9278,37 +20275,115 @@ export default function FloodRunnerGameModal() {
   const navigation = useNavigation();
   const route = useRoute();
 
+  const insets = useSafeAreaInsets();
+
+  const {
+    width: windowWidth,
+    height: windowHeight,
+  } = useWindowDimensions();
+
   /*
-  |--------------------------------------------------------------------------
-  | LEVEL
-  |--------------------------------------------------------------------------
-  */
+   * IMPORTANT:
+   *
+   * This is the SAME UserContext completion mechanism
+   * already used by the Flood Runner code you supplied.
+   *
+   * UserContext remains the source of truth.
+   */
+  const {
+    user,
+    completeMission,
+  } = useUser();
 
-  const routeLevel = route?.params?.level ?? 1;
+  /* ==========================================================
+     CAMPAIGN LEVEL
+  ========================================================== */
 
-  const selectedLevel = Math.min(
-    3,
-    Math.max(
-      1,
-      Number(routeLevel) || 1
-    )
+  const campaignLevel = Number(
+    route?.params?.level ?? 2
   );
 
-  const config = LEVEL_CONFIG[selectedLevel];
+  /*
+   * If MissionsScreen opened Flood Runner:
+   *
+   * 2 -> internal game level 1
+   * 5 -> internal game level 2
+   * 8 -> internal game level 3
+   *
+   * We also support directly opening Flood Runner with
+   * level 1/2/3 for testing.
+   */
+  const gameLevel = useMemo(() => {
+    if (
+      CAMPAIGN_TO_GAME_LEVEL[
+        campaignLevel
+      ]
+    ) {
+      return CAMPAIGN_TO_GAME_LEVEL[
+        campaignLevel
+      ];
+    }
+
+    return clamp(
+      Number(campaignLevel) || 1,
+      1,
+      3
+    );
+  }, [campaignLevel]);
+
+  const config =
+    GAME_LEVELS[gameLevel];
 
   /*
-  |--------------------------------------------------------------------------
-  | GAME DIMENSIONS
-  |--------------------------------------------------------------------------
-  */
+   * THIS is the ID MissionsScreen actually checks.
+   *
+   * For example:
+   *
+   * mission = "level-2"
+   *
+   * MissionsScreen checks:
+   *
+   * completedMissions["level-2"]
+   */
+  const campaignMissionId =
+    route?.params?.mission ||
+    `level-${campaignLevel}`;
+
+  /*
+   * Rewards passed by MissionsScreen are authoritative
+   * for the campaign mission.
+   *
+   * Example:
+   *
+   * Mission 2:
+   * xpreward = 180
+   * coinreward = 40
+   */
+  const missionXpReward =
+    Number(route?.params?.xpreward) ||
+    config.reward.xp;
+
+  const missionCoinReward =
+    Number(route?.params?.coinreward) ||
+    config.reward.coins;
+
+  /* ==========================================================
+     RESPONSIVE GAME DIMENSIONS
+  ========================================================== */
 
   const GAME_WIDTH = Math.min(
-    SCREEN_WIDTH - 32,
-    390
+    Math.max(windowWidth - 28, 280),
+    420
   );
 
-  const GAME_HEIGHT = Math.min(
-    SCREEN_HEIGHT * 0.52,
+  /*
+   * Keep the game area comfortably inside the visible
+   * window. The entire screen itself is scrollable, so
+   * very short devices can still reach the controls.
+   */
+  const GAME_HEIGHT = clamp(
+    windowHeight * 0.46,
+    300,
     430
   );
 
@@ -9316,49 +20391,102 @@ export default function FloodRunnerGameModal() {
     GAME_WIDTH / 2 -
     PLAYER_SIZE / 2;
 
-  /*
-  |--------------------------------------------------------------------------
-  | STATE
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     STATE
+  ========================================================== */
 
-  const [gameStarted, setGameStarted] =
-    useState(false);
+  const [
+    gameStarted,
+    setGameStarted,
+  ] = useState(false);
 
-  const [countdown, setCountdown] =
-    useState(null);
+  const [
+    countdown,
+    setCountdown,
+  ] = useState(null);
 
-  const [playerPositionX, setPlayerPositionX] =
-    useState(INITIAL_PLAYER_X);
+  const [
+    playerPositionX,
+    setPlayerPositionX,
+  ] = useState(INITIAL_PLAYER_X);
 
-  const [debris, setDebris] =
-    useState([]);
+  const [
+    debris,
+    setDebris,
+  ] = useState([]);
 
-  const [score, setScore] =
-    useState(0);
+  const [
+    score,
+    setScore,
+  ] = useState(0);
 
-  const [gameOver, setGameOver] =
-    useState(false);
+  const [
+    gameOver,
+    setGameOver,
+  ] = useState(false);
 
-  const [hasWon, setHasWon] =
-    useState(false);
+  const [
+    hasWon,
+    setHasWon,
+  ] = useState(false);
 
-  const [sensorAvailable, setSensorAvailable] =
-    useState(false);
+  const [
+    sensorAvailable,
+    setSensorAvailable,
+  ] = useState(false);
 
-  /*
-  |--------------------------------------------------------------------------
-  | REFS
-  |--------------------------------------------------------------------------
-  */
+  const [
+    rescueVisible,
+    setRescueVisible,
+  ] = useState(false);
 
-  const playerXRef = useRef(
-    INITIAL_PLAYER_X
-  );
+  const [
+    rescueQuestion,
+    setRescueQuestion,
+  ] = useState(null);
 
-  const debrisRef = useRef([]);
+  const [
+    rescueLives,
+    setRescueLives,
+  ] = useState(MAX_RESCUE_LIVES);
 
-  const scoreRef = useRef(0);
+  const [
+    selectedAnswer,
+    setSelectedAnswer,
+  ] = useState(null);
+
+  const [
+    answerFeedback,
+    setAnswerFeedback,
+  ] = useState(null);
+
+  const [
+    riskScore,
+    setRiskScore,
+  ] = useState(50);
+
+  const [
+    difficultyFactor,
+    setDifficultyFactor,
+  ] = useState(1);
+
+  const [
+    rewardClaimed,
+    setRewardClaimed,
+  ] = useState(false);
+
+  /* ==========================================================
+     REFS
+  ========================================================== */
+
+  const playerXRef =
+    useRef(INITIAL_PLAYER_X);
+
+  const debrisRef =
+    useRef([]);
+
+  const scoreRef =
+    useRef(0);
 
   const gameRunningRef =
     useRef(false);
@@ -9367,6 +20495,9 @@ export default function FloodRunnerGameModal() {
     useRef(false);
 
   const hasWonRef =
+    useRef(false);
+
+  const rewardClaimedRef =
     useRef(false);
 
   const movementRef =
@@ -9388,97 +20519,170 @@ export default function FloodRunnerGameModal() {
     useRef(null);
 
   /*
-   * Prevents an old animation frame from
-   * accidentally continuing after restart.
+   * Every game/restart/rescue gets a unique session.
    */
   const gameSessionRef =
     useRef(0);
 
   /*
-  |--------------------------------------------------------------------------
-  | HAPTICS
-  |--------------------------------------------------------------------------
-  */
+   * Prevents completion while the reward action is
+   * being processed.
+   */
+  const completionInProgressRef =
+    useRef(false);
 
-  const safeImpact = useCallback(
-    async (style) => {
+  /*
+   * Adaptive difficulty state.
+   */
+  const adaptiveRef =
+    useRef({
+      riskScore: 50,
+      nearMisses: 0,
+      successfulDodges: 0,
+      collisions: 0,
+      correctRescues: 0,
+      lastRiskUpdate: 0,
+    });
+
+  /* ==========================================================
+     HAPTICS
+  ========================================================== */
+
+  const safeImpact =
+    useCallback(async (style) => {
       try {
         await Haptics.impactAsync(style);
-      } catch (error) {
-        // Haptics may be unavailable on some devices.
-      }
-    },
-    []
-  );
-
-  const safeNotification =
-    useCallback(async (type) => {
-      try {
-        await Haptics.notificationAsync(type);
       } catch (error) {
         // Haptics may be unavailable.
       }
     }, []);
 
-  /*
-  |--------------------------------------------------------------------------
-  | CLAMP PLAYER
-  |--------------------------------------------------------------------------
-  */
+  const safeNotification =
+    useCallback(async (type) => {
+      try {
+        await Haptics.notificationAsync(
+          type
+        );
+      } catch (error) {
+        // Haptics may be unavailable.
+      }
+    }, []);
 
-  const clampPlayerX = useCallback(
-    (x) => {
-      return Math.max(
+  /* ==========================================================
+     ADAPTIVE DIFFICULTY
+  ========================================================== */
+
+  const calculateAdaptiveDifficulty =
+    useCallback((timestamp) => {
+      const adaptive =
+        adaptiveRef.current;
+
+      if (
+        timestamp -
+          adaptive.lastRiskUpdate <
+        RISK_UPDATE_INTERVAL
+      ) {
+        return;
+      }
+
+      adaptive.lastRiskUpdate =
+        timestamp;
+
+      /*
+       * Successful play makes the game gradually harder.
+       */
+      adaptive.riskScore -=
+        adaptive.successfulDodges *
+        RISK_DECREASE_SUCCESS;
+
+      adaptive.successfulDodges = 0;
+
+      /*
+       * Correct rescue answers provide evidence that
+       * the player can handle the situation, but we
+       * still give a small temporary adjustment.
+       */
+      adaptive.riskScore +=
+        adaptive.correctRescues * 2;
+
+      adaptive.correctRescues = 0;
+
+      adaptive.riskScore = clamp(
+        adaptive.riskScore,
         0,
-        Math.min(
-          GAME_WIDTH - PLAYER_SIZE,
-          x
+        100
+      );
+
+      const nextFactor =
+        MAX_DIFFICULTY_FACTOR -
+        (adaptive.riskScore / 100) *
+          (
+            MAX_DIFFICULTY_FACTOR -
+            MIN_DIFFICULTY_FACTOR
+          );
+
+      const safeFactor = clamp(
+        nextFactor,
+        MIN_DIFFICULTY_FACTOR,
+        MAX_DIFFICULTY_FACTOR
+      );
+
+      setRiskScore(
+        Math.round(
+          adaptive.riskScore
         )
       );
-    },
-    [GAME_WIDTH]
-  );
 
-  /*
-  |--------------------------------------------------------------------------
-  | CREATE DEBRIS
-  |--------------------------------------------------------------------------
-  */
+      setDifficultyFactor(
+        safeFactor
+      );
+    }, []);
 
-  const createDebrisObject =
+  /* ==========================================================
+     PLAYER CLAMP
+  ========================================================== */
+
+  const clampPlayerX =
     useCallback(
-      (y = -DEBRIS_SIZE) => {
-        return {
-          id:
-            `${Date.now()}-${Math.random()}`,
-
-          x:
-            Math.random() *
-            Math.max(
-              1,
-              GAME_WIDTH - DEBRIS_SIZE
-            ),
-
-          y,
-        };
+      (x) => {
+        return Math.max(
+          0,
+          Math.min(
+            GAME_WIDTH - PLAYER_SIZE,
+            x
+          )
+        );
       },
       [GAME_WIDTH]
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | CREATE INITIAL DEBRIS
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     DEBRIS
+  ========================================================== */
+
+  const createDebrisObject =
+    useCallback(
+      (y = -DEBRIS_SIZE) => ({
+        id:
+          `${Date.now()}-${Math.random()}`,
+
+        x:
+          Math.random() *
+          Math.max(
+            1,
+            GAME_WIDTH - DEBRIS_SIZE
+          ),
+
+        y,
+
+        nearMissed: false,
+      }),
+      [GAME_WIDTH]
+    );
 
   const createInitialDebris =
     useCallback(() => {
       const objects = [];
-
-      /*
-       * Start debris at different heights so
-       * the player has time to react.
-       */
 
       for (
         let index = 0;
@@ -9499,164 +20703,161 @@ export default function FloodRunnerGameModal() {
           y:
             -DEBRIS_SIZE -
             index * 120 -
-            Math.random() * 100,
+            Math.random() * 90,
+
+          nearMissed: false,
         });
       }
 
       return objects;
     }, [
-      config.spawnCount,
       GAME_WIDTH,
+      config.spawnCount,
     ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | STOP SENSOR
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     SENSOR
+  ========================================================== */
 
-  const stopSensor = useCallback(() => {
-    if (
-      sensorSubscriptionRef.current
-    ) {
-      try {
-        sensorSubscriptionRef.current.remove();
-      } catch (error) {
-        // Ignore cleanup errors.
+  const stopSensor =
+    useCallback(() => {
+      if (
+        sensorSubscriptionRef.current
+      ) {
+        try {
+          sensorSubscriptionRef.current.remove();
+        } catch (error) {
+          // Ignore sensor cleanup errors.
+        }
+
+        sensorSubscriptionRef.current =
+          null;
       }
 
-      sensorSubscriptionRef.current =
-        null;
-    }
+      movementRef.current = 0;
+    }, []);
 
-    movementRef.current = 0;
-  }, []);
+  /* ==========================================================
+     GAME LOOP STOP
+  ========================================================== */
 
-  /*
-  |--------------------------------------------------------------------------
-  | STOP GAME LOOP
-  |--------------------------------------------------------------------------
-  */
+  const stopGameLoop =
+    useCallback(() => {
+      gameRunningRef.current = false;
 
-  const stopGameLoop = useCallback(() => {
-    gameRunningRef.current =
-      false;
+      gameSessionRef.current += 1;
 
-    gameSessionRef.current += 1;
+      if (
+        animationFrameRef.current !==
+        null
+      ) {
+        cancelAnimationFrame(
+          animationFrameRef.current
+        );
 
-    if (
-      animationFrameRef.current !==
-      null
-    ) {
-      cancelAnimationFrame(
-        animationFrameRef.current
-      );
+        animationFrameRef.current =
+          null;
+      }
 
-      animationFrameRef.current =
-        null;
-    }
+      lastFrameTimeRef.current = null;
+    }, []);
 
-    lastFrameTimeRef.current =
-      null;
-  }, []);
+  /* ==========================================================
+     RESET
+  ========================================================== */
 
-  /*
-  |--------------------------------------------------------------------------
-  | RESET GAME
-  |--------------------------------------------------------------------------
-  */
-
-  const resetGame = useCallback(() => {
-    /*
-     * Stop countdown.
-     */
-
-    if (
-      countdownTimerRef.current
-    ) {
-      clearInterval(
+  const resetGame =
+    useCallback(() => {
+      if (
         countdownTimerRef.current
+      ) {
+        clearInterval(
+          countdownTimerRef.current
+        );
+
+        countdownTimerRef.current =
+          null;
+      }
+
+      stopGameLoop();
+      stopSensor();
+
+      playerXRef.current =
+        INITIAL_PLAYER_X;
+
+      debrisRef.current = [];
+
+      scoreRef.current = 0;
+
+      gameRunningRef.current = false;
+      gameOverRef.current = false;
+      hasWonRef.current = false;
+
+      rewardClaimedRef.current =
+        false;
+
+      completionInProgressRef.current =
+        false;
+
+      movementRef.current = 0;
+
+      adaptiveRef.current = {
+        riskScore: 50,
+        nearMisses: 0,
+        successfulDodges: 0,
+        collisions: 0,
+        correctRescues: 0,
+        lastRiskUpdate: 0,
+      };
+
+      setGameStarted(false);
+      setCountdown(null);
+
+      setPlayerPositionX(
+        INITIAL_PLAYER_X
       );
 
-      countdownTimerRef.current =
-        null;
-    }
+      setDebris([]);
+      setScore(0);
 
-    /*
-     * Stop gameplay.
-     */
+      setGameOver(false);
+      setHasWon(false);
 
-    stopGameLoop();
-    stopSensor();
+      setRescueVisible(false);
+      setRescueQuestion(null);
 
-    /*
-     * Reset refs.
-     */
+      setSelectedAnswer(null);
+      setAnswerFeedback(null);
 
-    playerXRef.current =
-      INITIAL_PLAYER_X;
+      setRescueLives(
+        MAX_RESCUE_LIVES
+      );
 
-    debrisRef.current = [];
+      setRiskScore(50);
+      setDifficultyFactor(1);
 
-    scoreRef.current = 0;
+      setRewardClaimed(false);
+    }, [
+      INITIAL_PLAYER_X,
+      stopGameLoop,
+      stopSensor,
+    ]);
 
-    gameRunningRef.current =
-      false;
-
-    gameOverRef.current =
-      false;
-
-    hasWonRef.current =
-      false;
-
-    movementRef.current = 0;
-
-    lastFrameTimeRef.current =
-      null;
-
-    lastSpawnTimeRef.current =
-      0;
-
-    /*
-     * Reset state.
-     */
-
-    setGameStarted(false);
-    setCountdown(null);
-    setPlayerPositionX(
-      INITIAL_PLAYER_X
-    );
-    setDebris([]);
-    setScore(0);
-    setGameOver(false);
-    setHasWon(false);
-  }, [
-    INITIAL_PLAYER_X,
-    stopGameLoop,
-    stopSensor,
-  ]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | FINISH GAME
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     GAME OVER
+  ========================================================== */
 
   const finishGame =
     useCallback(() => {
       if (
-        !gameRunningRef.current ||
         gameOverRef.current ||
         hasWonRef.current
       ) {
         return;
       }
 
-      gameRunningRef.current =
-        false;
-
-      gameOverRef.current =
-        true;
+      gameRunningRef.current = false;
+      gameOverRef.current = true;
 
       stopSensor();
 
@@ -9672,25 +20873,21 @@ export default function FloodRunnerGameModal() {
           null;
       }
 
-      lastFrameTimeRef.current =
-        null;
+      lastFrameTimeRef.current = null;
 
       setGameOver(true);
 
       safeNotification(
-        Haptics.NotificationFeedbackType
-          .Error
+        Haptics.NotificationFeedbackType.Error
       );
     }, [
       safeNotification,
       stopSensor,
     ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | WIN GAME
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     WIN
+  ========================================================== */
 
   const winGame =
     useCallback(() => {
@@ -9701,11 +20898,8 @@ export default function FloodRunnerGameModal() {
         return;
       }
 
-      gameRunningRef.current =
-        false;
-
-      hasWonRef.current =
-        true;
+      gameRunningRef.current = false;
+      hasWonRef.current = true;
 
       stopSensor();
 
@@ -9730,12 +20924,10 @@ export default function FloodRunnerGameModal() {
           null;
       }
 
-      lastFrameTimeRef.current =
-        null;
+      lastFrameTimeRef.current = null;
 
       safeNotification(
-        Haptics.NotificationFeedbackType
-          .Success
+        Haptics.NotificationFeedbackType.Success
       );
     }, [
       config.targetScore,
@@ -9743,11 +20935,9 @@ export default function FloodRunnerGameModal() {
       stopSensor,
     ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | COLLISION
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     COLLISION
+  ========================================================== */
 
   const checkCollision =
     useCallback(
@@ -9808,20 +20998,85 @@ export default function FloodRunnerGameModal() {
       [GAME_HEIGHT]
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | GAME LOOP
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     RESCUE
+  ========================================================== */
+
+  const triggerRescueQuestion =
+    useCallback(() => {
+      if (rescueLives <= 0) {
+        finishGame();
+        return;
+      }
+
+      gameRunningRef.current =
+        false;
+
+      stopSensor();
+
+      /*
+       * Kill the current animation session.
+       */
+      gameSessionRef.current += 1;
+
+      if (
+        animationFrameRef.current !==
+        null
+      ) {
+        cancelAnimationFrame(
+          animationFrameRef.current
+        );
+
+        animationFrameRef.current =
+          null;
+      }
+
+      lastFrameTimeRef.current = null;
+
+      adaptiveRef.current.collisions +=
+        1;
+
+      adaptiveRef.current.riskScore +=
+        RISK_INCREASE_COLLISION;
+
+      adaptiveRef.current.riskScore =
+        clamp(
+          adaptiveRef.current.riskScore,
+          0,
+          100
+        );
+
+      setRiskScore(
+        Math.round(
+          adaptiveRef.current.riskScore
+        )
+      );
+
+      const question =
+        getRandomQuestion();
+
+      setRescueQuestion(question);
+      setSelectedAnswer(null);
+      setAnswerFeedback(null);
+      setRescueVisible(true);
+
+      safeNotification(
+        Haptics.NotificationFeedbackType.Warning
+      );
+    }, [
+      finishGame,
+      rescueLives,
+      safeNotification,
+      stopSensor,
+    ]);
+
+  /* ==========================================================
+     GAME LOOP
+  ========================================================== */
 
   const runGameLoop =
     useCallback(
       (timestamp, sessionId) => {
-        /*
-         * Ignore an animation frame belonging
-         * to an old game session.
-         */
-
         if (
           sessionId !==
           gameSessionRef.current
@@ -9832,14 +21087,11 @@ export default function FloodRunnerGameModal() {
         if (
           !gameRunningRef.current ||
           gameOverRef.current ||
-          hasWonRef.current
+          hasWonRef.current ||
+          rescueVisible
         ) {
           return;
         }
-
-        /*
-         * First frame.
-         */
 
         if (
           lastFrameTimeRef.current ===
@@ -9849,25 +21101,40 @@ export default function FloodRunnerGameModal() {
             timestamp;
         }
 
-        /*
-         * Cap delta so the game doesn't
-         * jump after a frame-rate drop.
-         */
-
-        const delta = Math.min(
-          timestamp -
-            lastFrameTimeRef.current,
-          50
-        ) / 1000;
+        const delta =
+          Math.min(
+            timestamp -
+              lastFrameTimeRef.current,
+            50
+          ) / 1000;
 
         lastFrameTimeRef.current =
           timestamp;
 
-        /*
-         |--------------------------------------------------------------------------
-         | PLAYER MOVEMENT
-         |--------------------------------------------------------------------------
-         */
+        calculateAdaptiveDifficulty(
+          timestamp
+        );
+
+        const adaptive =
+          adaptiveRef.current;
+
+        const factor = clamp(
+          MAX_DIFFICULTY_FACTOR -
+            (
+              adaptive.riskScore /
+              100
+            ) *
+            (
+              MAX_DIFFICULTY_FACTOR -
+              MIN_DIFFICULTY_FACTOR
+            ),
+          MIN_DIFFICULTY_FACTOR,
+          MAX_DIFFICULTY_FACTOR
+        );
+
+        /* ------------------------------------------------------
+           PLAYER
+        ------------------------------------------------------ */
 
         let nextPlayerX =
           playerXRef.current;
@@ -9897,11 +21164,13 @@ export default function FloodRunnerGameModal() {
           nextPlayerX
         );
 
-        /*
-         |--------------------------------------------------------------------------
-         | MOVE DEBRIS
-         |--------------------------------------------------------------------------
-         */
+        /* ------------------------------------------------------
+           DEBRIS MOVEMENT
+        ------------------------------------------------------ */
+
+        const effectiveDebrisSpeed =
+          config.debrisSpeed *
+          factor;
 
         const movedDebris =
           debrisRef.current.map(
@@ -9910,55 +21179,121 @@ export default function FloodRunnerGameModal() {
 
               y:
                 item.y +
-                config.debrisSpeed *
-                  delta,
+                effectiveDebrisSpeed *
+                delta,
             })
           );
 
-        /*
-         |--------------------------------------------------------------------------
-         | COLLISION
-         |--------------------------------------------------------------------------
-         */
+        /* ------------------------------------------------------
+           COLLISION / NEAR MISS
+        ------------------------------------------------------ */
 
-        const collision =
-          movedDebris.some(
-            (item) =>
-              checkCollision(
-                nextPlayerX,
-                item
-              )
+        let collision = false;
+
+        const checkedDebris =
+          movedDebris.map(
+            (item) => {
+              if (
+                checkCollision(
+                  nextPlayerX,
+                  item
+                )
+              ) {
+                collision = true;
+                return item;
+              }
+
+              /*
+               * Near miss gives the adaptive algorithm
+               * evidence that the player is operating
+               * close to danger.
+               */
+              if (
+                !item.nearMissed &&
+                item.y >
+                  GAME_HEIGHT -
+                  PLAYER_SIZE -
+                  PLAYER_BOTTOM_OFFSET -
+                  FLOOD_HEIGHT -
+                  45 &&
+                item.y <
+                  GAME_HEIGHT -
+                  PLAYER_SIZE -
+                  PLAYER_BOTTOM_OFFSET -
+                  FLOOD_HEIGHT +
+                  55
+              ) {
+                const horizontalGap =
+                  Math.abs(
+                    (
+                      item.x +
+                      DEBRIS_SIZE / 2
+                    ) -
+                    (
+                      nextPlayerX +
+                      PLAYER_SIZE / 2
+                    )
+                  );
+
+                if (
+                  horizontalGap <=
+                  NEAR_MISS_DISTANCE
+                ) {
+                  adaptive.nearMisses +=
+                    1;
+
+                  adaptive.riskScore +=
+                    RISK_INCREASE_NEAR_MISS;
+
+                  adaptive.riskScore =
+                    clamp(
+                      adaptive.riskScore,
+                      0,
+                      100
+                    );
+
+                  return {
+                    ...item,
+                    nearMissed: true,
+                  };
+                }
+              }
+
+              return item;
+            }
           );
 
         if (collision) {
           debrisRef.current =
-            movedDebris;
+            checkedDebris;
 
           setDebris(
-            movedDebris
+            checkedDebris
           );
 
-          finishGame();
+          triggerRescueQuestion();
 
           return;
         }
 
-        /*
-         |--------------------------------------------------------------------------
-         | SCORE
-         |--------------------------------------------------------------------------
-         */
+        /* ------------------------------------------------------
+           PASSED OBSTACLES
+        ------------------------------------------------------ */
 
         let passedCount = 0;
 
         const survivingDebris =
-          movedDebris.filter(
+          checkedDebris.filter(
             (item) => {
               if (
                 item.y >
                 GAME_HEIGHT
               ) {
                 passedCount += 1;
+
+                adaptive.successfulDodges +=
+                  1;
+
                 return false;
               }
 
@@ -9966,9 +21301,11 @@ export default function FloodRunnerGameModal() {
             }
           );
 
-        if (
-          passedCount > 0
-        ) {
+        /* ------------------------------------------------------
+           SCORE
+        ------------------------------------------------------ */
+
+        if (passedCount > 0) {
           const nextScore =
             Math.min(
               config.targetScore,
@@ -9980,11 +21317,6 @@ export default function FloodRunnerGameModal() {
             nextScore;
 
           setScore(nextScore);
-
-          /*
-           * Win immediately once the
-           * target has been reached.
-           */
 
           if (
             nextScore >=
@@ -10003,25 +21335,21 @@ export default function FloodRunnerGameModal() {
           }
         }
 
-        /*
-         |--------------------------------------------------------------------------
-         | SPAWN
-         |--------------------------------------------------------------------------
-         */
+        /* ------------------------------------------------------
+           ADAPTIVE SPAWN
+        ------------------------------------------------------ */
+
+        const effectiveSpawnInterval =
+          config.spawnInterval /
+          factor;
 
         if (
           timestamp -
             lastSpawnTimeRef.current >=
-          config.spawnInterval
+          effectiveSpawnInterval
         ) {
           lastSpawnTimeRef.current =
             timestamp;
-
-          /*
-           * Only spawn if we haven't
-           * reached the configured number
-           * of active obstacles.
-           */
 
           if (
             survivingDebris.length <
@@ -10034,9 +21362,8 @@ export default function FloodRunnerGameModal() {
         }
 
         /*
-         * Safety limit.
+         * Prevent runaway obstacle count.
          */
-
         while (
           survivingDebris.length >
           config.spawnCount
@@ -10051,12 +21378,6 @@ export default function FloodRunnerGameModal() {
           survivingDebris
         );
 
-        /*
-         |--------------------------------------------------------------------------
-         | NEXT FRAME
-         |--------------------------------------------------------------------------
-         */
-
         animationFrameRef.current =
           requestAnimationFrame(
             (nextTimestamp) =>
@@ -10067,6 +21388,8 @@ export default function FloodRunnerGameModal() {
           );
       },
       [
+        calculateAdaptiveDifficulty,
+        checkCollision,
         clampPlayerX,
         config.debrisSpeed,
         config.playerSpeed,
@@ -10074,34 +21397,202 @@ export default function FloodRunnerGameModal() {
         config.spawnInterval,
         config.targetScore,
         createDebrisObject,
-        finishGame,
         GAME_HEIGHT,
-        checkCollision,
+        rescueVisible,
+        triggerRescueQuestion,
         winGame,
       ]
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | BEGIN GAME
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     RESCUE ANSWER
+  ========================================================== */
+
+  const handleRescueAnswer =
+    useCallback(
+      (answerId) => {
+        if (
+          !rescueQuestion ||
+          selectedAnswer
+        ) {
+          return;
+        }
+
+        setSelectedAnswer(
+          answerId
+        );
+
+        const correct =
+          answerId ===
+          rescueQuestion.correct;
+
+        if (!correct) {
+          setAnswerFeedback(
+            'wrong'
+          );
+
+          safeNotification(
+            Haptics.NotificationFeedbackType.Error
+          );
+
+          setTimeout(() => {
+            setRescueVisible(false);
+            setRescueQuestion(null);
+
+            finishGame();
+          }, 850);
+
+          return;
+        }
+
+        setAnswerFeedback(
+          'correct'
+        );
+
+        safeNotification(
+          Haptics.NotificationFeedbackType.Success
+        );
+
+        adaptiveRef.current.correctRescues +=
+          1;
+
+        adaptiveRef.current.riskScore -=
+          RISK_DECREASE_CORRECT_RESCUE;
+
+        adaptiveRef.current.riskScore =
+          clamp(
+            adaptiveRef.current.riskScore,
+            0,
+            100
+          );
+
+        const nextScore =
+          Math.min(
+            config.targetScore,
+            scoreRef.current +
+              RESCUE_POINTS
+          );
+
+        scoreRef.current =
+          nextScore;
+
+        setScore(nextScore);
+
+        setRiskScore(
+          Math.round(
+            adaptiveRef.current.riskScore
+          )
+        );
+
+        const nextFactor =
+          MAX_DIFFICULTY_FACTOR -
+          (
+            adaptiveRef.current
+              .riskScore / 100
+          ) *
+          (
+            MAX_DIFFICULTY_FACTOR -
+            MIN_DIFFICULTY_FACTOR
+          );
+
+        setDifficultyFactor(
+          clamp(
+            nextFactor,
+            MIN_DIFFICULTY_FACTOR,
+            MAX_DIFFICULTY_FACTOR
+          )
+        );
+
+        setRescueLives(
+          (value) =>
+            Math.max(
+              0,
+              value - 1
+            )
+        );
+
+        /*
+         * Clear nearby obstacles.
+         */
+        debrisRef.current =
+          debrisRef.current.filter(
+            (item) =>
+              item.y <
+              GAME_HEIGHT * 0.35
+          );
+
+        setDebris(
+          debrisRef.current
+        );
+
+        /*
+         * Kill old session.
+         */
+        const newSession =
+          gameSessionRef.current +
+          1;
+
+        gameSessionRef.current =
+          newSession;
+
+        setTimeout(() => {
+          setRescueVisible(false);
+          setRescueQuestion(null);
+          setSelectedAnswer(null);
+          setAnswerFeedback(null);
+
+          if (
+            nextScore >=
+            config.targetScore
+          ) {
+            winGame();
+            return;
+          }
+
+          gameOverRef.current = false;
+          hasWonRef.current = false;
+          gameRunningRef.current = true;
+
+          lastFrameTimeRef.current =
+            null;
+
+          lastSpawnTimeRef.current =
+            performance.now();
+
+          animationFrameRef.current =
+            requestAnimationFrame(
+              (timestamp) =>
+                runGameLoop(
+                  timestamp,
+                  newSession
+                )
+            );
+        }, 700);
+      },
+      [
+        config.targetScore,
+        finishGame,
+        GAME_HEIGHT,
+        rescueQuestion,
+        runGameLoop,
+        safeNotification,
+        selectedAnswer,
+        winGame,
+      ]
+    );
+
+  /* ==========================================================
+     BEGIN GAME
+  ========================================================== */
 
   const beginGame =
     useCallback(() => {
-      /*
-       * Create a new session.
-       */
-
       const sessionId =
-        gameSessionRef.current + 1;
+        gameSessionRef.current +
+        1;
 
       gameSessionRef.current =
         sessionId;
-
-      /*
-       * Stop any previous frame.
-       */
 
       if (
         animationFrameRef.current !==
@@ -10115,16 +21606,8 @@ export default function FloodRunnerGameModal() {
           null;
       }
 
-      /*
-       * Initial player.
-       */
-
       playerXRef.current =
         INITIAL_PLAYER_X;
-
-      /*
-       * Initial obstacles.
-       */
 
       const initialDebris =
         createInitialDebris();
@@ -10132,19 +21615,16 @@ export default function FloodRunnerGameModal() {
       debrisRef.current =
         initialDebris;
 
-      /*
-       * Reset game refs.
-       */
-
       scoreRef.current = 0;
 
-      gameRunningRef.current =
-        true;
+      gameRunningRef.current = true;
+      gameOverRef.current = false;
+      hasWonRef.current = false;
 
-      gameOverRef.current =
+      rewardClaimedRef.current =
         false;
 
-      hasWonRef.current =
+      completionInProgressRef.current =
         false;
 
       movementRef.current = 0;
@@ -10155,34 +21635,40 @@ export default function FloodRunnerGameModal() {
       lastSpawnTimeRef.current =
         performance.now();
 
-      /*
-       * Update UI.
-       */
+      adaptiveRef.current = {
+        riskScore: 50,
+        nearMisses: 0,
+        successfulDodges: 0,
+        collisions: 0,
+        correctRescues: 0,
+        lastRiskUpdate:
+          performance.now(),
+      };
+
+      setRiskScore(50);
+      setDifficultyFactor(1);
 
       setPlayerPositionX(
         INITIAL_PLAYER_X
       );
 
-      setDebris(
-        initialDebris
-      );
-
+      setDebris(initialDebris);
       setScore(0);
 
       setGameOver(false);
-
       setHasWon(false);
+
+      setRewardClaimed(false);
+
+      setRescueLives(
+        MAX_RESCUE_LIVES
+      );
 
       setGameStarted(true);
 
       safeNotification(
-        Haptics.NotificationFeedbackType
-          .Success
+        Haptics.NotificationFeedbackType.Success
       );
-
-      /*
-       * Start loop.
-       */
 
       animationFrameRef.current =
         requestAnimationFrame(
@@ -10199,28 +21685,18 @@ export default function FloodRunnerGameModal() {
       safeNotification,
     ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | START GAME
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     START GAME
+  ========================================================== */
 
   const startGame =
     useCallback(() => {
-      /*
-       * Don't allow multiple starts.
-       */
-
       if (
         gameRunningRef.current ||
         countdown !== null
       ) {
         return;
       }
-
-      /*
-       * Clear any previous timer.
-       */
 
       if (
         countdownTimerRef.current
@@ -10233,12 +21709,6 @@ export default function FloodRunnerGameModal() {
           null;
       }
 
-      /*
-       * Reset gameplay state,
-       * but keep the start screen hidden
-       * while counting down.
-       */
-
       stopGameLoop();
       stopSensor();
 
@@ -10249,13 +21719,14 @@ export default function FloodRunnerGameModal() {
 
       scoreRef.current = 0;
 
-      gameOverRef.current =
+      gameOverRef.current = false;
+      hasWonRef.current = false;
+      gameRunningRef.current = false;
+
+      rewardClaimedRef.current =
         false;
 
-      hasWonRef.current =
-        false;
-
-      gameRunningRef.current =
+      completionInProgressRef.current =
         false;
 
       setPlayerPositionX(
@@ -10263,26 +21734,28 @@ export default function FloodRunnerGameModal() {
       );
 
       setDebris([]);
-
       setScore(0);
 
       setGameOver(false);
-
       setHasWon(false);
 
-      setGameStarted(false);
+      setRescueVisible(false);
+      setRescueQuestion(null);
 
-      /*
-       * Countdown.
-       */
+      setRescueLives(
+        MAX_RESCUE_LIVES
+      );
+
+      setRewardClaimed(false);
+
+      setGameStarted(false);
 
       let count = 3;
 
       setCountdown(count);
 
       safeImpact(
-        Haptics.ImpactFeedbackStyle
-          .Light
+        Haptics.ImpactFeedbackStyle.Light
       );
 
       countdownTimerRef.current =
@@ -10307,8 +21780,7 @@ export default function FloodRunnerGameModal() {
           setCountdown(count);
 
           safeImpact(
-            Haptics.ImpactFeedbackStyle
-              .Light
+            Haptics.ImpactFeedbackStyle.Light
           );
         }, 700);
     }, [
@@ -10320,11 +21792,9 @@ export default function FloodRunnerGameModal() {
       stopSensor,
     ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | TOUCH MOVEMENT
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     TOUCH CONTROLS
+  ========================================================== */
 
   const movePlayer =
     useCallback(
@@ -10348,7 +21818,9 @@ export default function FloodRunnerGameModal() {
           direction === 'left'
         ) {
           nextX -= amount;
-        } else if (
+        }
+
+        if (
           direction === 'right'
         ) {
           nextX += amount;
@@ -10365,8 +21837,7 @@ export default function FloodRunnerGameModal() {
         );
 
         safeImpact(
-          Haptics.ImpactFeedbackStyle
-            .Light
+          Haptics.ImpactFeedbackStyle.Light
         );
       },
       [
@@ -10376,26 +21847,20 @@ export default function FloodRunnerGameModal() {
       ]
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | ACCELEROMETER
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     ACCELEROMETER
+  ========================================================== */
 
   useEffect(() => {
     let mounted = true;
 
     const setupAccelerometer =
       async () => {
-        /*
-         * Only use the sensor while
-         * the game is actually active.
-         */
-
         if (
           !gameStarted ||
           gameOver ||
-          hasWon
+          hasWon ||
+          rescueVisible
         ) {
           stopSensor();
           return;
@@ -10410,20 +21875,20 @@ export default function FloodRunnerGameModal() {
           }
 
           if (!available) {
-            setSensorAvailable(false);
+            setSensorAvailable(
+              false
+            );
+
             return;
           }
 
-          setSensorAvailable(true);
+          setSensorAvailable(
+            true
+          );
 
           Accelerometer.setUpdateInterval(
             50
           );
-
-          /*
-           * Remove an older subscription
-           * before creating another one.
-           */
 
           stopSensor();
 
@@ -10436,21 +21901,15 @@ export default function FloodRunnerGameModal() {
                   return;
                 }
 
-                /*
-                 * X-axis is used for
-                 * left/right movement.
-                 */
-
                 const value =
-                  Number(data?.x) || 0;
+                  Number(data?.x) ||
+                  0;
 
                 movementRef.current =
-                  Math.max(
+                  clamp(
+                    value,
                     -1,
-                    Math.min(
-                      1,
-                      value
-                    )
+                    1
                   );
               }
             );
@@ -10461,7 +21920,9 @@ export default function FloodRunnerGameModal() {
           );
 
           if (mounted) {
-            setSensorAvailable(false);
+            setSensorAvailable(
+              false
+            );
           }
         }
       };
@@ -10476,54 +21937,21 @@ export default function FloodRunnerGameModal() {
     gameStarted,
     gameOver,
     hasWon,
+    rescueVisible,
     stopSensor,
   ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | BACK BUTTON
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     BACK BUTTON
+  ========================================================== */
 
-  useEffect(() => {
-    const subscription =
-      BackHandler.addEventListener(
-        'hardwareBackPress',
-        () => {
-          /*
-           * Prevent leaving while the
-           * game or countdown is active.
-           */
-
-          if (
-            gameRunningRef.current ||
-            countdown !== null
-          ) {
-            return true;
-          }
-
-          return false;
-        }
-      );
-
-    return () => {
-      subscription.remove();
-    };
-  }, [
-    countdown,
-  ]);
-
-  /*
-  |--------------------------------------------------------------------------
-  | SCREEN CLEANUP
-  |--------------------------------------------------------------------------
-  */
-
-  useEffect(() => {
-    return () => {
+  const handleBack =
+    useCallback(() => {
       /*
-       * Countdown.
+       * Stop every active game resource before leaving.
        */
+      stopGameLoop();
+      stopSensor();
 
       if (
         countdownTimerRef.current
@@ -10536,9 +21964,45 @@ export default function FloodRunnerGameModal() {
           null;
       }
 
-      /*
-       * Animation.
-       */
+      navigation.goBack();
+    }, [
+      navigation,
+      stopGameLoop,
+      stopSensor,
+    ]);
+
+  /* ==========================================================
+     ANDROID HARDWARE BACK
+  ========================================================== */
+
+  useEffect(() => {
+    const subscription =
+      BackHandler.addEventListener(
+        'hardwareBackPress',
+        () => {
+          handleBack();
+          return true;
+        }
+      );
+
+    return () => {
+      subscription.remove();
+    };
+  }, [handleBack]);
+
+  /* ==========================================================
+     CLEANUP
+  ========================================================== */
+
+  useEffect(() => {
+    return () => {
+      if (
+        countdownTimerRef.current
+      ) {
+        clearInterval(
+          countdownTimerRef.current
+        );
+      }
 
       if (
         animationFrameRef.current !==
@@ -10547,14 +22011,7 @@ export default function FloodRunnerGameModal() {
         cancelAnimationFrame(
           animationFrameRef.current
         );
-
-        animationFrameRef.current =
-          null;
       }
-
-      /*
-       * Sensor.
-       */
 
       if (
         sensorSubscriptionRef.current
@@ -10564,9 +22021,6 @@ export default function FloodRunnerGameModal() {
         } catch (error) {
           // Ignore.
         }
-
-        sensorSubscriptionRef.current =
-          null;
       }
 
       gameRunningRef.current =
@@ -10574,83 +22028,354 @@ export default function FloodRunnerGameModal() {
     };
   }, []);
 
-  /*
-  |--------------------------------------------------------------------------
-  | CLAIM REWARD
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     COMPLETE MISSION
+  ========================================================== */
 
-  const handleClaimReward =
-    useCallback(() => {
-      if (
-        !hasWonRef.current
-      ) {
-        return;
-      }
+//   const handleClaimReward = useCallback(() => {
+//   if (rewardClaimed) {
+//     return;
+//   }
 
-      /*
-       * Your XP/coins system can be
-       * connected here later.
-       */
+//   if (!missionId) {
+//     console.warn('FloodRunner: missing missionId');
+//     return;
+//   }
 
+//   completeMission(
+//     missionId,
+//     missionXpReward,
+//     missionCoinReward
+//   );
+
+//   setRewardClaimed(true);
+// }, [
+//   rewardClaimed,
+//   missionId,
+//   missionXpReward,
+//   missionCoinReward,
+//   completeMission,
+// ]);
+  const handleClaimReward = useCallback(async () => {
+    /*
+    * The game must genuinely be won.
+    */
+    if (!hasWonRef.current) {
+      return;
+    }
+
+    /*
+    * Prevent double tapping.
+    */
+    if (
+      rewardClaimedRef.current ||
+      completionInProgressRef.current
+    ) {
+      return;
+    }
+
+    completionInProgressRef.current = true;
+    rewardClaimedRef.current = true;
+    setRewardClaimed(true);
+
+    try {
+      await Promise.resolve(
+        completeMission(
+          campaignMissionId,
+          missionXpReward,
+          missionCoinReward
+        )
+      );
+    } catch (error) {
+      console.error(
+        'FloodRunner mission completion error:',
+        error
+      );
+
+      rewardClaimedRef.current = false;
+      completionInProgressRef.current = false;
+      setRewardClaimed(false);
+
+      return;
+    }
+
+    setTimeout(() => {
       resetGame();
-
       navigation.goBack();
-    }, [
-      navigation,
-      resetGame,
-    ]);
+    }, 250);
+  }, [
+    campaignMissionId,
+    completeMission,
+    missionXpReward,
+    missionCoinReward,
+    navigation,
+    resetGame,
+  ]);
 
-  /*
-  |--------------------------------------------------------------------------
-  | PROGRESS
-  |--------------------------------------------------------------------------
-  */
+
+  // const handleClaimReward = useCallback(async() => {
+  //     /*
+  //      * The game must genuinely be won.
+  //      */
+  //     if (!hasWonRef.current) {
+  //       return;
+  //     }
+
+  //     /*
+  //      * Prevent double tapping.
+  //      */
+  //     if (
+  //       rewardClaimedRef.current ||
+  //       completionInProgressRef.current
+  //     ) {
+  //       return;
+  //     }
+
+  //     completionInProgressRef.current =
+  //       true;
+
+  //     rewardClaimedRef.current =
+  //       true;
+
+  //     setRewardClaimed(true);
+
+  //     /*
+  //      * ======================================================
+  //      * IMPORTANT MISSION CONNECTION
+  //      * ======================================================
+  //      *
+  //      * DO NOT use:
+  //      *
+  //      * missionId: 'floodRunner'
+  //      *
+  //      * because MissionsScreen does NOT look for that key.
+  //      *
+  //      * MissionsScreen looks for:
+  //      *
+  //      * completedMissions['level-2']
+  //      * completedMissions['level-5']
+  //      * completedMissions['level-8']
+  //      *
+  //      * Therefore we send the actual mission ID.
+  //      */
+  //     try {
+  //       await Promise.resolve(
+  //         completeMission({
+  //           // missionId: campaignMissionId,
+  //           // /*
+  //           //  * Campaign level:
+  //           //  * 2 / 5 / 8
+  //           //  */
+  //           // level: campaignLevel,
+  //           // /*
+  //           //  * Internal Flood Runner level:
+  //           //  * 1 / 2 / 3
+  //           //  */
+  //           // gameLevel,
+  //           // score: scoreRef.current,
+
+  //           // /*
+  //           //  * Rewards supplied by MissionsScreen.
+  //           //  */
+  //           // xp:
+  //           //   missionXpReward,
+
+  //           // coins:
+  //           //   missionCoinReward,
+
+  //           // /*
+  //           //  * Extra aliases are harmless for contexts
+  //           //  * that use them and make the completion
+  //           //  * payload explicit.
+  //           //  */
+  //           // xpreward:
+  //           //   missionXpReward,
+
+  //           // coinreward:
+  //           //   missionCoinReward,
+
+  //           // game:
+  //           //   'FloodRunnerGameModal',
+  //           campaignMissionId,
+  //           missionXpReward,
+  //           missionCoinReward
+  //         })
+  //       );
+  //     } catch (error) {
+  //       console.error(
+  //         'FloodRunner mission completion error:',
+  //         error
+  //       );
+
+  //       /*
+  //        * Allow the player to retry claiming if the
+  //        * UserContext operation failed.
+  //        */
+  //       rewardClaimedRef.current =
+  //         false;
+
+  //       completionInProgressRef.current =
+  //         false;
+
+  //       setRewardClaimed(false);
+
+  //       return;
+  //     }
+
+  //     /*
+  //      * UserContext is now the source of truth.
+  //      *
+  //      * MissionsScreen will see:
+  //      *
+  //      * completedMissions[level-X] === true
+  //      *
+  //      * and unlock the next campaign mission.
+  //      */
+  //     setTimeout(() => {
+  //       resetGame();
+
+  //       navigation.goBack();
+  //     }, 250);
+  //   }, [
+  //     campaignLevel,
+  //     campaignMissionId,
+  //     completeMission,
+  //     gameLevel,
+  //     missionCoinReward,
+  //     missionXpReward,
+  //     navigation,
+  //     resetGame,
+  //   ]);
+
+  /* ==========================================================
+     PROGRESS
+  ========================================================== */
 
   const progressPercentage =
     Math.min(
       100,
-      (score /
-        config.targetScore) *
-        100
+      (
+        score /
+        config.targetScore
+      ) * 100
     );
 
-  /*
-  |--------------------------------------------------------------------------
-  | RENDER
-  |--------------------------------------------------------------------------
-  */
+  /* ==========================================================
+     DIFFICULTY LABEL
+  ========================================================== */
+
+  const difficultyLabel =
+    useMemo(() => {
+      if (
+        difficultyFactor < 0.88
+      ) {
+        return t(
+          'games.floodRunner.adaptive.easier'
+        );
+      }
+
+      if (
+        difficultyFactor > 1.05
+      ) {
+        return t(
+          'games.floodRunner.adaptive.harder'
+        );
+      }
+
+      return t(
+        'games.floodRunner.adaptive.balanced'
+      );
+    }, [
+      difficultyFactor,
+      t,
+    ]);
+
+  /* ==========================================================
+     RENDER HELPERS
+  ========================================================== */
+
+  const isCompact =
+    windowHeight < 700;
+
+  const isVerySmall =
+    windowHeight < 620;
+
+  /* ==========================================================
+     RENDER
+  ========================================================== */
 
   return (
     <View
-      style={styles.screen}
+      style={[
+        styles.screen,
+        {
+          paddingTop:
+            Math.max(
+              insets.top,
+              6
+            ),
+          paddingBottom:
+            Math.max(
+              insets.bottom,
+              6
+            ),
+        },
+      ]}
     >
-      <View
-        style={[
-          styles.modalContentCard,
+      <ScrollView
+        style={styles.scroll}
+        contentContainerStyle={[
+          styles.scrollContent,
           {
-            width:
-              Math.min(
-                GAME_WIDTH + 32,
-                SCREEN_WIDTH - 16
+            paddingBottom:
+              Math.max(
+                insets.bottom + 20,
+                24
               ),
           },
         ]}
+        showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        bounces
       >
-        {/* HEADER */}
-
         <View
-          style={styles.modalHeader}
+          style={[
+            styles.modalContentCard,
+            {
+              width: Math.min(
+                GAME_WIDTH + 24,
+                windowWidth - 12
+              ),
+            },
+          ]}
         >
+          {/* =================================================
+              HEADER
+          ================================================= */}
+
           <View
-            style={
-              styles.headerTitleArea
-            }
+            style={[
+              styles.modalHeader,
+              isCompact &&
+                styles.modalHeaderCompact,
+            ]}
           >
+            <TouchableOpacity
+              style={styles.backButton}
+              onPress={handleBack}
+              activeOpacity={0.8}
+              accessibilityRole="button"
+              accessibilityLabel="Go back"
+            >
+              <Ionicons
+                name="arrow-back"
+                size={20}
+                color="#FFFFFF"
+              />
+            </TouchableOpacity>
+
             <View
-              style={
-                styles.headerIcon
-              }
+              style={styles.headerIcon}
             >
               <Ionicons
                 name="water"
@@ -10660,14 +22385,11 @@ export default function FloodRunnerGameModal() {
             </View>
 
             <View
-              style={
-                styles.headerTextArea
-              }
+              style={styles.headerTextArea}
             >
               <Text
-                style={
-                  styles.modalTitle
-                }
+                style={styles.modalTitle}
+                numberOfLines={1}
               >
                 {t(
                   'games.floodRunner.title'
@@ -10675,271 +22397,327 @@ export default function FloodRunnerGameModal() {
               </Text>
 
               <Text
-                style={
-                  styles.levelLabel
-                }
+                style={styles.levelLabel}
               >
                 {t(
                   'games.floodRunner.level',
                   {
                     level:
-                      selectedLevel,
+                      gameLevel,
                   }
                 )}{' '}
                 •{' '}
-                {t(
-                  config.nameKey
-                )}
+                {t(config.nameKey)}
               </Text>
             </View>
           </View>
-        </View>
 
-        {/* OBJECTIVE */}
+          {/* =================================================
+              CAMPAIGN CONNECTION
+          ================================================= */}
 
-        <View
-          style={
-            styles.objectiveCard
-          }
-        >
           <View
-            style={
-              styles.objectiveIcon
-            }
+            style={styles.campaignConnection}
           >
             <Ionicons
-              name="flag"
-              size={18}
-              color="#34D399"
+              name="map"
+              size={14}
+              color="#A855F7"
             />
-          </View>
-
-          <View
-            style={
-              styles.objectiveTextArea
-            }
-          >
-            <Text
-              style={
-                styles.objectiveTitle
-              }
-            >
-              {t(
-                'games.floodRunner.objective'
-              )}
-            </Text>
 
             <Text
               style={
-                styles.objectiveText
+                styles.campaignConnectionText
               }
             >
               {t(
-                'games.floodRunner.objectiveDescription'
+                'games.floodRunner.level',
+                {
+                  level:
+                    campaignLevel,
+                }
+              )}
+            </Text>
+
+            <View
+              style={
+                styles.connectionDot
+              }
+            />
+
+            <Text
+              style={
+                styles.campaignConnectionText
+              }
+            >
+              {t(
+                config.nameKey
               )}
             </Text>
           </View>
-        </View>
 
-        {/* INSTRUCTIONS */}
-
-        {!gameStarted &&
-          !gameOver &&
-          !hasWon &&
-          countdown === null && (
-            <View
-              style={
-                styles.instructionsCard
-              }
-            >
-              <View
-                style={
-                  styles.instructionsHeader
-                }
-              >
-                <Ionicons
-                  name="help-circle"
-                  size={20}
-                  color="#FBBF24"
-                />
-
-                <Text
-                  style={
-                    styles.instructionsTitle
-                  }
-                >
-                  {t(
-                    'games.floodRunner.howToPlay'
-                  )}
-                </Text>
-              </View>
-
-              <InstructionRow
-                icon="swap-horizontal"
-                text={t(
-                  'games.floodRunner.instructions.move'
-                )}
-              />
-
-              <InstructionRow
-                icon="warning"
-                text={t(
-                  'games.floodRunner.instructions.avoid'
-                )}
-              />
-
-              <InstructionRow
-                icon="water"
-                text={t(
-                  'games.floodRunner.instructions.flood'
-                )}
-              />
-
-              <InstructionRow
-                icon="flag"
-                text={t(
-                  'games.floodRunner.instructions.finish',
-                  {
-                    score:
-                      config.targetScore,
-                  }
-                )}
-              />
-            </View>
-          )}
-
-        {/* SENSOR STATUS */}
-
-        {gameStarted &&
-          !gameOver &&
-          !hasWon && (
-            <View
-              style={
-                styles.sensorStatus
-              }
-            >
-              <Ionicons
-                name={
-                  sensorAvailable
-                    ? 'phone-portrait-outline'
-                    : 'hand-left-outline'
-                }
-                size={15}
-                color={
-                  sensorAvailable
-                    ? '#34D399'
-                    : '#FBBF24'
-                }
-              />
-
-              <Text
-                style={[
-                  styles.sensorText,
-                  {
-                    color:
-                      sensorAvailable
-                        ? '#34D399'
-                        : '#FBBF24',
-                  },
-                ]}
-              >
-                {sensorAvailable
-                  ? t(
-                      'games.floodRunner.tiltActive'
-                    )
-                  : t(
-                      'games.floodRunner.touchActive'
-                    )}
-              </Text>
-            </View>
-          )}
-
-        {/* GAME AREA */}
-
-        <View
-          style={[
-            styles.gameCanvas,
-            {
-              width:
-                GAME_WIDTH,
-              height:
-                GAME_HEIGHT,
-            },
-          ]}
-        >
-          {/* SAFE ZONE */}
+          {/* =================================================
+              OBJECTIVE
+          ================================================= */}
 
           <View
-            style={
-              styles.safeZone
-            }
+            style={styles.objectiveCard}
           >
             <View
-              style={
-                styles.safeZoneIcon
-              }
+              style={styles.objectiveIcon}
             >
               <Ionicons
-                name="shield-checkmark"
+                name="flag"
                 size={18}
                 color="#34D399"
               />
             </View>
 
-            <View>
+            <View
+              style={styles.objectiveTextArea}
+            >
               <Text
                 style={
-                  styles.safeZoneTitle
+                  styles.objectiveTitle
                 }
               >
                 {t(
-                  'games.floodRunner.safeShelter'
+                  'games.floodRunner.objective'
                 )}
               </Text>
 
               <Text
                 style={
-                  styles.safeZoneSub
+                  styles.objectiveText
                 }
               >
                 {t(
-                  'games.floodRunner.highGround'
+                  'games.floodRunner.objectiveDescription'
                 )}
               </Text>
             </View>
           </View>
 
-          {/* DANGER FIELD */}
+          {/* =================================================
+              INSTRUCTIONS
+          ================================================= */}
 
-          <View
-            style={
-              styles.dangerField
-            }
-          >
-            <View
-              style={
-                styles.routeLine
-              }
-            />
+          {!gameStarted &&
+            !gameOver &&
+            !hasWon &&
+            countdown === null && (
+              <View
+                style={
+                  styles.instructionsCard
+                }
+              >
+                <View
+                  style={
+                    styles.instructionsHeader
+                  }
+                >
+                  <Ionicons
+                    name="help-circle"
+                    size={20}
+                    color="#FBBF24"
+                  />
 
-            <Text
-              style={
-                styles.dangerText
-              }
-            >
-              {t(
-                'games.floodRunner.evacuationRoute'
-              )}
-            </Text>
-          </View>
+                  <Text
+                    style={
+                      styles.instructionsTitle
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.howToPlay'
+                    )}
+                  </Text>
+                </View>
 
-          {/* DEBRIS */}
+                <InstructionRow
+                  icon="swap-horizontal"
+                  text={t(
+                    'games.floodRunner.instructions.move'
+                  )}
+                />
+
+                <InstructionRow
+                  icon="warning"
+                  text={t(
+                    'games.floodRunner.instructions.avoid'
+                  )}
+                />
+
+                <InstructionRow
+                  icon="water"
+                  text={t(
+                    'games.floodRunner.instructions.flood'
+                  )}
+                />
+
+                <InstructionRow
+                  icon="flag"
+                  text={t(
+                    'games.floodRunner.instructions.finish',
+                    {
+                      score:
+                        config.targetScore,
+                    }
+                  )}
+                />
+
+                <InstructionRow
+                  icon="help-circle"
+                  text={t(
+                    'games.floodRunner.instructions.rescue'
+                  )}
+                />
+              </View>
+            )}
+
+          {/* =================================================
+              SENSOR STATUS
+          ================================================= */}
 
           {gameStarted &&
             !gameOver &&
             !hasWon &&
-            debris.map(
-              (item) => (
+            !rescueVisible && (
+              <View
+                style={
+                  styles.sensorStatus
+                }
+              >
+                <Ionicons
+                  name={
+                    sensorAvailable
+                      ? 'phone-portrait-outline'
+                      : 'hand-left-outline'
+                  }
+                  size={15}
+                  color={
+                    sensorAvailable
+                      ? '#34D399'
+                      : '#FBBF24'
+                  }
+                />
+
+                <Text
+                  style={[
+                    styles.sensorText,
+                    {
+                      color:
+                        sensorAvailable
+                          ? '#34D399'
+                          : '#FBBF24',
+                    },
+                  ]}
+                >
+                  {sensorAvailable
+                    ? t(
+                        'games.floodRunner.tiltActive'
+                      )
+                    : t(
+                        'games.floodRunner.touchActive'
+                      )}
+                </Text>
+
+                <View
+                  style={
+                    styles.lifeBadge
+                  }
+                >
+                  <Ionicons
+                    name="heart"
+                    size={12}
+                    color="#FB7185"
+                  />
+
+                  <Text
+                    style={styles.lifeText}
+                  >
+                    {rescueLives}
+                  </Text>
+                </View>
+              </View>
+            )}
+
+          {/* =================================================
+              GAME CANVAS
+          ================================================= */}
+
+          <View
+            style={[
+              styles.gameCanvas,
+              {
+                width: GAME_WIDTH,
+                height: GAME_HEIGHT,
+              },
+            ]}
+          >
+            {/* SAFE ZONE */}
+
+            <View
+              style={styles.safeZone}
+            >
+              <View
+                style={
+                  styles.safeZoneIcon
+                }
+              >
+                <Ionicons
+                  name="shield-checkmark"
+                  size={18}
+                  color="#34D399"
+                />
+              </View>
+
+              <View>
+                <Text
+                  style={
+                    styles.safeZoneTitle
+                  }
+                >
+                  {t(
+                    'games.floodRunner.safeShelter'
+                  )}
+                </Text>
+
+                <Text
+                  style={
+                    styles.safeZoneSub
+                  }
+                >
+                  {t(
+                    'games.floodRunner.highGround'
+                  )}
+                </Text>
+              </View>
+            </View>
+
+            {/* DANGER FIELD */}
+
+            <View
+              style={styles.dangerField}
+            >
+              <View
+                style={styles.routeLine}
+              />
+
+              <Text
+                style={styles.dangerText}
+              >
+                {t(
+                  'games.floodRunner.evacuationRoute'
+                )}
+              </Text>
+            </View>
+
+            {/* DEBRIS */}
+
+            {gameStarted &&
+              !gameOver &&
+              !hasWon &&
+              debris.map((item) => (
                 <View
                   key={item.id}
                   style={[
@@ -10958,502 +22736,850 @@ export default function FloodRunnerGameModal() {
                     color="#FCA5A5"
                   />
                 </View>
-              )
-            )}
+              ))}
 
-          {/* PLAYER */}
+            {/* PLAYER */}
 
-          {gameStarted &&
-            !gameOver &&
-            !hasWon && (
+            {gameStarted &&
+              !gameOver &&
+              !hasWon &&
+              !rescueVisible && (
+                <View
+                  style={[
+                    styles.playerNode,
+                    {
+                      left:
+                        playerPositionX,
+
+                      bottom:
+                        PLAYER_BOTTOM_OFFSET +
+                        FLOOD_HEIGHT,
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="person"
+                    size={25}
+                    color="#FFFFFF"
+                  />
+                </View>
+              )}
+
+            {/* FLOOD */}
+
+            <View
+              style={styles.floodLayer}
+            >
               <View
-                style={[
-                  styles.playerNode,
-                  {
-                    left:
-                      playerPositionX,
-
-                    bottom:
-                      PLAYER_BOTTOM_OFFSET +
-                      FLOOD_HEIGHT,
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="person"
-                  size={25}
-                  color="#FFFFFF"
-                />
-              </View>
-            )}
-
-          {/* FLOOD */}
-
-          <View
-            style={
-              styles.floodLayer
-            }
-          >
-            <View
-              style={
-                styles.waveContainer
-              }
-            >
-              {Array.from({
-                length: 12,
-              }).map(
-                (_, index) => (
-                  <Text
-                    key={index}
-                    style={
-                      styles.wave
-                    }
-                  >
-                    ~
-                  </Text>
-                )
-              )}
-            </View>
-
-            <Text
-              style={
-                styles.floodLabel
-              }
-            >
-              {t(
-                'games.floodRunner.floodZone'
-              )}
-            </Text>
-          </View>
-
-          {/* COUNTDOWN */}
-
-          {countdown !== null && (
-            <View
-              style={
-                styles.countdownOverlay
-              }
-            >
-              <Text
                 style={
-                  styles.countdownNumber
+                  styles.waveContainer
                 }
               >
-                {countdown}
-              </Text>
+                {Array.from({
+                  length: 12,
+                }).map(
+                  (_, index) => (
+                    <Text
+                      key={index}
+                      style={
+                        styles.wave
+                      }
+                    >
+                      ~
+                    </Text>
+                  )
+                )}
+              </View>
 
               <Text
                 style={
-                  styles.countdownText
+                  styles.floodLabel
                 }
               >
                 {t(
-                  'games.floodRunner.getReady'
+                  'games.floodRunner.floodZone'
                 )}
               </Text>
             </View>
-          )}
 
-          {/* START */}
+            {/* ADAPTIVE BADGE */}
 
-          {!gameStarted &&
-            countdown === null &&
-            !gameOver &&
-            !hasWon && (
-              <View
-                style={
-                  styles.startOverlay
-                }
-              >
+            {gameStarted &&
+              !gameOver &&
+              !hasWon &&
+              !rescueVisible && (
                 <View
                   style={
-                    styles.startIcon
+                    styles.adaptiveBadge
                   }
                 >
                   <Ionicons
-                    name="walk"
-                    size={34}
+                    name="pulse"
+                    size={11}
                     color="#38BDF8"
+                  />
+
+                  <Text
+                    style={
+                      styles.adaptiveText
+                    }
+                  >
+                    {difficultyLabel}
+                  </Text>
+                </View>
+              )}
+
+            {/* COUNTDOWN */}
+
+            {countdown !== null && (
+              <View
+                style={
+                  styles.countdownOverlay
+                }
+              >
+                <Text
+                  style={
+                    styles.countdownNumber
+                  }
+                >
+                  {countdown}
+                </Text>
+
+                <Text
+                  style={
+                    styles.countdownText
+                  }
+                >
+                  {t(
+                    'games.floodRunner.getReady'
+                  )}
+                </Text>
+              </View>
+            )}
+
+            {/* START */}
+
+            {!gameStarted &&
+              countdown === null &&
+              !gameOver &&
+              !hasWon && (
+                <View
+                  style={
+                    styles.startOverlay
+                  }
+                >
+                  <View
+                    style={
+                      styles.startIcon
+                    }
+                  >
+                    <Ionicons
+                      name="walk"
+                      size={34}
+                      color="#38BDF8"
+                    />
+                  </View>
+
+                  <Text
+                    style={
+                      styles.startTitle
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.ready'
+                    )}
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.startDescription
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.startDescription'
+                    )}
+                  </Text>
+
+                  <TouchableOpacity
+                    style={
+                      styles.startButton
+                    }
+                    onPress={
+                      startGame
+                    }
+                    activeOpacity={
+                      0.8
+                    }
+                  >
+                    <Ionicons
+                      name="play"
+                      size={18}
+                      color="#FFFFFF"
+                    />
+
+                    <Text
+                      style={
+                        styles.startButtonText
+                      }
+                    >
+                      {t(
+                        'games.floodRunner.start'
+                      )}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+
+            {/* =================================================
+                RESCUE
+            ================================================= */}
+
+            {rescueVisible &&
+              rescueQuestion && (
+                <View
+                  style={
+                    styles.rescueOverlay
+                  }
+                >
+                  <View
+                    style={
+                      styles.rescueIcon
+                    }
+                  >
+                    <Ionicons
+                      name="medkit"
+                      size={26}
+                      color="#FBBF24"
+                    />
+                  </View>
+
+                  <Text
+                    style={
+                      styles.rescueTitle
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.rescueTitle'
+                    )}
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.rescueDescription
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.rescueDescription'
+                    )}
+                  </Text>
+
+                  <Text
+                    style={
+                      styles.rescueQuestion
+                    }
+                  >
+                    {t(
+                      rescueQuestion.questionKey
+                    )}
+                  </Text>
+
+                  <View
+                    style={
+                      styles.answerList
+                    }
+                  >
+                    {rescueQuestion.options.map(
+                      (option) => {
+                        const isSelected =
+                          selectedAnswer ===
+                          option.id;
+
+                        const isCorrect =
+                          rescueQuestion.correct ===
+                          option.id;
+
+                        let backgroundColor =
+                          '#172033';
+
+                        let borderColor =
+                          '#334155';
+
+                        if (
+                          isSelected &&
+                          answerFeedback ===
+                            'correct'
+                        ) {
+                          backgroundColor =
+                            '#064E3B';
+
+                          borderColor =
+                            '#10B981';
+                        }
+
+                        if (
+                          isSelected &&
+                          answerFeedback ===
+                            'wrong'
+                        ) {
+                          backgroundColor =
+                            '#450A0A';
+
+                          borderColor =
+                            '#EF4444';
+                        }
+
+                        if (
+                          selectedAnswer &&
+                          isCorrect &&
+                          answerFeedback ===
+                            'correct'
+                        ) {
+                          backgroundColor =
+                            '#064E3B';
+
+                          borderColor =
+                            '#10B981';
+                        }
+
+                        return (
+                          <TouchableOpacity
+                            key={
+                              option.id
+                            }
+                            disabled={
+                              !!selectedAnswer
+                            }
+                            style={[
+                              styles.answerButton,
+                              {
+                                backgroundColor,
+                                borderColor,
+                              },
+                            ]}
+                            onPress={() =>
+                              handleRescueAnswer(
+                                option.id
+                              )
+                            }
+                            activeOpacity={
+                              0.8
+                            }
+                          >
+                            <View
+                              style={
+                                styles.answerLetter
+                              }
+                            >
+                              <Text
+                                style={
+                                  styles.answerLetterText
+                                }
+                              >
+                                {option.id.toUpperCase()}
+                              </Text>
+                            </View>
+
+                            <Text
+                              style={
+                                styles.answerText
+                              }
+                            >
+                              {t(
+                                option.textKey
+                              )}
+                            </Text>
+                          </TouchableOpacity>
+                        );
+                      }
+                    )}
+                  </View>
+
+                  <View
+                    style={
+                      styles.rescueLifeNotice
+                    }
+                  >
+                    <Ionicons
+                      name="heart"
+                      size={13}
+                      color="#FB7185"
+                    />
+
+                    <Text
+                      style={
+                        styles.rescueLifeText
+                      }
+                    >
+                      {t(
+                        'games.floodRunner.rescueLifeNotice'
+                      )}
+                    </Text>
+                  </View>
+                </View>
+              )}
+
+            {/* =================================================
+                GAME OVER
+            ================================================= */}
+
+            {gameOver && (
+              <View
+                style={
+                  styles.endGameOverlay
+                }
+              >
+                <View
+                  style={[
+                    styles.resultIcon,
+                    {
+                      backgroundColor:
+                        '#450A0A',
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="warning"
+                    size={34}
+                    color="#EF4444"
                   />
                 </View>
 
                 <Text
                   style={
-                    styles.startTitle
+                    styles.gameOverTitle
                   }
                 >
                   {t(
-                    'games.floodRunner.ready'
+                    'games.floodRunner.failed'
                   )}
                 </Text>
 
                 <Text
                   style={
-                    styles.startDescription
+                    styles.gameOverText
                   }
                 >
                   {t(
-                    'games.floodRunner.startDescription'
+                    'games.floodRunner.failedDescription'
                   )}
+                </Text>
+
+                <Text
+                  style={
+                    styles.finalScore
+                  }
+                >
+                  {score} /{' '}
+                  {
+                    config.targetScore
+                  }
                 </Text>
 
                 <TouchableOpacity
                   style={
-                    styles.startButton
+                    styles.retryButton
                   }
                   onPress={
                     startGame
                   }
-                  activeOpacity={0.8}
+                  activeOpacity={
+                    0.8
+                  }
                 >
                   <Ionicons
-                    name="play"
+                    name="refresh"
                     size={18}
                     color="#FFFFFF"
                   />
 
                   <Text
                     style={
-                      styles.startButtonText
+                      styles.buttonText
                     }
                   >
                     {t(
-                      'games.floodRunner.start'
+                      'games.floodRunner.retry'
                     )}
                   </Text>
                 </TouchableOpacity>
               </View>
             )}
 
-          {/* GAME OVER */}
+            {/* =================================================
+                WIN
+            ================================================= */}
 
-          {gameOver && (
+            {hasWon && (
+              <View
+                style={
+                  styles.endGameOverlay
+                }
+              >
+                <View
+                  style={[
+                    styles.resultIcon,
+                    {
+                      backgroundColor:
+                        '#064E3B',
+                    },
+                  ]}
+                >
+                  <Ionicons
+                    name="shield-checkmark"
+                    size={36}
+                    color="#10B981"
+                  />
+                </View>
+
+                <Text
+                  style={
+                    styles.successTitle
+                  }
+                >
+                  {t(
+                    'games.floodRunner.success'
+                  )}
+                </Text>
+
+                <Text
+                  style={
+                    styles.gameOverText
+                  }
+                >
+                  {t(
+                    'games.floodRunner.successDescription'
+                  )}
+                </Text>
+
+                <View
+                  style={
+                    styles.rewardRow
+                  }
+                >
+                  <Reward
+                    icon="flash"
+                    value={`+${missionXpReward}`}
+                    label={t(
+                      'games.floodRunner.xp'
+                    )}
+                  />
+
+                  <Reward
+                    icon="cash"
+                    value={`+${missionCoinReward}`}
+                    label={t(
+                      'games.floodRunner.coins'
+                    )}
+                  />
+                </View>
+
+                <View
+                  style={
+                    styles.unlockNotice
+                  }
+                >
+                  <Ionicons
+                    name="lock-open"
+                    size={14}
+                    color="#34D399"
+                  />
+
+                  <Text
+                    style={
+                      styles.unlockNoticeText
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.successDescription'
+                    )}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  style={[
+                    styles.claimRewardButton,
+                    rewardClaimed &&
+                      styles.claimDisabled,
+                  ]}
+                  disabled={
+                    rewardClaimed
+                  }
+                  onPress={
+                    handleClaimReward
+                  }
+                  activeOpacity={
+                    0.8
+                  }
+                >
+                  <Ionicons
+                    name="checkmark-circle"
+                    size={18}
+                    color="#FFFFFF"
+                  />
+
+                  <Text
+                    style={
+                      styles.buttonText
+                    }
+                  >
+                    {rewardClaimed
+                      ? t(
+                          'games.floodRunner.rewardClaimed'
+                        )
+                      : t(
+                          'games.floodRunner.claimReward'
+                        )}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+          </View>
+
+          {/* =================================================
+              SCORE HUD
+          ================================================= */}
+
+          <View
+            style={styles.gameHud}
+          >
             <View
               style={
-                styles.endGameOverlay
+                styles.scoreHeader
               }
             >
-              <View
-                style={[
-                  styles.resultIcon,
-                  {
-                    backgroundColor:
-                      '#450A0A',
-                  },
-                ]}
-              >
-                <Ionicons
-                  name="warning"
-                  size={34}
-                  color="#EF4444"
-                />
-              </View>
-
               <Text
-                style={
-                  styles.gameOverTitle
-                }
+                style={styles.scoreLabel}
               >
                 {t(
-                  'games.floodRunner.failed'
+                  'games.floodRunner.score'
                 )}
               </Text>
 
               <Text
-                style={
-                  styles.gameOverText
-                }
-              >
-                {t(
-                  'games.floodRunner.failedDescription'
-                )}
-              </Text>
-
-              <Text
-                style={
-                  styles.finalScore
-                }
+                style={styles.scoreValue}
               >
                 {score} /{' '}
-                {config.targetScore}
+                {
+                  config.targetScore
+                }
               </Text>
-
-              <TouchableOpacity
-                style={
-                  styles.retryButton
-                }
-                onPress={
-                  startGame
-                }
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name="refresh"
-                  size={18}
-                  color="#FFFFFF"
-                />
-
-                <Text
-                  style={
-                    styles.buttonText
-                  }
-                >
-                  {t(
-                    'games.floodRunner.retry'
-                  )}
-                </Text>
-              </TouchableOpacity>
             </View>
-          )}
 
-          {/* WIN */}
-
-          {hasWon && (
             <View
               style={
-                styles.endGameOverlay
+                styles.progressBackground
               }
             >
               <View
                 style={[
-                  styles.resultIcon,
+                  styles.progressFill,
                   {
-                    backgroundColor:
-                      '#064E3B',
+                    width:
+                      `${progressPercentage}%`,
                   },
                 ]}
-              >
-                <Ionicons
-                  name="shield-checkmark"
-                  size={36}
-                  color="#10B981"
-                />
-              </View>
+              />
+            </View>
 
-              <Text
-                style={
-                  styles.successTitle
-                }
-              >
-                {t(
-                  'games.floodRunner.success'
-                )}
-              </Text>
-
-              <Text
-                style={
-                  styles.gameOverText
-                }
-              >
-                {t(
-                  'games.floodRunner.successDescription'
-                )}
-              </Text>
-
-              <View
-                style={
-                  styles.rewardRow
-                }
-              >
-                <Reward
-                  icon="flash"
-                  value={`+${config.reward.xp}`}
-                  label={t(
-                    'games.floodRunner.xp'
-                  )}
-                />
-
-                <Reward
-                  icon="cash"
-                  value={`+${config.reward.coins}`}
-                  label={t(
-                    'games.floodRunner.coins'
-                  )}
-                />
-              </View>
-
-              <TouchableOpacity
-                style={
-                  styles.claimRewardButton
-                }
-                onPress={
-                  handleClaimReward
-                }
-                activeOpacity={0.8}
-              >
-                <Ionicons
-                  name="checkmark-circle"
-                  size={18}
-                  color="#FFFFFF"
-                />
-
-                <Text
+            {gameStarted &&
+              !gameOver &&
+              !hasWon && (
+                <View
                   style={
-                    styles.buttonText
+                    styles.algorithmPanel
                   }
                 >
-                  {t(
-                    'games.floodRunner.claimReward'
-                  )}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
+                  <View>
+                    <Text
+                      style={
+                        styles.algorithmLabel
+                      }
+                    >
+                      ADAPTIVE SAFETY
+                    </Text>
 
-        {/* SCORE */}
+                    <Text
+                      style={
+                        styles.algorithmSub
+                      }
+                    >
+                      {difficultyLabel}
+                    </Text>
+                  </View>
 
-        <View
-          style={styles.gameHud}
-        >
-          <View
-            style={
-              styles.scoreHeader
-            }
-          >
-            <Text
-              style={
-                styles.scoreLabel
-              }
-            >
-              {t(
-                'games.floodRunner.score'
+                  <View
+                    style={
+                      styles.algorithmScoreBox
+                    }
+                  >
+                    <Ionicons
+                      name="pulse"
+                      size={12}
+                      color="#38BDF8"
+                    />
+
+                    <Text
+                      style={
+                        styles.algorithmValue
+                      }
+                    >
+                      {riskScore}
+                    </Text>
+                  </View>
+                </View>
               )}
-            </Text>
-
-            <Text
-              style={
-                styles.scoreValue
-              }
-            >
-              {score} /{' '}
-              {config.targetScore}
-            </Text>
           </View>
 
-          <View
-            style={
-              styles.progressBackground
-            }
-          >
-            <View
-              style={[
-                styles.progressFill,
-                {
-                  width:
-                    `${progressPercentage}%`,
-                },
-              ]}
-            />
-          </View>
-        </View>
+          {/* =================================================
+              CONTROLS
+          ================================================= */}
 
-        {/* CONTROLS */}
+          {gameStarted &&
+            !gameOver &&
+            !hasWon &&
+            !rescueVisible && (
+              <View
+                style={[
+                  styles.controls,
+                  isVerySmall &&
+                    styles.controlsCompact,
+                ]}
+              >
+                <TouchableOpacity
+                  style={
+                    styles.controlButton
+                  }
+                  onPress={() =>
+                    movePlayer(
+                      'left'
+                    )
+                  }
+                  activeOpacity={
+                    0.7
+                  }
+                >
+                  <Ionicons
+                    name="arrow-back"
+                    size={24}
+                    color="#FFFFFF"
+                  />
 
-        {gameStarted &&
-          !gameOver &&
-          !hasWon && (
-            <View
-              style={
-                styles.controls
-              }
-            >
+                  <Text
+                    style={
+                      styles.controlText
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.left'
+                    )}
+                  </Text>
+                </TouchableOpacity>
+
+                <View
+                  style={
+                    styles.controlHint
+                  }
+                >
+                  <Ionicons
+                    name={
+                      sensorAvailable
+                        ? 'phone-portrait-outline'
+                        : 'hand-left-outline'
+                    }
+                    size={21}
+                    color="#38BDF8"
+                  />
+
+                  <Text
+                    style={
+                      styles.controlHintText
+                    }
+                  >
+                    {sensorAvailable
+                      ? t(
+                          'games.floodRunner.tilt'
+                        )
+                      : t(
+                          'games.floodRunner.touch'
+                        )}
+                  </Text>
+                </View>
+
+                <TouchableOpacity
+                  style={
+                    styles.controlButton
+                  }
+                  onPress={() =>
+                    movePlayer(
+                      'right'
+                    )
+                  }
+                  activeOpacity={
+                    0.7
+                  }
+                >
+                  <Ionicons
+                    name="arrow-forward"
+                    size={24}
+                    color="#FFFFFF"
+                  />
+
+                  <Text
+                    style={
+                      styles.controlText
+                    }
+                  >
+                    {t(
+                      'games.floodRunner.right'
+                    )}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+          {/* =================================================
+              EXIT BUTTON
+          ================================================= */}
+
+          {!gameStarted &&
+            !countdown && (
               <TouchableOpacity
                 style={
-                  styles.controlButton
+                  styles.bottomBackButton
                 }
-                onPress={() =>
-                  movePlayer('left')
+                onPress={
+                  handleBack
                 }
-                activeOpacity={0.7}
+                activeOpacity={
+                  0.8
+                }
               >
                 <Ionicons
                   name="arrow-back"
-                  size={24}
-                  color="#FFFFFF"
+                  size={17}
+                  color="#CBD5E1"
                 />
 
                 <Text
                   style={
-                    styles.controlText
+                    styles.bottomBackText
                   }
-                  numberOfLines={2}
                 >
                   {t(
-                    'games.floodRunner.left'
-                  )}
+                    'common.back'
+                  ) || 'Back'}
                 </Text>
               </TouchableOpacity>
-
-              <View
-                style={
-                  styles.controlHint
-                }
-              >
-                <Ionicons
-                  name={
-                    sensorAvailable
-                      ? 'phone-portrait-outline'
-                      : 'hand-left-outline'
-                  }
-                  size={21}
-                  color="#38BDF8"
-                />
-
-                <Text
-                  style={
-                    styles.controlHintText
-                  }
-                  numberOfLines={2}
-                >
-                  {sensorAvailable
-                    ? t(
-                        'games.floodRunner.tilt'
-                      )
-                    : t(
-                        'games.floodRunner.touch'
-                      )}
-                </Text>
-              </View>
-
-              <TouchableOpacity
-                style={
-                  styles.controlButton
-                }
-                onPress={() =>
-                  movePlayer('right')
-                }
-                activeOpacity={0.7}
-              >
-                <Ionicons
-                  name="arrow-forward"
-                  size={24}
-                  color="#FFFFFF"
-                />
-
-                <Text
-                  style={
-                    styles.controlText
-                  }
-                  numberOfLines={2}
-                >
-                  {t(
-                    'games.floodRunner.right'
-                  )}
-                </Text>
-              </TouchableOpacity>
-            </View>
-          )}
-      </View>
+            )}
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| INSTRUCTION ROW
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   INSTRUCTION ROW
+============================================================ */
 
 function InstructionRow({
   icon,
@@ -11461,14 +23587,10 @@ function InstructionRow({
 }) {
   return (
     <View
-      style={
-        styles.instructionRow
-      }
+      style={styles.instructionRow}
     >
       <View
-        style={
-          styles.instructionIcon
-        }
+        style={styles.instructionIcon}
       >
         <Ionicons
           name={icon}
@@ -11478,9 +23600,7 @@ function InstructionRow({
       </View>
 
       <Text
-        style={
-          styles.instructionText
-        }
+        style={styles.instructionText}
       >
         {text}
       </Text>
@@ -11488,11 +23608,9 @@ function InstructionRow({
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| REWARD
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   REWARD
+============================================================ */
 
 function Reward({
   icon,
@@ -11500,9 +23618,7 @@ function Reward({
   label,
 }) {
   return (
-    <View
-      style={styles.reward}
-    >
+    <View style={styles.reward}>
       <Ionicons
         name={icon}
         size={18}
@@ -11510,17 +23626,13 @@ function Reward({
       />
 
       <Text
-        style={
-          styles.rewardValue
-        }
+        style={styles.rewardValue}
       >
         {value}
       </Text>
 
       <Text
-        style={
-          styles.rewardLabel
-        }
+        style={styles.rewardLabel}
       >
         {label}
       </Text>
@@ -11528,52 +23640,70 @@ function Reward({
   );
 }
 
-/*
-|--------------------------------------------------------------------------
-| STYLES
-|--------------------------------------------------------------------------
-*/
+/* ============================================================
+   STYLES
+============================================================ */
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
     backgroundColor: '#020617',
-    justifyContent: 'center',
     alignItems: 'center',
-    padding: 8,
+  },
+
+  scroll: {
+    flex: 1,
+    width: '100%',
+  },
+
+  scrollContent: {
+    alignItems: 'center',
+    paddingHorizontal: 6,
+    paddingTop: 6,
   },
 
   modalContentCard: {
     backgroundColor: '#0F172A',
+    borderRadius: 24,
+    padding: 12,
     borderWidth: 1,
     borderColor: '#1E293B',
-    borderRadius: 22,
-    padding: 12,
-    maxWidth: 430,
-    maxHeight: '98%',
   },
+
+  /* ==========================================================
+     HEADER
+  ========================================================== */
 
   modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 10,
   },
 
-  headerTitleArea: {
-    flexDirection: 'row',
+  modalHeaderCompact: {
+    marginBottom: 7,
+  },
+
+  backButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 13,
+    backgroundColor: '#172033',
+    borderWidth: 1,
+    borderColor: '#334155',
     alignItems: 'center',
-    flex: 1,
+    justifyContent: 'center',
+    marginRight: 8,
   },
 
   headerIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 12,
+    width: 40,
+    height: 40,
+    borderRadius: 13,
     backgroundColor: '#082F49',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 9,
   },
 
   headerTextArea: {
@@ -11582,36 +23712,69 @@ const styles = StyleSheet.create({
 
   modalTitle: {
     color: '#FFFFFF',
-    fontSize: 17,
-    fontWeight: '900',
+    fontSize: 19,
+    fontWeight: '800',
   },
 
   levelLabel: {
-    color: '#38BDF8',
+    color: '#94A3B8',
     fontSize: 11,
-    fontWeight: '800',
-    marginTop: 3,
+    marginTop: 2,
   },
+
+  /* ==========================================================
+     CAMPAIGN CONNECTION
+  ========================================================== */
+
+  campaignConnection: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    alignSelf: 'flex-start',
+    backgroundColor: '#1E1B4B',
+    borderWidth: 1,
+    borderColor: '#4C1D95',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    marginBottom: 9,
+  },
+
+  campaignConnectionText: {
+    color: '#C4B5FD',
+    fontSize: 9,
+    fontWeight: '800',
+  },
+
+  connectionDot: {
+    width: 3,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: '#A855F7',
+    marginHorizontal: 6,
+  },
+
+  /* ==========================================================
+     OBJECTIVE
+  ========================================================== */
 
   objectiveCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#052E16',
+    backgroundColor: '#0B1F1A',
     borderWidth: 1,
-    borderColor: '#166534',
-    borderRadius: 13,
-    padding: 10,
-    marginBottom: 8,
+    borderColor: '#064E3B',
+    borderRadius: 14,
+    padding: 9,
+    marginBottom: 9,
   },
 
   objectiveIcon: {
-    width: 32,
-    height: 32,
+    width: 33,
+    height: 33,
     borderRadius: 10,
-    backgroundColor: '#064E3B',
+    backgroundColor: '#052E25',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 10,
+    marginRight: 9,
   },
 
   objectiveTextArea: {
@@ -11620,88 +23783,111 @@ const styles = StyleSheet.create({
 
   objectiveTitle: {
     color: '#34D399',
-    fontSize: 11,
-    fontWeight: '900',
-    textTransform: 'uppercase',
+    fontWeight: '800',
+    fontSize: 12,
   },
 
   objectiveText: {
     color: '#A7F3D0',
-    fontSize: 11,
-    lineHeight: 16,
+    fontSize: 10,
     marginTop: 2,
+    lineHeight: 15,
   },
+
+  /* ==========================================================
+     INSTRUCTIONS
+  ========================================================== */
 
   instructionsCard: {
     backgroundColor: '#111827',
-    borderWidth: 1,
-    borderColor: '#334155',
     borderRadius: 14,
-    padding: 11,
-    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: '#1E293B',
+    padding: 9,
+    marginBottom: 9,
   },
 
   instructionsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 7,
   },
 
   instructionsTitle: {
     color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '900',
+    fontWeight: '800',
     marginLeft: 7,
+    fontSize: 12,
   },
 
   instructionRow: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 6,
+    alignItems: 'center',
+    marginVertical: 2,
   },
 
   instructionIcon: {
-    width: 25,
-    height: 25,
+    width: 24,
+    height: 24,
     borderRadius: 8,
     backgroundColor: '#082F49',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 8,
+    marginRight: 7,
   },
 
   instructionText: {
-    flex: 1,
     color: '#CBD5E1',
-    fontSize: 11,
-    lineHeight: 16,
-    paddingTop: 3,
+    fontSize: 10,
+    flex: 1,
+    lineHeight: 14,
   },
+
+  /* ==========================================================
+     SENSOR
+  ========================================================== */
 
   sensorStatus: {
     flexDirection: 'row',
     alignItems: 'center',
-    alignSelf: 'flex-start',
-    backgroundColor: '#020617',
-    paddingHorizontal: 9,
-    paddingVertical: 5,
-    borderRadius: 8,
-    marginBottom: 8,
+    marginBottom: 6,
+    paddingHorizontal: 4,
   },
 
   sensorText: {
     fontSize: 10,
-    fontWeight: '800',
-    marginLeft: 6,
+    fontWeight: '700',
+    marginLeft: 5,
+    flex: 1,
   },
 
+  lifeBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#3F1722',
+    borderRadius: 10,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+
+  lifeText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    marginLeft: 4,
+    fontSize: 10,
+  },
+
+  /* ==========================================================
+     GAME
+  ========================================================== */
+
   gameCanvas: {
-    backgroundColor: '#020617',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#1E293B',
-    position: 'relative',
+    backgroundColor: '#07111F',
+    borderRadius: 18,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#1E3A5F',
+    position: 'relative',
   },
 
   safeZone: {
@@ -11709,336 +23895,452 @@ const styles = StyleSheet.create({
     top: 0,
     left: 0,
     right: 0,
-    height: SAFE_ZONE_HEIGHT,
-    backgroundColor: '#064E3B',
+    height: 55,
+    backgroundColor: '#052E25',
     borderBottomWidth: 1,
-    borderBottomColor: '#10B981',
+    borderBottomColor: '#065F46',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 14,
-    zIndex: 4,
+    paddingHorizontal: 11,
+    zIndex: 2,
   },
 
   safeZoneIcon: {
-    width: 34,
-    height: 34,
+    width: 31,
+    height: 31,
     borderRadius: 10,
-    backgroundColor: '#065F46',
+    backgroundColor: '#064E3B',
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: 9,
+    marginRight: 8,
   },
 
   safeZoneTitle: {
-    color: '#D1FAE5',
+    color: '#6EE7B7',
     fontSize: 11,
-    fontWeight: '900',
-    letterSpacing: 0.5,
+    fontWeight: '800',
   },
 
   safeZoneSub: {
-    color: '#6EE7B7',
-    fontSize: 9,
-    fontWeight: '700',
-    marginTop: 2,
+    color: '#A7F3D0',
+    fontSize: 8,
+    marginTop: 1,
   },
 
   dangerField: {
     position: 'absolute',
-    top: SAFE_ZONE_HEIGHT,
-    bottom: FLOOD_HEIGHT,
+    top: 55,
     left: 0,
     right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
+    bottom: FLOOD_HEIGHT,
+    backgroundColor: '#0B1626',
   },
 
   routeLine: {
     position: 'absolute',
-    width: 2,
-    height: '100%',
-    backgroundColor: '#1E293B',
-    opacity: 0.8,
+    left: '50%',
+    top: 0,
+    bottom: 0,
+    width: 1,
+    backgroundColor: '#1E3A5F',
+    opacity: 0.7,
   },
 
   dangerText: {
     color: '#334155',
     fontSize: 8,
-    fontWeight: '900',
-    letterSpacing: 1.5,
-    transform: [
-      {
-        rotate: '-90deg',
-      },
-    ],
+    position: 'absolute',
+    top: 10,
+    left: 11,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
 
   debrisNode: {
     position: 'absolute',
     width: DEBRIS_SIZE,
     height: DEBRIS_SIZE,
-    borderRadius:
-      DEBRIS_SIZE / 2,
-    backgroundColor: '#450A0A',
+    borderRadius: 9,
+    backgroundColor: '#451A1A',
     borderWidth: 1,
-    borderColor: '#EF4444',
+    borderColor: '#7F1D1D',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 5,
+    zIndex: 4,
   },
 
   playerNode: {
     position: 'absolute',
     width: PLAYER_SIZE,
     height: PLAYER_SIZE,
-    borderRadius:
-      PLAYER_SIZE / 2,
-    backgroundColor: '#2563EB',
+    borderRadius: 12,
+    backgroundColor: '#0284C7',
     borderWidth: 2,
-    borderColor: '#60A5FA',
+    borderColor: '#7DD3FC',
     alignItems: 'center',
     justifyContent: 'center',
-    zIndex: 6,
+    zIndex: 5,
   },
 
   floodLayer: {
     position: 'absolute',
-    bottom: 0,
     left: 0,
     right: 0,
+    bottom: 0,
     height: FLOOD_HEIGHT,
     backgroundColor: '#075985',
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     borderTopColor: '#38BDF8',
-    justifyContent: 'center',
-    alignItems: 'center',
     zIndex: 3,
   },
 
   waveContainer: {
-    position: 'absolute',
-    top: -13,
-    left: 0,
-    right: 0,
     flexDirection: 'row',
     justifyContent: 'space-around',
+    position: 'absolute',
+    top: -11,
+    left: 0,
+    right: 0,
   },
 
   wave: {
-    color: '#38BDF8',
-    fontSize: 24,
+    color: '#7DD3FC',
+    fontSize: 18,
     fontWeight: '900',
   },
 
   floodLabel: {
     color: '#BAE6FD',
-    fontSize: 9,
-    fontWeight: '900',
-    letterSpacing: 2,
-    marginTop: 12,
+    fontSize: 8,
+    fontWeight: '800',
+    textAlign: 'center',
+    marginTop: 25,
+    letterSpacing: 1,
   },
 
-  startOverlay: {
+  adaptiveBadge: {
     position: 'absolute',
-    top: SAFE_ZONE_HEIGHT,
-    bottom: FLOOD_HEIGHT,
-    left: 0,
-    right: 0,
+    top: 65,
+    right: 8,
+    backgroundColor: '#082F49',
+    borderRadius: 10,
+    paddingHorizontal: 7,
+    paddingVertical: 4,
+    flexDirection: 'row',
+    alignItems: 'center',
+    zIndex: 8,
+  },
+
+  adaptiveText: {
+    color: '#7DD3FC',
+    fontSize: 8,
+    fontWeight: '700',
+    marginLeft: 4,
+  },
+
+  /* ==========================================================
+     COUNTDOWN
+  ========================================================== */
+
+  countdownOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor:
-      'rgba(2, 6, 23, 0.94)',
+      'rgba(2,6,23,0.88)',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
     zIndex: 20,
   },
 
-  startIcon: {
-    width: 62,
-    height: 62,
-    borderRadius: 20,
-    backgroundColor: '#082F49',
-    borderWidth: 1,
-    borderColor: '#0369A1',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-
-  startTitle: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '900',
-    textAlign: 'center',
-  },
-
-  startDescription: {
-    color: '#94A3B8',
-    fontSize: 12,
-    lineHeight: 18,
-    textAlign: 'center',
-    marginTop: 6,
-    maxWidth: 250,
-  },
-
-  startButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#0284C7',
-    borderRadius: 12,
-    minHeight: 48,
-    paddingHorizontal: 22,
-    marginTop: 16,
-  },
-
-  startButtonText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '900',
-    marginLeft: 7,
-  },
-
-  countdownOverlay: {
-    position: 'absolute',
-    top: SAFE_ZONE_HEIGHT,
-    bottom: FLOOD_HEIGHT,
-    left: 0,
-    right: 0,
-    backgroundColor:
-      'rgba(2, 6, 23, 0.85)',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 30,
-  },
-
   countdownNumber: {
-    color: '#38BDF8',
-    fontSize: 64,
+    color: '#FFFFFF',
+    fontSize: 68,
     fontWeight: '900',
   },
 
   countdownText: {
-    color: '#CBD5E1',
+    color: '#7DD3FC',
     fontSize: 12,
-    fontWeight: '800',
-    marginTop: 2,
+    marginTop: 4,
   },
 
-  endGameOverlay: {
-    position: 'absolute',
-    top: SAFE_ZONE_HEIGHT + 8,
-    bottom: FLOOD_HEIGHT + 8,
-    left: 10,
-    right: 10,
+  /* ==========================================================
+     START
+  ========================================================== */
+
+  startOverlay: {
+    ...StyleSheet.absoluteFillObject,
     backgroundColor:
-      'rgba(15, 23, 42, 0.98)',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 18,
+      'rgba(2,6,23,0.9)',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 18,
+    padding: 20,
+    zIndex: 15,
+  },
+
+  startIcon: {
+    width: 65,
+    height: 65,
+    borderRadius: 22,
+    backgroundColor: '#082F49',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+
+  startTitle: {
+    color: '#FFFFFF',
+    fontSize: 22,
+    fontWeight: '900',
+  },
+
+  startDescription: {
+    color: '#94A3B8',
+    textAlign: 'center',
+    fontSize: 10,
+    lineHeight: 16,
+    marginTop: 5,
+    maxWidth: 270,
+  },
+
+  startButton: {
+    marginTop: 15,
+    backgroundColor: '#0284C7',
+    borderRadius: 13,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+
+  startButtonText: {
+    color: '#FFFFFF',
+    fontWeight: '800',
+    marginLeft: 7,
+    fontSize: 12,
+  },
+
+  /* ==========================================================
+     RESCUE
+  ========================================================== */
+
+  rescueOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor:
+      'rgba(2,6,23,0.98)',
+    alignItems: 'center',
+    padding: 14,
     zIndex: 30,
   },
 
+  rescueIcon: {
+    width: 50,
+    height: 50,
+    borderRadius: 17,
+    backgroundColor: '#422006',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 7,
+  },
+
+  rescueTitle: {
+    color: '#FBBF24',
+    fontSize: 18,
+    fontWeight: '900',
+  },
+
+  rescueDescription: {
+    color: '#CBD5E1',
+    fontSize: 9,
+    textAlign: 'center',
+    marginTop: 3,
+    marginBottom: 8,
+  },
+
+  rescueQuestion: {
+    color: '#FFFFFF',
+    fontSize: 12,
+    fontWeight: '800',
+    textAlign: 'center',
+    lineHeight: 17,
+    marginBottom: 9,
+  },
+
+  answerList: {
+    width: '100%',
+  },
+
+  answerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderRadius: 11,
+    padding: 7,
+    marginBottom: 6,
+  },
+
+  answerLetter: {
+    width: 27,
+    height: 27,
+    borderRadius: 9,
+    backgroundColor: '#334155',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginRight: 8,
+  },
+
+  answerLetterText: {
+    color: '#FFFFFF',
+    fontSize: 10,
+    fontWeight: '900',
+  },
+
+  answerText: {
+    color: '#E2E8F0',
+    fontSize: 9,
+    lineHeight: 14,
+    flex: 1,
+  },
+
+  rescueLifeNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 2,
+  },
+
+  rescueLifeText: {
+    color: '#94A3B8',
+    fontSize: 8,
+    marginLeft: 4,
+  },
+
+  /* ==========================================================
+     END GAME
+  ========================================================== */
+
+  endGameOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor:
+      'rgba(2,6,23,0.97)',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 18,
+    zIndex: 25,
+  },
+
   resultIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 20,
+    width: 65,
+    height: 65,
+    borderRadius: 22,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
   },
 
   gameOverTitle: {
-    color: '#EF4444',
+    color: '#F87171',
+    fontSize: 21,
     fontWeight: '900',
-    fontSize: 20,
-    textAlign: 'center',
   },
 
   successTitle: {
-    color: '#10B981',
+    color: '#34D399',
+    fontSize: 21,
     fontWeight: '900',
-    fontSize: 20,
-    textAlign: 'center',
   },
 
   gameOverText: {
     color: '#94A3B8',
-    fontSize: 11,
+    fontSize: 10,
     textAlign: 'center',
-    lineHeight: 17,
-    marginTop: 7,
-    maxWidth: 250,
+    lineHeight: 16,
+    marginTop: 5,
+    maxWidth: 270,
   },
 
   finalScore: {
     color: '#FFFFFF',
     fontSize: 24,
     fontWeight: '900',
-    marginTop: 12,
+    marginTop: 10,
   },
 
   retryButton: {
+    marginTop: 13,
+    backgroundColor: '#DC2626',
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#DC2626',
-    minHeight: 44,
-    paddingHorizontal: 20,
-    borderRadius: 11,
-    marginTop: 14,
   },
 
   claimRewardButton: {
-    flexDirection: 'row',
+    marginTop: 12,
     backgroundColor: '#059669',
-    minHeight: 46,
-    paddingHorizontal: 22,
-    borderRadius: 11,
+    borderRadius: 12,
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
-    marginTop: 14,
+  },
+
+  claimDisabled: {
+    opacity: 0.6,
   },
 
   buttonText: {
     color: '#FFFFFF',
-    fontWeight: '900',
-    fontSize: 12,
-    marginLeft: 6,
+    fontWeight: '800',
+    marginLeft: 7,
+    fontSize: 11,
   },
 
   rewardRow: {
     flexDirection: 'row',
-    marginTop: 14,
-    gap: 10,
+    marginTop: 12,
+    gap: 24,
   },
 
   reward: {
-    minWidth: 78,
-    backgroundColor: '#111827',
-    borderWidth: 1,
-    borderColor: '#334155',
-    borderRadius: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
     alignItems: 'center',
   },
 
   rewardValue: {
     color: '#FBBF24',
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: '900',
     marginTop: 2,
   },
 
   rewardLabel: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 8,
-    fontWeight: '800',
     marginTop: 1,
   },
+
+  unlockNotice: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#052E25',
+    borderWidth: 1,
+    borderColor: '#065F46',
+    borderRadius: 9,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    marginTop: 9,
+  },
+
+  unlockNoticeText: {
+    color: '#A7F3D0',
+    fontSize: 8,
+    marginLeft: 5,
+    maxWidth: 190,
+    textAlign: 'center',
+  },
+
+  /* ==========================================================
+     HUD
+  ========================================================== */
 
   gameHud: {
     marginTop: 9,
@@ -12046,28 +24348,27 @@ const styles = StyleSheet.create({
 
   scoreHeader: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
 
   scoreLabel: {
-    color: '#64748B',
+    color: '#94A3B8',
     fontSize: 9,
-    fontWeight: '900',
-    letterSpacing: 1,
+    fontWeight: '700',
+    textTransform: 'uppercase',
   },
 
   scoreValue: {
     color: '#FFFFFF',
-    fontSize: 16,
+    fontSize: 12,
     fontWeight: '900',
   },
 
   progressBackground: {
-    height: 6,
-    width: '100%',
+    height: 7,
     backgroundColor: '#1E293B',
-    borderRadius: 3,
+    borderRadius: 5,
     overflow: 'hidden',
     marginTop: 5,
   },
@@ -12075,48 +24376,114 @@ const styles = StyleSheet.create({
   progressFill: {
     height: '100%',
     backgroundColor: '#38BDF8',
-    borderRadius: 3,
+    borderRadius: 5,
   },
+
+  algorithmPanel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginTop: 5,
+    backgroundColor: '#081522',
+    borderRadius: 9,
+    paddingHorizontal: 8,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: '#12324A',
+  },
+
+  algorithmLabel: {
+    color: '#64748B',
+    fontSize: 7,
+    fontWeight: '800',
+    letterSpacing: 0.6,
+  },
+
+  algorithmSub: {
+    color: '#38BDF8',
+    fontSize: 8,
+    marginTop: 1,
+    fontWeight: '700',
+  },
+
+  algorithmScoreBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+  },
+
+  algorithmValue: {
+    color: '#38BDF8',
+    fontSize: 10,
+    fontWeight: '900',
+  },
+
+  /* ==========================================================
+     CONTROLS
+  ========================================================== */
 
   controls: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     marginTop: 9,
-    gap: 8,
+  },
+
+  controlsCompact: {
+    marginTop: 7,
   },
 
   controlButton: {
-    flex: 1,
-    minHeight: 54,
-    backgroundColor: '#1E3A8A',
-    borderWidth: 1,
-    borderColor: '#3B82F6',
+    width: 78,
+    height: 44,
     borderRadius: 13,
+    backgroundColor: '#172033',
+    borderWidth: 1,
+    borderColor: '#334155',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 5,
   },
 
   controlText: {
-    color: '#BFDBFE',
+    color: '#CBD5E1',
     fontSize: 8,
-    fontWeight: '900',
-    marginTop: 2,
-    textAlign: 'center',
+    marginTop: 1,
+    fontWeight: '700',
   },
 
   controlHint: {
-    width: 54,
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
 
   controlHintText: {
-    color: '#38BDF8',
-    fontSize: 7,
-    fontWeight: '900',
-    marginTop: 3,
-    textAlign: 'center',
+    color: '#64748B',
+    fontSize: 8,
+    marginTop: 2,
+  },
+
+  /* ==========================================================
+     BOTTOM BACK
+  ========================================================== */
+
+  bottomBackButton: {
+    marginTop: 10,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#111827',
+    borderWidth: 1,
+    borderColor: '#334155',
+    borderRadius: 11,
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+  },
+
+  bottomBackText: {
+    color: '#CBD5E1',
+    fontSize: 10,
+    fontWeight: '700',
+    marginLeft: 6,
   },
 });

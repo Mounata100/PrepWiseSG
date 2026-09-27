@@ -2,7 +2,7 @@
 // // PREPWISE SG: PRODUCTION SITUATED LEARNING ENGINE
 // // Features: Auto-Shuffle, Clean Lifecycle Controls, Step-by-Step Walkthroughs
 // // =========================================================
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import {
   View,
   Text,
@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import { useGame } from '../contexts/GameContext';
 import { useNavigation, useRoute } from '@react-navigation/native';
-
+import { useTranslation } from 'react-i18next';
 /*
 |--------------------------------------------------------------------------
 | GO-BAG SCENARIOS
@@ -346,13 +346,36 @@ function getDifficultyConfig(difficulty) {
 export default function GoBagScreen() {
   const navigation = useNavigation();
   const route = useRoute();
+  const {t} = useTranslation();
 
-  const userContext = useUser();
+  const {
+    mission: missionId,
+    level,
+    difficulty,
+    xpreward,
+    coinreward,
+  } = route.params || {};
 
-  const updatePoints = userContext?.updatePoints;
-  const addBadge = userContext?.addBadge;
+  //const missionLevel = Number(level || 3);
 
-  const { triggerConfetti } = useGame();
+  //const missionDifficulty = String(
+    //difficulty || 'EASY'
+  //).toUpperCase();
+  const missionLevel = Number(level || 3);
+  const missionDifficulty = String( difficulty || 'EASY').toUpperCase();
+
+
+  const missionXpReward = Number(xpreward || 0);
+  const missionCoinReward = Number(coinreward || 0);
+
+
+  //const userContext = useUser();
+  const { updatePoints, addBadge, triggerConfetti, completeMission } = useUser();
+
+  //const updatePoints = userContext?.updatePoints;
+  //const addBadge = userContext?.addBadge;
+
+  //const { triggerConfetti } = useGame();
 
   /*
   |--------------------------------------------------------------------------
@@ -361,26 +384,30 @@ export default function GoBagScreen() {
   |
   | MissionsScreen can navigate here with:
   |
-  | navigation.navigate('GoBag', {
+  | navigation.navigate(mission.game, {
+  |   mission: mission.id,
   |   level: mission.level,
-  |   difficulty: mission.difficulty,
-  |   reward: mission.reward,
+  |   difficulty: mission.difficultyKey
+  |               .split('.')
+  |               .pop()
+  |               .toUpperCase(),
+  |   xpreward: mission.xpreward,
+  |   coinreward: mission.coinreward,
   | });
   |
   */
 
-  const missionLevel = Number(route?.params?.level || 3);
+  // const missionLevel = Number(route?.params?.level || 3);
 
-  const missionDifficulty = String(
-    route?.params?.difficulty || 'EASY'
-  ).toUpperCase();
+  // const missionDifficulty = String(
+  //   route?.params?.difficulty || 'EASY'
+  // ).toUpperCase();
 
-  const missionReward = Number(
-    route?.params?.reward || 40
-  );
+  //const missionReward = Number(
+    //route?.params?.reward || 40
+  //);
 
-  const difficultyConfig =
-    getDifficultyConfig(missionDifficulty);
+  const difficultyConfig = getDifficultyConfig(missionDifficulty);
 
   /*
   |--------------------------------------------------------------------------
@@ -835,40 +862,94 @@ export default function GoBagScreen() {
   | COMPLETE MISSION
   |--------------------------------------------------------------------------
   */
-
-  const completeMission = () => {
-    const finalScore =
-      Number(score || 0);
-
-    if (
-      typeof updatePoints ===
-      'function'
-    ) {
-      updatePoints(
-        finalScore +
-          missionReward
+  const handleCompleteMission = useCallback(() => {
+    /*
+    * Prevent completion if we don't have
+    * the campaign mission ID.
+    */
+    if (!missionId) {
+      console.warn(
+        'GoBag: missing missionId',
+        route.params
       );
+      return;
     }
 
+    /*
+    * Complete the campaign mission.
+    *
+    * UserContext will:
+    * - mark completedMissions[missionId] = true
+    * - award XP
+    * - award PrepCoins
+    */
+    completeMission(
+      missionId,
+      missionXpReward,
+      missionCoinReward
+    );
+
+    /*
+    * Existing badge logic.
+    */
     if (
       resultSummary?.mastered &&
-      typeof addBadge ===
-        'function'
+      typeof addBadge === 'function'
     ) {
-      addBadge(
-        'go_bag_master'
-      );
+      addBadge('go_bag_master');
 
       if (
-        typeof triggerConfetti ===
-        'function'
+        typeof triggerConfetti === 'function'
       ) {
         triggerConfetti();
       }
     }
 
     setGameState('finished');
-  };
+  }, [
+    missionId,
+    missionXpReward,
+    missionCoinReward,
+    completeMission,
+    resultSummary?.mastered,
+    addBadge,
+    triggerConfetti,
+  ]);
+
+
+  // const completeMission = () => {
+  //   const finalScore =
+  //     Number(score || 0);
+
+  //   if (
+  //     typeof updatePoints ===
+  //     'function'
+  //   ) {
+  //     updatePoints(
+  //       finalScore +
+  //         missionReward
+  //     );
+  //   }
+
+  //   if (
+  //     resultSummary?.mastered &&
+  //     typeof addBadge ===
+  //       'function'
+  //   ) {
+  //     addBadge(
+  //       'go_bag_master'
+  //     );
+
+  //     if (
+  //       typeof triggerConfetti ===
+  //       'function'
+  //     ) {
+  //       triggerConfetti();
+  //     }
+  //   }
+
+  //   setGameState('finished');
+  // };
 
   /*
   |--------------------------------------------------------------------------
@@ -926,1369 +1007,1052 @@ export default function GoBagScreen() {
   |--------------------------------------------------------------------------
   */
 
-  return (
-    <View style={styles.container}>
-      {/* =====================================================
-          HEADER
-          ===================================================== */}
+  /*
+  |--------------------------------------------------------------------------
+  | RENDER
+  |--------------------------------------------------------------------------
+  */
 
-      <View style={styles.topBar}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() =>
-            navigation.goBack()
-          }
-          activeOpacity={0.8}
-        >
-          <Ionicons
-            name="close"
-            size={23}
-            color="#94A3B8"
-          />
-        </TouchableOpacity>
+return (
+  <View style={styles.container}>
+    {/* =====================================================
+        HEADER
+    ===================================================== */}
 
-        <View style={styles.topBarCenter}>
-          <Text
-            style={
-              styles.topBarTitle
-            }
-          >
-            GO-BAG DRILL
-          </Text>
+    <View style={styles.topBar}>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.goBack()}
+        activeOpacity={0.8}
+      >
+        <Ionicons
+          name="close"
+          size={23}
+          color="#94A3B8"
+        />
+      </TouchableOpacity>
 
-          <Text
-            style={
-              styles.topBarSub
-            }
-          >
-            LEVEL {missionLevel} ·{' '}
-            {missionDifficulty}
-          </Text>
-        </View>
+      <View style={styles.topBarCenter}>
+        <Text style={styles.topBarTitle}>
+          {t('goBagDrill.title')}
+        </Text>
 
-        <View
-          style={styles.levelBadge}
-        >
-          <Text
-            style={
-              styles.levelBadgeText
-            }
-          >
-            {missionLevel}
-          </Text>
-        </View>
+        <Text style={styles.topBarSub}>
+          {t('goBagDrill.levelDifficulty', {
+            level: missionLevel,
+            difficulty: missionDifficulty,
+          })}
+        </Text>
       </View>
 
-      {/* =====================================================
-          ONBOARDING
-          ===================================================== */}
+      <View style={styles.levelBadge}>
+        <Text style={styles.levelBadgeText}>
+          {missionLevel}
+        </Text>
+      </View>
+    </View>
 
-      {gameState ===
-        'onboarding' && (
-        <ScrollView
-          contentContainerStyle={
-            styles.centerScroll
-          }
-          showsVerticalScrollIndicator={
-            false
-          }
-        >
-          <View
-            style={
-              styles.briefingIcon
-            }
-          >
+    {/* =====================================================
+        ONBOARDING
+    ===================================================== */}
+
+    {gameState === 'onboarding' && (
+      <ScrollView
+        contentContainerStyle={styles.centerScroll}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.briefingIcon}>
+          <Ionicons
+            name="briefcase-outline"
+            size={48}
+            color="#38BDF8"
+          />
+        </View>
+
+        <Text style={styles.titleText}>
+          {t('goBagDrill.title')}
+        </Text>
+
+        <Text style={styles.subtitleText}>
+          {t('goBagDrill.subtitle')}
+        </Text>
+
+        <View style={styles.briefingCard}>
+          <View style={styles.briefingHeader}>
             <Ionicons
-              name="briefcase-outline"
-              size={48}
+              name="information-circle-outline"
+              size={20}
               color="#38BDF8"
             />
-          </View>
 
-          <Text
-            style={
-              styles.titleText
-            }
-          >
-            Emergency Go-Bag
-          </Text>
-
-          <Text
-            style={
-              styles.subtitleText
-            }
-          >
-            Preparedness Packing Drill
-          </Text>
-
-          <View
-            style={
-              styles.briefingCard
-            }
-          >
-            <View
-              style={
-                styles.briefingHeader
-              }
-            >
-              <Ionicons
-                name="information-circle-outline"
-                size={20}
-                color="#38BDF8"
-              />
-
-              <Text
-                style={
-                  styles.briefingHeaderText
-                }
-              >
-                Mission Brief
-              </Text>
-            </View>
-
-            <Text
-              style={
-                styles.briefingText
-              }
-            >
-              Build an emergency
-              loadout by selecting
-              equipment for the
-              scenario. Your bag has
-              limited capacity, so
-              prioritise items that
-              support the immediate
-              response.
+            <Text style={styles.briefingHeaderText}>
+              {t('goBagDrill.missionBrief')}
             </Text>
           </View>
 
-          <View
-            style={
-              styles.configGrid
-            }
-          >
-            <View
-              style={
-                styles.configCard
-              }
-            >
-              <Text
-                style={
-                  styles.configLabel
-                }
-              >
-                DIFFICULTY
-              </Text>
-
-              <Text
-                style={[
-                  styles.configValue,
-                  {
-                    color:
-                      missionDifficulty ===
-                      'HARD'
-                        ? '#EF4444'
-                        : missionDifficulty ===
-                          'MEDIUM'
-                        ? '#38BDF8'
-                        : '#34D399',
-                  },
-                ]}
-              >
-                {
-                  difficultyConfig.title
-                }
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.configCard
-              }
-            >
-              <Text
-                style={
-                  styles.configLabel
-                }
-              >
-                TIME
-              </Text>
-
-              <Text
-                style={
-                  styles.configValue
-                }
-              >
-                {
-                  difficultyConfig.time
-                }
-                s
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.configCard
-              }
-            >
-              <Text
-                style={
-                  styles.configLabel
-                }
-              >
-                CAPACITY
-              </Text>
-
-              <Text
-                style={
-                  styles.configValue
-                }
-              >
-                {
-                  difficultyConfig.capacity
-                }{' '}
-                KG
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.configCard
-              }
-            >
-              <Text
-                style={
-                  styles.configLabel
-                }
-              >
-                REWARD
-              </Text>
-
-              <Text
-                style={
-                  styles.configValue
-                }
-              >
-                +{missionReward} XP
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={
-              styles.rulesCard
-            }
-          >
-            <Text
-              style={
-                styles.rulesTitle
-              }
-            >
-              How to complete the
-              drill
-            </Text>
-
-            <View
-              style={
-                styles.ruleRow
-              }
-            >
-              <View
-                style={
-                  styles.ruleNumber
-                }
-              >
-                <Text
-                  style={
-                    styles.ruleNumberText
-                  }
-                >
-                  1
-                </Text>
-              </View>
-
-              <Text
-                style={
-                  styles.ruleText
-                }
-              >
-                Review the emergency
-                scenario.
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.ruleRow
-              }
-            >
-              <View
-                style={
-                  styles.ruleNumber
-                }
-              >
-                <Text
-                  style={
-                    styles.ruleNumberText
-                  }
-                >
-                  2
-                </Text>
-              </View>
-
-              <Text
-                style={
-                  styles.ruleText
-                }
-              >
-                Tap equipment to place
-                it into the go-bag.
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.ruleRow
-              }
-            >
-              <View
-                style={
-                  styles.ruleNumber
-                }
-              >
-                <Text
-                  style={
-                    styles.ruleNumberText
-                  }
-                >
-                  3
-                </Text>
-              </View>
-
-              <Text
-                style={
-                  styles.ruleText
-                }
-              >
-                Keep the loadout within
-                the weight limit.
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.ruleRow
-              }
-            >
-              <View
-                style={
-                  styles.ruleNumber
-                }
-              >
-                <Text
-                  style={
-                    styles.ruleNumberText
-                  }
-                >
-                  4
-                </Text>
-              </View>
-
-              <Text
-                style={
-                  styles.ruleText
-                }
-              >
-                Submit the loadout before
-                the timer expires.
-              </Text>
-            </View>
-          </View>
-
-          <Text
-            style={
-              styles.difficultyDescription
-            }
-          >
-            {
-              difficultyConfig.description
-            }
+          <Text style={styles.briefingText}>
+            {t('goBagDrill.missionBriefText')}
           </Text>
+        </View>
 
-          <TouchableOpacity
-            style={
-              styles.primaryButton
-            }
-            onPress={startGame}
-            activeOpacity={0.85}
-          >
-            <Text
-              style={
-                styles.primaryButtonText
-              }
-            >
-              Begin Packing Drill
+        <View style={styles.configGrid}>
+          <View style={styles.configCard}>
+            <Text style={styles.configLabel}>
+              {t('goBagDrill.difficulty')}
             </Text>
 
-            <Ionicons
-              name="arrow-forward"
-              size={18}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-        </ScrollView>
-      )}
-
-      {/* =====================================================
-          PLAYING
-          ===================================================== */}
-
-      {gameState ===
-        'playing' && (
-        <ScrollView
-          contentContainerStyle={
-            styles.playingContent
-          }
-          showsVerticalScrollIndicator={
-            false
-          }
-        >
-          {/* Dashboard */}
-
-          <View
-            style={
-              styles.dashboard
-            }
-          >
-            <View>
-              <Text
-                style={
-                  styles.dashboardTitle
-                }
-              >
-                PACK LOADOUT
-              </Text>
-
-              <Text
-                style={
-                  styles.dashboardSub
-                }
-              >
-                {currentScenario.location}
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.timerBox
-              }
-            >
-              <Ionicons
-                name="timer-outline"
-                size={16}
-                color={
-                  timeLeft <= 5
-                    ? '#EF4444'
-                    : '#F59E0B'
-                }
-              />
-
-              <Text
-                style={[
-                  styles.timerText,
-                  timeLeft <= 5 &&
-                    styles.timerDanger,
-                ]}
-              >
-                {timeLeft}s
-              </Text>
-            </View>
-          </View>
-
-          {/* Timer */}
-
-          <View
-            style={
-              styles.timerTrack
-            }
-          >
-            <Animated.View
+            <Text
               style={[
-                styles.timerFill,
+                styles.configValue,
                 {
-                  width:
-                    timerAnim.interpolate(
-                      {
-                        inputRange: [
-                          0,
-                          1,
-                        ],
-                        outputRange: [
-                          '0%',
-                          '100%',
-                        ],
-                      }
-                    ),
+                  color:
+                    missionDifficulty === 'HARD'
+                      ? '#EF4444'
+                      : missionDifficulty === 'MEDIUM'
+                      ? '#38BDF8'
+                      : '#34D399',
                 },
+              ]}
+            >
+              {difficultyConfig.title}
+            </Text>
+          </View>
+
+          <View style={styles.configCard}>
+            <Text style={styles.configLabel}>
+              {t('goBagDrill.time')}
+            </Text>
+
+            <Text style={styles.configValue}>
+              {difficultyConfig.time}
+              {t('goBagDrill.secondsShort')}
+            </Text>
+          </View>
+
+          <View style={styles.configCard}>
+            <Text style={styles.configLabel}>
+              {t('goBagDrill.capacity')}
+            </Text>
+
+            <Text style={styles.configValue}>
+              {difficultyConfig.capacity}{' '}
+              {t('goBagDrill.kg')}
+            </Text>
+          </View>
+
+          <View style={styles.configCard}>
+            <Text style={styles.configLabel}>
+              {t('goBagDrill.reward')}
+            </Text>
+
+            <Text style={styles.configValue}>
+              +{missionXpReward} {t('goBagDrill.xp')}
+            </Text>
+          </View>
+        </View>
+
+        <View style={styles.rulesCard}>
+          <Text style={styles.rulesTitle}>
+            {t('goBagDrill.howToComplete')}
+          </Text>
+
+          <View style={styles.ruleRow}>
+            <View style={styles.ruleNumber}>
+              <Text style={styles.ruleNumberText}>
+                1
+              </Text>
+            </View>
+
+            <Text style={styles.ruleText}>
+              {t('goBagDrill.rule1')}
+            </Text>
+          </View>
+
+          <View style={styles.ruleRow}>
+            <View style={styles.ruleNumber}>
+              <Text style={styles.ruleNumberText}>
+                2
+              </Text>
+            </View>
+
+            <Text style={styles.ruleText}>
+              {t('goBagDrill.rule2')}
+            </Text>
+          </View>
+
+          <View style={styles.ruleRow}>
+            <View style={styles.ruleNumber}>
+              <Text style={styles.ruleNumberText}>
+                3
+              </Text>
+            </View>
+
+            <Text style={styles.ruleText}>
+              {t('goBagDrill.rule3')}
+            </Text>
+          </View>
+
+          <View style={styles.ruleRow}>
+            <View style={styles.ruleNumber}>
+              <Text style={styles.ruleNumberText}>
+                4
+              </Text>
+            </View>
+
+            <Text style={styles.ruleText}>
+              {t('goBagDrill.rule4')}
+            </Text>
+          </View>
+        </View>
+
+        <Text style={styles.difficultyDescription}>
+          {difficultyConfig.description}
+        </Text>
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={startGame}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.primaryButtonText}>
+            {t('goBagDrill.beginPackingDrill')}
+          </Text>
+
+          <Ionicons
+            name="arrow-forward"
+            size={18}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </ScrollView>
+    )}
+
+    {/* =====================================================
+        PLAYING
+    ===================================================== */}
+
+    {gameState === 'playing' && (
+      <ScrollView
+        contentContainerStyle={styles.playingContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Dashboard */}
+
+        <View style={styles.dashboard}>
+          <View>
+            <Text style={styles.dashboardTitle}>
+              {t('goBagDrill.packLoadout')}
+            </Text>
+
+            <Text style={styles.dashboardSub}>
+              {currentScenario.location}
+            </Text>
+          </View>
+
+          <View style={styles.timerBox}>
+            <Ionicons
+              name="timer-outline"
+              size={16}
+              color={
+                timeLeft <= 5
+                  ? '#EF4444'
+                  : '#F59E0B'
+              }
+            />
+
+            <Text
+              style={[
+                styles.timerText,
                 timeLeft <= 5 &&
-                  styles.timerDangerFill,
+                  styles.timerDanger,
+              ]}
+            >
+              {timeLeft}
+              {t('goBagDrill.secondsShort')}
+            </Text>
+          </View>
+        </View>
+
+        {/* Timer */}
+
+        <View style={styles.timerTrack}>
+          <Animated.View
+            style={[
+              styles.timerFill,
+              {
+                width: timerAnim.interpolate({
+                  inputRange: [0, 1],
+                  outputRange: ['0%', '100%'],
+                }),
+              },
+              timeLeft <= 5 &&
+                styles.timerDangerFill,
+            ]}
+          />
+        </View>
+
+        {/* Scenario */}
+
+        <Animated.View
+          style={[
+            styles.scenarioCard,
+            {
+              transform: [
+                {
+                  scale: pulseAnim,
+                },
+              ],
+            },
+          ]}
+        >
+          <View style={styles.scenarioTop}>
+            <View style={styles.scenarioIcon}>
+              <Ionicons
+                name="warning-outline"
+                size={22}
+                color="#F59E0B"
+              />
+            </View>
+
+            <View style={styles.scenarioMeta}>
+              <Text style={styles.scenarioLabel}>
+                {t('goBagDrill.activeScenario')}
+              </Text>
+
+              <Text style={styles.scenarioName}>
+                {currentScenario.name}
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.scenarioDescription}>
+            {currentScenario.desc}
+          </Text>
+        </Animated.View>
+
+        {/* Capacity */}
+
+        <View style={styles.capacityCard}>
+          <View style={styles.capacityHeader}>
+            <Text style={styles.capacityTitle}>
+              {t('goBagDrill.bagCapacity')}
+            </Text>
+
+            <Text
+              style={[
+                styles.capacityValue,
+                currentWeight >=
+                  difficultyConfig.capacity &&
+                  styles.capacityDanger,
+              ]}
+            >
+              {currentWeight.toFixed(1)} /{' '}
+              {difficultyConfig.capacity}{' '}
+              {t('goBagDrill.kg')}
+            </Text>
+          </View>
+
+          <View style={styles.capacityTrack}>
+            <View
+              style={[
+                styles.capacityFill,
+                {
+                  width: `${progressPercentage}%`,
+                },
+                currentWeight >=
+                  difficultyConfig.capacity &&
+                  styles.capacityFillDanger,
               ]}
             />
           </View>
+        </View>
 
-          {/* Scenario */}
+        {/* Instruction */}
 
-          <Animated.View
-            style={[
-              styles.scenarioCard,
-              {
-                transform: [
-                  {
-                    scale:
-                      pulseAnim,
-                  },
-                ],
-              },
-            ]}
-          >
-            <View
-              style={
-                styles.scenarioTop
-              }
-            >
-              <View
-                style={
-                  styles.scenarioIcon
-                }
-              >
-                <Ionicons
-                  name="warning-outline"
-                  size={22}
-                  color="#F59E0B"
-                />
-              </View>
+        <View style={styles.instructionStrip}>
+          <Ionicons
+            name="hand-left-outline"
+            size={17}
+            color="#38BDF8"
+          />
 
-              <View
-                style={
-                  styles.scenarioMeta
-                }
-              >
-                <Text
-                  style={
-                    styles.scenarioLabel
-                  }
-                >
-                  ACTIVE SCENARIO
-                </Text>
+          <Text style={styles.instructionStripText}>
+            {t('goBagDrill.packInstruction')}
+          </Text>
+        </View>
 
-                <Text
-                  style={
-                    styles.scenarioName
-                  }
-                >
-                  {
-                    currentScenario.name
-                  }
-                </Text>
-              </View>
-            </View>
+        {/* Equipment */}
 
-            <Text
-              style={
-                styles.scenarioDescription
-              }
-            >
-              {
-                currentScenario.desc
-              }
+        <View style={styles.sectionHeadingRow}>
+          <View>
+            <Text style={styles.sectionTitle}>
+              {t('goBagDrill.availableEquipment')}
             </Text>
-          </Animated.View>
 
-          {/* Capacity */}
-
-          <View
-            style={
-              styles.capacityCard
-            }
-          >
-            <View
-              style={
-                styles.capacityHeader
-              }
-            >
-              <Text
-                style={
-                  styles.capacityTitle
-                }
-              >
-                BAG CAPACITY
-              </Text>
-
-              <Text
-                style={[
-                  styles.capacityValue,
-                  currentWeight >=
-                    difficultyConfig.capacity &&
-                    styles.capacityDanger,
-                ]}
-              >
-                {currentWeight.toFixed(
-                  1
-                )}{' '}
-                /{' '}
-                {
-                  difficultyConfig.capacity
-                }{' '}
-                KG
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.capacityTrack
-              }
-            >
-              <View
-                style={[
-                  styles.capacityFill,
-                  {
-                    width: `${progressPercentage}%`,
-                  },
-                  currentWeight >=
-                    difficultyConfig.capacity &&
-                    styles.capacityFillDanger,
-                ]}
-              />
-            </View>
-          </View>
-
-          {/* Instruction */}
-
-          <View
-            style={
-              styles.instructionStrip
-            }
-          >
-            <Ionicons
-              name="hand-left-outline"
-              size={17}
-              color="#38BDF8"
-            />
-
-            <Text
-              style={
-                styles.instructionStripText
-              }
-            >
-              Tap an equipment card
-              to pack it. Tap again to
-              remove it.
+            <Text style={styles.sectionSub}>
+              {t('goBagDrill.itemsPacked', {
+                count: selectedItems.length,
+              })}
             </Text>
           </View>
 
-          {/* Equipment */}
-
-          <View
-            style={
-              styles.sectionHeadingRow
-            }
-          >
-            <View>
-              <Text
-                style={
-                  styles.sectionTitle
-                }
-              >
-                AVAILABLE EQUIPMENT
-              </Text>
-
-              <Text
-                style={
-                  styles.sectionSub
-                }
-              >
-                {selectedItems.length}{' '}
-                items packed
-              </Text>
-            </View>
-
-            <View
-              style={
-                styles.selectionCount
-              }
-            >
-              <Text
-                style={
-                  styles.selectionCountText
-                }
-              >
-                {selectedItems.length}
-              </Text>
-            </View>
+          <View style={styles.selectionCount}>
+            <Text style={styles.selectionCountText}>
+              {selectedItems.length}
+            </Text>
           </View>
+        </View>
 
-          <View
-            style={
-              styles.itemGrid
-            }
-          >
-            {items.map((item) => {
-              const selected =
-                item.selected;
+        <View style={styles.itemGrid}>
+          {items.map((item) => {
+            const selected = item.selected;
 
-              const cannotFit =
-                !selected &&
-                currentWeight +
-                  item.weight >
-                  difficultyConfig.capacity;
+            const cannotFit =
+              !selected &&
+              currentWeight + item.weight >
+                difficultyConfig.capacity;
 
-              return (
-                <TouchableOpacity
-                  key={item.id}
-                  activeOpacity={
-                    cannotFit
-                      ? 1
-                      : 0.8
-                  }
-                  disabled={
-                    cannotFit
-                  }
-                  onPress={() =>
-                    toggleItem(
-                      item.id
-                    )
-                  }
+            return (
+              <TouchableOpacity
+                key={item.id}
+                activeOpacity={
+                  cannotFit ? 1 : 0.8
+                }
+                disabled={cannotFit}
+                onPress={() =>
+                  toggleItem(item.id)
+                }
+                style={[
+                  styles.itemCard,
+                  selected &&
+                    styles.itemCardSelected,
+                  cannotFit &&
+                    styles.itemCardDisabled,
+                ]}
+              >
+                {/* Checkbox */}
+
+                <View
                   style={[
-                    styles.itemCard,
+                    styles.checkbox,
                     selected &&
-                      styles.itemCardSelected,
-                    cannotFit &&
-                      styles.itemCardDisabled,
+                      styles.checkboxSelected,
                   ]}
                 >
-                  {/* Checkbox */}
-
-                  <View
-                    style={[
-                      styles.checkbox,
-                      selected &&
-                        styles.checkboxSelected,
-                    ]}
-                  >
-                    {selected && (
-                      <Ionicons
-                        name="checkmark"
-                        size={17}
-                        color="#FFFFFF"
-                      />
-                    )}
-                  </View>
-
-                  <View
-                    style={
-                      styles.itemIcon
-                    }
-                  >
+                  {selected && (
                     <Ionicons
-                      name={
-                        item.icon
-                      }
-                      size={25}
-                      color={
-                        selected
-                          ? '#FFFFFF'
-                          : '#64748B'
-                      }
+                      name="checkmark"
+                      size={17}
+                      color="#FFFFFF"
                     />
-                  </View>
+                  )}
+                </View>
 
-                  <Text
-                    style={[
-                      styles.itemName,
-                      selected &&
-                        styles.itemNameSelected,
-                    ]}
-                  >
-                    {item.name}
-                  </Text>
-
-                  <Text
-                    style={[
-                      styles.itemGroup,
-                      selected &&
-                        styles.itemGroupSelected,
-                    ]}
-                  >
-                    {item.group}
-                  </Text>
-
-                  <View
-                    style={
-                      styles.itemFooter
-                    }
-                  >
-                    <Text
-                      style={[
-                        styles.itemWeight,
-                        selected &&
-                          styles.itemWeightSelected,
-                      ]}
-                    >
-                      {item.weight}{' '}
-                      KG
-                    </Text>
-
-                    {selected && (
-                      <Text
-                        style={
-                          styles.packedLabel
-                        }
-                      >
-                        PACKED
-                      </Text>
-                    )}
-                  </View>
-                </TouchableOpacity>
-              );
-            })}
-          </View>
-
-          {/* Submit */}
-
-          <TouchableOpacity
-            style={
-              styles.submitButton
-            }
-            onPress={
-              submitLoadout
-            }
-            activeOpacity={0.85}
-          >
-            <View>
-              <Text
-                style={
-                  styles.submitButtonText
-                }
-              >
-                Submit Loadout
-              </Text>
-
-              <Text
-                style={
-                  styles.submitButtonSub
-                }
-              >
-                Lock in your
-                preparedness response
-              </Text>
-            </View>
-
-            <Ionicons
-              name="checkmark-circle-outline"
-              size={27}
-              color="#FFFFFF"
-            />
-          </TouchableOpacity>
-        </ScrollView>
-        )}
-        /* =====================================================
-            REVIEW
-         ===================================================== */
-          {gameState === 'review' && (
-            <ScrollView
-              contentContainerStyle={styles.reviewContent}
-              showsVerticalScrollIndicator={false}
-            >
-              <View style={styles.reviewHero}>
-                <View style={styles.reviewIconCircle}>
+                <View style={styles.itemIcon}>
                   <Ionicons
-                    name={
-                      resultSummary?.mastered
-                        ? 'checkmark-circle'
-                        : 'school-outline'
-                    }
-                    size={42}
+                    name={item.icon}
+                    size={25}
                     color={
-                      resultSummary?.mastered
-                        ? '#34D399'
-                        : '#38BDF8'
+                      selected
+                        ? '#FFFFFF'
+                        : '#64748B'
                     }
                   />
                 </View>
 
-                <Text style={styles.reviewTitle}>
-                  {resultSummary?.mastered
-                    ? 'Loadout Complete'
-                    : 'Loadout Review'}
+                <Text
+                  style={[
+                    styles.itemName,
+                    selected &&
+                      styles.itemNameSelected,
+                  ]}
+                >
+                  {item.name}
                 </Text>
 
-                <Text style={styles.reviewSubtitle}>
-                  Review the decisions you made for this
-                  emergency scenario.
+                <Text
+                  style={[
+                    styles.itemGroup,
+                    selected &&
+                      styles.itemGroupSelected,
+                  ]}
+                >
+                  {item.group}
                 </Text>
-              </View>
 
-              {/* SCORE CARD */}
-
-              <View style={styles.scoreCard}>
-                <View>
-                  <Text style={styles.scoreLabel}>
-                    DRILL SCORE
+                <View style={styles.itemFooter}>
+                  <Text
+                    style={[
+                      styles.itemWeight,
+                      selected &&
+                        styles.itemWeightSelected,
+                    ]}
+                  >
+                    {item.weight}{' '}
+                    {t('goBagDrill.kg')}
                   </Text>
 
-                  <Text style={styles.scoreValue}>
-                    {score}
-                    <Text style={styles.scoreXP}>
-                      {' '}XP
+                  {selected && (
+                    <Text style={styles.packedLabel}>
+                      {t('goBagDrill.packed')}
                     </Text>
-                  </Text>
-                </View>
-
-                <View style={styles.scoreDivider} />
-
-                <View>
-                  <Text style={styles.scoreLabel}>
-                    TIME BONUS
-                  </Text>
-
-                  <Text style={styles.scoreBonus}>
-                    +{resultSummary?.timeBonus || 0}
-                  </Text>
-                </View>
-              </View>
-
-              {/* PACKED SUMMARY */}
-
-              <View style={styles.reviewSection}>
-                <View style={styles.reviewSectionHeader}>
-                  <Text style={styles.reviewSectionTitle}>
-                    YOUR PACK
-                  </Text>
-
-                  <Text style={styles.reviewSectionCount}>
-                    {selectedItems.length} ITEMS
-                  </Text>
-                </View>
-
-                <View style={styles.packedItemsContainer}>
-                  {selectedItems.length === 0 ? (
-                    <View style={styles.emptyPack}>
-                      <Ionicons
-                        name="briefcase-outline"
-                        size={28}
-                        color="#475569"
-                      />
-
-                      <Text style={styles.emptyPackText}>
-                        No equipment was packed.
-                      </Text>
-                    </View>
-                  ) : (
-                    selectedItems.map((item) => {
-                      const isCritical =
-                        currentScenario.criticalItems.includes(
-                          item.id
-                        );
-
-                      const isRecommended =
-                        currentScenario.recommendedItems.includes(
-                          item.id
-                        );
-
-                      const isUnnecessary =
-                        currentScenario.avoidItems.includes(
-                          item.id
-                        );
-
-                      return (
-                        <View
-                          key={item.id}
-                          style={styles.reviewItem}
-                        >
-                          <View
-                            style={[
-                              styles.reviewItemIcon,
-                              isUnnecessary &&
-                                styles.reviewItemIconBad,
-                              !isUnnecessary &&
-                                styles.reviewItemIconGood,
-                            ]}
-                          >
-                            <Ionicons
-                              name={item.icon}
-                              size={20}
-                              color={
-                                isUnnecessary
-                                  ? '#F87171'
-                                  : '#34D399'
-                              }
-                            />
-                          </View>
-
-                          <View style={styles.reviewItemInfo}>
-                            <Text style={styles.reviewItemName}>
-                              {item.name}
-                            </Text>
-
-                            <Text style={styles.reviewItemWeight}>
-                              {item.weight} KG
-                            </Text>
-                          </View>
-
-                          <View
-                            style={[
-                              styles.reviewStatus,
-                              isUnnecessary &&
-                                styles.reviewStatusBad,
-                              isCritical &&
-                                styles.reviewStatusCritical,
-                            ]}
-                          >
-                            <Text
-                              style={[
-                                styles.reviewStatusText,
-                                isUnnecessary &&
-                                  styles.reviewStatusTextBad,
-                                isCritical &&
-                                  styles.reviewStatusTextCritical,
-                              ]}
-                            >
-                              {isCritical
-                                ? 'ESSENTIAL'
-                                : isRecommended
-                                ? 'USEFUL'
-                                : 'OPTIONAL'}
-                            </Text>
-                          </View>
-                        </View>
-                      );
-                    })
                   )}
                 </View>
+              </TouchableOpacity>
+            );
+          })}
+        </View>
+
+        {/* Submit */}
+
+        <TouchableOpacity
+          style={styles.submitButton}
+          onPress={submitLoadout}
+          activeOpacity={0.85}
+        >
+          <View>
+            <Text style={styles.submitButtonText}>
+              {t('goBagDrill.submitLoadout')}
+            </Text>
+
+            <Text style={styles.submitButtonSub}>
+              {t('goBagDrill.lockInResponse')}
+            </Text>
+          </View>
+
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={27}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </ScrollView>
+    )}
+
+    {/* =====================================================
+        REVIEW
+    ===================================================== */}
+
+    {gameState === 'review' && (
+      <ScrollView
+        contentContainerStyle={
+          styles.reviewContent
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.reviewHero}>
+          <View style={styles.reviewIconCircle}>
+            <Ionicons
+              name={
+                resultSummary?.mastered
+                  ? 'checkmark-circle'
+                  : 'school-outline'
+              }
+              size={42}
+              color={
+                resultSummary?.mastered
+                  ? '#34D399'
+                  : '#38BDF8'
+              }
+            />
+          </View>
+
+          <Text style={styles.reviewTitle}>
+            {resultSummary?.mastered
+              ? t('goBagDrill.loadoutComplete')
+              : t('goBagDrill.loadoutReview')}
+          </Text>
+
+          <Text style={styles.reviewSubtitle}>
+            {t('goBagDrill.reviewSubtitle')}
+          </Text>
+        </View>
+
+        {/* SCORE CARD */}
+
+        <View style={styles.scoreCard}>
+          <View>
+            <Text style={styles.scoreLabel}>
+              {t('goBagDrill.drillScore')}
+            </Text>
+
+            <Text style={styles.scoreValue}>
+              {score}
+              <Text style={styles.scoreXP}>
+                {' '}
+                {t('goBagDrill.xp')}
+              </Text>
+            </Text>
+          </View>
+
+          <View style={styles.scoreDivider} />
+
+          <View>
+            <Text style={styles.scoreLabel}>
+              {t('goBagDrill.timeBonus')}
+            </Text>
+
+            <Text style={styles.scoreBonus}>
+              +{resultSummary?.timeBonus || 0}
+            </Text>
+          </View>
+        </View>
+
+        {/* PACKED SUMMARY */}
+
+        <View style={styles.reviewSection}>
+          <View style={styles.reviewSectionHeader}>
+            <Text style={styles.reviewSectionTitle}>
+              {t('goBagDrill.yourPack')}
+            </Text>
+
+            <Text style={styles.reviewSectionCount}>
+              {t('goBagDrill.itemsCount', {
+                count: selectedItems.length,
+              })}
+            </Text>
+          </View>
+
+          <View style={styles.packedItemsContainer}>
+            {selectedItems.length === 0 ? (
+              <View style={styles.emptyPack}>
+                <Ionicons
+                  name="briefcase-outline"
+                  size={28}
+                  color="#475569"
+                />
+
+                <Text style={styles.emptyPackText}>
+                  {t('goBagDrill.noEquipmentPacked')}
+                </Text>
               </View>
+            ) : (
+              selectedItems.map((item) => {
+                const isCritical =
+                  currentScenario.criticalItems.includes(
+                    item.id
+                  );
 
-              {/* CRITICAL ITEMS */}
+                const isRecommended =
+                  currentScenario.recommendedItems.includes(
+                    item.id
+                  );
 
-              <View style={styles.reviewSection}>
-                <View style={styles.reviewSectionHeader}>
-                  <Text style={styles.reviewSectionTitle}>
-                    ESSENTIAL CHECK
-                  </Text>
-                </View>
+                const isUnnecessary =
+                  currentScenario.avoidItems.includes(
+                    item.id
+                  );
 
-                {resultSummary?.criticalSelected?.map(
-                  (id) => (
+                return (
+                  <View
+                    key={item.id}
+                    style={styles.reviewItem}
+                  >
                     <View
-                      key={`selected-${id}`}
-                      style={styles.feedbackRow}
+                      style={[
+                        styles.reviewItemIcon,
+                        isUnnecessary &&
+                          styles.reviewItemIconBad,
+                        !isUnnecessary &&
+                          styles.reviewItemIconGood,
+                      ]}
                     >
-                      <View style={styles.feedbackIconGood}>
-                        <Ionicons
-                          name="checkmark"
-                          size={17}
-                          color="#FFFFFF"
-                        />
-                      </View>
-
-                      <View style={styles.feedbackTextBlock}>
-                        <Text style={styles.feedbackTitle}>
-                          {getItemName(id)}
-                        </Text>
-
-                        <Text style={styles.feedbackBody}>
-                          Essential equipment correctly
-                          included in your loadout.
-                        </Text>
-                      </View>
+                      <Ionicons
+                        name={item.icon}
+                        size={20}
+                        color={
+                          isUnnecessary
+                            ? '#F87171'
+                            : '#34D399'
+                        }
+                      />
                     </View>
-                  )
-                )}
 
-                {resultSummary?.criticalMissed?.map(
-                  (id) => (
                     <View
-                      key={`missed-${id}`}
-                      style={styles.feedbackRow}
+                      style={styles.reviewItemInfo}
                     >
-                      <View style={styles.feedbackIconBad}>
-                        <Ionicons
-                          name="close"
-                          size={17}
-                          color="#FFFFFF"
-                        />
-                      </View>
-
-                      <View style={styles.feedbackTextBlock}>
-                        <Text style={styles.feedbackTitle}>
-                          {getItemName(id)}
-                        </Text>
-
-                        <Text style={styles.feedbackBody}>
-                          This was an essential item for
-                          this scenario and was not packed.
-                        </Text>
-                      </View>
-                    </View>
-                  )
-                )}
-              </View>
-
-              {/* EDUCATIONAL BREAKDOWN */}
-
-              <View style={styles.reviewSection}>
-                <View style={styles.reviewSectionHeader}>
-                  <Text style={styles.reviewSectionTitle}>
-                    WHY IT MATTERS
-                  </Text>
-                </View>
-
-                {currentScenario.steps.map(
-                  (step, index) => {
-                    const packed =
-                      selectedItemIds.includes(step.id);
-
-                    return (
-                      <View
-                        key={step.id}
-                        style={styles.educationCard}
+                      <Text
+                        style={styles.reviewItemName}
                       >
-                        <View
-                          style={[
-                            styles.educationNumber,
-                            packed
-                              ? styles.educationNumberGood
-                              : styles.educationNumberMissed,
-                          ]}
-                        >
-                          <Text
-                            style={styles.educationNumberText}
-                          >
-                            {index + 1}
-                          </Text>
-                        </View>
+                        {item.name}
+                      </Text>
 
-                        <View style={styles.educationContent}>
-                          <View
-                            style={
-                              styles.educationTitleRow
-                            }
-                          >
-                            <Text
-                              style={
-                                styles.educationTitle
-                              }
-                            >
-                              {step.title}
-                            </Text>
+                      <Text
+                        style={
+                          styles.reviewItemWeight
+                        }
+                      >
+                        {item.weight}{' '}
+                        {t('goBagDrill.kg')}
+                      </Text>
+                    </View>
 
-                            <Ionicons
-                              name={
-                                packed
-                                  ? 'checkmark-circle'
-                                  : 'alert-circle'
-                              }
-                              size={18}
-                              color={
-                                packed
-                                  ? '#34D399'
-                                  : '#F59E0B'
-                              }
-                            />
-                          </View>
-
-                          <Text
-                            style={
-                              styles.educationBody
-                            }
-                          >
-                            {step.body}
-                          </Text>
-                        </View>
-                      </View>
-                    );
-                  }
-                )}
-              </View>
-
-              {/* MISSED / UNNECESSARY */}
-
-              {resultSummary?.unnecessarySelected?.length >
-                0 && (
-                <View style={styles.warningCard}>
-                  <View style={styles.warningIcon}>
-                    <Ionicons
-                      name="information-circle-outline"
-                      size={22}
-                      color="#F59E0B"
-                    />
+                    <View
+                      style={[
+                        styles.reviewStatus,
+                        isUnnecessary &&
+                          styles.reviewStatusBad,
+                        isCritical &&
+                          styles.reviewStatusCritical,
+                      ]}
+                    >
+                      <Text
+                        style={[
+                          styles.reviewStatusText,
+                          isUnnecessary &&
+                            styles.reviewStatusTextBad,
+                          isCritical &&
+                            styles.reviewStatusTextCritical,
+                        ]}
+                      >
+                        {isCritical
+                          ? t('goBagDrill.essential')
+                          : isRecommended
+                          ? t('goBagDrill.useful')
+                          : t('goBagDrill.optional')}
+                      </Text>
+                    </View>
                   </View>
+                );
+              })
+            )}
+          </View>
+        </View>
 
-                  <View style={styles.warningContent}>
-                    <Text style={styles.warningTitle}>
-                      Packing could be more efficient
-                    </Text>
+        {/* CRITICAL ITEMS */}
 
-                    <Text style={styles.warningText}>
-                      {resultSummary.unnecessarySelected
-                        .map(getItemName)
-                        .join(', ')}
-                      {' '}was not a priority for this
-                      scenario. Limited bag capacity means
-                      unnecessary equipment can crowd out
-                      more useful supplies.
-                    </Text>
-                  </View>
+        <View style={styles.reviewSection}>
+          <View style={styles.reviewSectionHeader}>
+            <Text style={styles.reviewSectionTitle}>
+              {t('goBagDrill.essentialCheck')}
+            </Text>
+          </View>
+
+          {resultSummary?.criticalSelected?.map(
+            (id) => (
+              <View
+                key={`selected-${id}`}
+                style={styles.feedbackRow}
+              >
+                <View style={styles.feedbackIconGood}>
+                  <Ionicons
+                    name="checkmark"
+                    size={17}
+                    color="#FFFFFF"
+                  />
                 </View>
-              )}
 
-              {/* REVIEW ACTIONS */}
+                <View style={styles.feedbackTextBlock}>
+                  <Text style={styles.feedbackTitle}>
+                    {getItemName(id)}
+                  </Text>
 
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={completeMission}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.primaryButtonText}>
-                  Lock In Results
-                </Text>
-
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                style={styles.secondaryActionButton}
-                onPress={retryScenario}
-                activeOpacity={0.85}
-              >
-                <Ionicons
-                  name="refresh-outline"
-                  size={18}
-                  color="#94A3B8"
-                />
-
-                <Text style={styles.secondaryActionText}>
-                  Try This Scenario Again
-                </Text>
-              </TouchableOpacity>
-            </ScrollView>
+                  <Text style={styles.feedbackBody}>
+                    {t('goBagDrill.essentialIncluded')}
+                  </Text>
+                </View>
+              </View>
+            )
           )}
 
-          {/* =====================================================
-              FINISHED
-              ===================================================== */}
-
-          {gameState === 'finished' && (
-            <ScrollView
-              contentContainerStyle={styles.finishedContent}
-              showsVerticalScrollIndicator={false}
-            >
+          {resultSummary?.criticalMissed?.map(
+            (id) => (
               <View
-                style={[
-                  styles.finishedIcon,
-                  resultSummary?.mastered &&
-                    styles.finishedIconMastered,
-                ]}
+                key={`missed-${id}`}
+                style={styles.feedbackRow}
               >
-                <Ionicons
-                  name={
-                    resultSummary?.mastered
-                      ? 'trophy-outline'
-                      : 'checkmark-outline'
-                  }
-                  size={52}
-                  color={
-                    resultSummary?.mastered
-                      ? '#FBBF24'
-                      : '#38BDF8'
-                  }
-                />
-              </View>
-
-              <Text style={styles.finishedTitle}>
-                {resultSummary?.mastered
-                  ? 'Go-Bag Mastered'
-                  : 'Drill Complete'}
-              </Text>
-
-              <Text style={styles.finishedSubtitle}>
-                {resultSummary?.mastered
-                  ? 'You identified the essential equipment and built an efficient response loadout.'
-                  : 'Your preparedness response has been recorded. Review the scenario and try again to improve your result.'}
-              </Text>
-
-              <View style={styles.finalScoreCard}>
-                <Text style={styles.finalScoreLabel}>
-                  LOADOUT SCORE
-                </Text>
-
-                <Text style={styles.finalScore}>
-                  {score}
-                  <Text style={styles.finalScoreXP}>
-                    {' '}XP
-                  </Text>
-                </Text>
-
-                <View style={styles.finalScoreDivider} />
-
-                <Text style={styles.rewardLabel}>
-                  MISSION REWARD
-                </Text>
-
-                <Text style={styles.rewardValue}>
-                  +{missionReward} XP
-                </Text>
-              </View>
-
-              {resultSummary?.mastered && (
-                <View style={styles.badgeCard}>
-                  <View style={styles.badgeIcon}>
-                    <Ionicons
-                      name="ribbon-outline"
-                      size={28}
-                      color="#FBBF24"
-                    />
-                  </View>
-
-                  <View style={styles.badgeContent}>
-                    <Text style={styles.badgeLabel}>
-                      BADGE UNLOCKED
-                    </Text>
-
-                    <Text style={styles.badgeTitle}>
-                      Go-Bag Master
-                    </Text>
-
-                    <Text style={styles.badgeDescription}>
-                      Completed the scenario without
-                      unnecessary equipment.
-                    </Text>
-                  </View>
+                <View style={styles.feedbackIconBad}>
+                  <Ionicons
+                    name="close"
+                    size={17}
+                    color="#FFFFFF"
+                  />
                 </View>
-              )}
 
-              <TouchableOpacity
-                style={styles.primaryButton}
-                onPress={() => navigation.goBack()}
-                activeOpacity={0.85}
-              >
-                <Text style={styles.primaryButtonText}>
-                  Return to Missions
-                </Text>
+                <View style={styles.feedbackTextBlock}>
+                  <Text style={styles.feedbackTitle}>
+                    {getItemName(id)}
+                  </Text>
 
-                <Ionicons
-                  name="arrow-forward"
-                  size={18}
-                  color="#FFFFFF"
-                />
-              </TouchableOpacity>
-            </ScrollView>
+                  <Text style={styles.feedbackBody}>
+                    {t('goBagDrill.essentialMissed')}
+                  </Text>
+                </View>
+              </View>
+            )
           )}
         </View>
-      )};
+
+        {/* EDUCATIONAL BREAKDOWN */}
+
+        <View style={styles.reviewSection}>
+          <View style={styles.reviewSectionHeader}>
+            <Text style={styles.reviewSectionTitle}>
+              {t('goBagDrill.whyItMatters')}
+            </Text>
+          </View>
+
+          {currentScenario.steps.map(
+            (step, index) => {
+              const packed =
+                selectedItemIds.includes(
+                  step.id
+                );
+
+              return (
+                <View
+                  key={step.id}
+                  style={styles.educationCard}
+                >
+                  <View
+                    style={[
+                      styles.educationNumber,
+                      packed
+                        ? styles.educationNumberGood
+                        : styles.educationNumberMissed,
+                    ]}
+                  >
+                    <Text
+                      style={
+                        styles.educationNumberText
+                      }
+                    >
+                      {index + 1}
+                    </Text>
+                  </View>
+
+                  <View
+                    style={
+                      styles.educationContent
+                    }
+                  >
+                    <View
+                      style={
+                        styles.educationTitleRow
+                      }
+                    >
+                      <Text
+                        style={
+                          styles.educationTitle
+                        }
+                      >
+                        {step.title}
+                      </Text>
+
+                      <Ionicons
+                        name={
+                          packed
+                            ? 'checkmark-circle'
+                            : 'alert-circle'
+                        }
+                        size={18}
+                        color={
+                          packed
+                            ? '#34D399'
+                            : '#F59E0B'
+                        }
+                      />
+                    </View>
+
+                    <Text
+                      style={
+                        styles.educationBody
+                      }
+                    >
+                      {step.body}
+                    </Text>
+                  </View>
+                </View>
+              );
+            }
+          )}
+        </View>
+
+        {/* MISSED / UNNECESSARY */}
+
+        {resultSummary?.unnecessarySelected
+          ?.length > 0 && (
+          <View style={styles.warningCard}>
+            <View style={styles.warningIcon}>
+              <Ionicons
+                name="information-circle-outline"
+                size={22}
+                color="#F59E0B"
+              />
+            </View>
+
+            <View style={styles.warningContent}>
+              <Text style={styles.warningTitle}>
+                {t('goBagDrill.packingCouldBeMoreEfficient')}
+              </Text>
+
+              <Text style={styles.warningText}>
+                {t('goBagDrill.unnecessaryItemsWarning', {
+                  items: resultSummary.unnecessarySelected
+                    .map(getItemName)
+                    .join(', '),
+                })}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        {/* REVIEW ACTIONS */}
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={handleCompleteMission}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.primaryButtonText}>
+            {t('goBagDrill.lockInResults')}
+          </Text>
+
+          <Ionicons
+            name="arrow-forward"
+            size={18}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.secondaryActionButton}
+          onPress={retryScenario}
+          activeOpacity={0.85}
+        >
+          <Ionicons
+            name="refresh-outline"
+            size={18}
+            color="#94A3B8"
+          />
+
+          <Text style={styles.secondaryActionText}>
+            {t('goBagDrill.tryScenarioAgain')}
+          </Text>
+        </TouchableOpacity>
+      </ScrollView>
+    )}
+
+    {/* =====================================================
+        FINISHED
+    ===================================================== */}
+
+    {gameState === 'finished' && (
+      <ScrollView
+        contentContainerStyle={
+          styles.finishedContent
+        }
+        showsVerticalScrollIndicator={false}
+      >
+        <View
+          style={[
+            styles.finishedIcon,
+            resultSummary?.mastered &&
+              styles.finishedIconMastered,
+          ]}
+        >
+          <Ionicons
+            name={
+              resultSummary?.mastered
+                ? 'trophy-outline'
+                : 'checkmark-outline'
+            }
+            size={52}
+            color={
+              resultSummary?.mastered
+                ? '#FBBF24'
+                : '#38BDF8'
+            }
+          />
+        </View>
+
+        <Text style={styles.finishedTitle}>
+          {resultSummary?.mastered
+            ? t('goBagDrill.goBagMastered')
+            : t('goBagDrill.drillComplete')}
+        </Text>
+
+        <Text style={styles.finishedSubtitle}>
+          {resultSummary?.mastered
+            ? t('goBagDrill.masteredSubtitle')
+            : t('goBagDrill.completeSubtitle')}
+        </Text>
+
+        <View style={styles.finalScoreCard}>
+          <Text style={styles.finalScoreLabel}>
+            {t('goBagDrill.loadoutScore')}
+          </Text>
+
+          <Text style={styles.finalScore}>
+            {score}
+            <Text style={styles.finalScoreXP}>
+              {' '}
+              {t('goBagDrill.xp')}
+            </Text>
+          </Text>
+
+          <View style={styles.finalScoreDivider} />
+
+          <Text style={styles.rewardLabel}>
+            {t('goBagDrill.missionReward')}
+          </Text>
+
+          <Text style={styles.rewardValue}>
+            +{missionXpReward} {t('goBagDrill.xp')}
+          </Text>
+        </View>
+
+        {resultSummary?.mastered && (
+          <View style={styles.badgeCard}>
+            <View style={styles.badgeIcon}>
+              <Ionicons
+                name="ribbon-outline"
+                size={28}
+                color="#FBBF24"
+              />
+            </View>
+
+            <View style={styles.badgeContent}>
+              <Text style={styles.badgeLabel}>
+                {t('goBagDrill.badgeUnlocked')}
+              </Text>
+
+              <Text style={styles.badgeTitle}>
+                {t('goBagDrill.goBagMaster')}
+              </Text>
+
+              <Text
+                style={
+                  styles.badgeDescription
+                }
+              >
+                {t('goBagDrill.badgeDescription')}
+              </Text>
+            </View>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={styles.primaryButton}
+          onPress={() => navigation.goBack()}
+          activeOpacity={0.85}
+        >
+          <Text style={styles.primaryButtonText}>
+            {t('goBagDrill.returnToMissions')}
+          </Text>
+
+          <Ionicons
+            name="arrow-forward"
+            size={18}
+            color="#FFFFFF"
+          />
+        </TouchableOpacity>
+      </ScrollView>
+    )}
+  </View>
+);
+}
+      
 
 /*
 |--------------------------------------------------------------------------
@@ -3282,6 +3046,7 @@ const styles = StyleSheet.create({
   */
 
   warningCard: {
+    flexdirection: 'row',
     backgroundColor: '#0F172A',
     borderWidth: 1,
     borderColor: '#334155',
@@ -3306,10 +3071,194 @@ const styles = StyleSheet.create({
   },
 
   warningBody: {
-    color: '#94A3B8',
+    color: '#FFFFFF',
     fontSize: 13,
     lineHeight: 19,
-  }
+  },
+  secondaryActionButton: {
+  width: '100%',
+  minHeight: 52,
+  borderRadius: 15,
+  backgroundColor: '#0F172A',
+  borderWidth: 1,
+  borderColor: '#1E293B',
+  flexDirection: 'row',
+  alignItems: 'center',
+  justifyContent: 'center',
+  paddingHorizontal: 18,
+  marginTop: 10,
+  marginBottom: 20,
+},
+
+secondaryActionText: {
+  color: '#94A3B8',
+  fontSize: 14,
+  fontWeight: '800',
+  marginLeft: 8,
+  textAlign: 'center',
+},
+warningIcon: {
+  width: 40,
+  height: 40,
+  borderRadius: 12,
+  backgroundColor: '#451A03',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: 10,
+},
+
+warningContent: {
+  flex: 1,
+},
+badgeCard: {
+  width: '100%',
+  flexDirection: 'row',
+  alignItems: 'center',
+  backgroundColor: '#0F172A',
+  borderWidth: 1,
+  borderColor: '#92400E',
+  borderRadius: 18,
+  padding: 16,
+  marginBottom: 18,
+},
+warningText: {
+  color: '#CBD5E1',
+  fontSize: 12,
+  lineHeight: 18,
+  marginTop: 2,
+},
+
+
+badgeIcon: {
+  width: 52,
+  height: 52,
+  borderRadius: 16,
+  backgroundColor: '#451A03',
+  borderWidth: 1,
+  borderColor: '#92400E',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginRight: 13,
+},
+
+badgeContent: {
+  flex: 1,
+},
+
+badgeLabel: {
+  color: '#FBBF24',
+  fontSize: 9,
+  fontWeight: '900',
+  letterSpacing: 1.2,
+  marginBottom: 3,
+},
+
+badgeTitle: {
+  color: '#F8FAFC',
+  fontSize: 16,
+  fontWeight: '900',
+  marginBottom: 3,
+},
+
+badgeDescription: {
+  color: '#94A3B8',
+  fontSize: 11,
+  lineHeight: 17,
+},
+finishedContent: {
+  flexGrow: 1,
+  alignItems: 'center',
+  paddingTop: 30,
+  paddingBottom: 45,
+},
+
+finishedIcon: {
+  width: 92,
+  height: 92,
+  borderRadius: 30,
+  backgroundColor: '#082F49',
+  borderWidth: 1,
+  borderColor: '#164E63',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: 18,
+},
+
+finishedIconMastered: {
+  backgroundColor: '#451A03',
+  borderColor: '#92400E',
+},
+
+finishedTitle: {
+  color: '#F8FAFC',
+  fontSize: 26,
+  fontWeight: '900',
+  textAlign: 'center',
+  marginBottom: 7,
+},
+
+finishedSubtitle: {
+  color: '#94A3B8',
+  fontSize: 12,
+  lineHeight: 19,
+  textAlign: 'center',
+  paddingHorizontal: 15,
+  marginBottom: 20,
+},
+
+finalScoreCard: {
+  width: '100%',
+  backgroundColor: '#0F172A',
+  borderRadius: 18,
+  borderWidth: 1,
+  borderColor: '#1E293B',
+  padding: 20,
+  alignItems: 'center',
+  marginBottom: 18,
+},
+
+finalScoreLabel: {
+  color: '#64748B',
+  fontSize: 9,
+  fontWeight: '900',
+  letterSpacing: 1,
+  marginBottom: 4,
+},
+
+finalScore: {
+  color: '#34D399',
+  fontSize: 38,
+  fontWeight: '900',
+},
+
+finalScoreXP: {
+  color: '#64748B',
+  fontSize: 13,
+},
+
+finalScoreDivider: {
+  width: '100%',
+  height: 1,
+  backgroundColor: '#1E293B',
+  marginVertical: 14,
+},
+
+rewardLabel: {
+  color: '#64748B',
+  fontSize: 9,
+  fontWeight: '900',
+  letterSpacing: 1,
+  marginBottom: 4,
+},
+
+rewardValue: {
+  color: '#38BDF8',
+  fontSize: 20,
+  fontWeight: '900',
+},
+
+
+
   // gameHeader: {
   //   marginBottom: 12,
   // },

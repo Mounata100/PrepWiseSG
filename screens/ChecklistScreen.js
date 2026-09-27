@@ -10,6 +10,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useUser } from '../contexts/UserContext';
 import * as Haptics from 'expo-haptics';
+import { useTranslation } from 'react-i18next';
 
 /*
 |--------------------------------------------------------------------------
@@ -28,80 +29,151 @@ import * as Haptics from 'expo-haptics';
 |--------------------------------------------------------------------------
 */
 
+// const DAILY_CHECKLIST = [
+//   {
+//     id: 'water_buffer',
+//     title: 'Check Emergency Water',
+//     description:
+//       'Make sure your household has an adequate supply of drinking and basic-use water.',
+//     icon: 'water-outline',
+//     color: '#38BDF8',
+//     xp: 20,
+//   },
+//   {
+//     id: 'go_bag',
+//     title: 'Inspect Your Go-Bag',
+//     description:
+//       'Check that your emergency bag contains essential supplies and is ready to deploy.',
+//     icon: 'briefcase-outline',
+//     color: '#10B981',
+//     xp: 25,
+//   },
+//   {
+//     id: 'power_bank',
+//     title: 'Charge Emergency Power',
+//     description:
+//       'Confirm your power bank or backup battery is charged and ready for a blackout.',
+//     icon: 'battery-charging-outline',
+//     color: '#FACC15',
+//     xp: 15,
+//   },
+//   {
+//     id: 'flashlight',
+//     title: 'Check Your Flashlight',
+//     description:
+//       'Verify that your flashlight works and has sufficient battery power.',
+//     icon: 'flashlight-outline',
+//     color: '#F59E0B',
+//     xp: 15,
+//   },
+//   {
+//     id: 'emergency_contacts',
+//     title: 'Review Emergency Contacts',
+//     description:
+//       'Make sure important family and emergency contact numbers are current.',
+//     icon: 'call-outline',
+//     color: '#A78BFA',
+//     xp: 20,
+//   },
+//   {
+//     id: 'family_meetup',
+//     title: 'Confirm Family Meeting Point',
+//     description:
+//       'Review your household emergency rendezvous point and make sure everyone knows it.',
+//     icon: 'location-outline',
+//     color: '#FB7185',
+//     xp: 20,
+//   },
+//   {
+//     id: 'weather_alerts',
+//     title: 'Check Emergency Alerts',
+//     description:
+//       'Review current alerts and make sure emergency notifications are enabled.',
+//     icon: 'notifications-outline',
+//     color: '#F97316',
+//     xp: 15,
+//   },
+//   {
+//     id: 'first_aid',
+//     title: 'Inspect First-Aid Kit',
+//     description:
+//       'Check that your first-aid supplies are present, usable, and not expired.',
+//     icon: 'medkit-outline',
+//     color: '#EF4444',
+//     xp: 20,
+//   },
+// ];
+
+
+
+
 const DAILY_CHECKLIST = [
   {
     id: 'water_buffer',
-    title: 'Check Emergency Water',
-    description:
-      'Make sure your household has an adequate supply of drinking and basic-use water.',
+    titleKey: 'checklist.items.waterBuffer.title',
+    descriptionKey: 'checklist.items.waterBuffer.description',
     icon: 'water-outline',
     color: '#38BDF8',
     xp: 20,
   },
   {
     id: 'go_bag',
-    title: 'Inspect Your Go-Bag',
-    description:
-      'Check that your emergency bag contains essential supplies and is ready to deploy.',
+    titleKey: 'checklist.items.goBag.title',
+    descriptionKey: 'checklist.items.goBag.description',
     icon: 'briefcase-outline',
     color: '#10B981',
     xp: 25,
   },
   {
     id: 'power_bank',
-    title: 'Charge Emergency Power',
-    description:
-      'Confirm your power bank or backup battery is charged and ready for a blackout.',
+    titleKey: 'checklist.items.powerBank.title',
+    descriptionKey: 'checklist.items.powerBank.description',
     icon: 'battery-charging-outline',
     color: '#FACC15',
     xp: 15,
   },
   {
     id: 'flashlight',
-    title: 'Check Your Flashlight',
-    description:
-      'Verify that your flashlight works and has sufficient battery power.',
+    titleKey: 'checklist.items.flashlight.title',
+    descriptionKey: 'checklist.items.flashlight.description',
     icon: 'flashlight-outline',
     color: '#F59E0B',
     xp: 15,
   },
   {
     id: 'emergency_contacts',
-    title: 'Review Emergency Contacts',
-    description:
-      'Make sure important family and emergency contact numbers are current.',
+    titleKey: 'checklist.items.emergencyContacts.title',
+    descriptionKey: 'checklist.items.emergencyContacts.description',
     icon: 'call-outline',
     color: '#A78BFA',
     xp: 20,
   },
   {
     id: 'family_meetup',
-    title: 'Confirm Family Meeting Point',
-    description:
-      'Review your household emergency rendezvous point and make sure everyone knows it.',
+    titleKey: 'checklist.items.familyMeetup.title',
+    descriptionKey: 'checklist.items.familyMeetup.description',
     icon: 'location-outline',
     color: '#FB7185',
     xp: 20,
   },
   {
     id: 'weather_alerts',
-    title: 'Check Emergency Alerts',
-    description:
-      'Review current alerts and make sure emergency notifications are enabled.',
+    titleKey: 'checklist.items.weatherAlerts.title',
+    descriptionKey: 'checklist.items.weatherAlerts.description',
     icon: 'notifications-outline',
     color: '#F97316',
     xp: 15,
   },
   {
     id: 'first_aid',
-    title: 'Inspect First-Aid Kit',
-    description:
-      'Check that your first-aid supplies are present, usable, and not expired.',
+    titleKey: 'checklist.items.firstAid.title',
+    descriptionKey: 'checklist.items.firstAid.description',
     icon: 'medkit-outline',
     color: '#EF4444',
     xp: 20,
   },
 ];
+
 
 /*
 |--------------------------------------------------------------------------
@@ -124,7 +196,7 @@ const getLocalDateKey = () => {
 
 export default function ChecklistScreen({ navigation }) {
   const { user, updateUser } = useUser();
-
+  const { t } = useTranslation();
   const todayKey = getLocalDateKey();
 
   /*
@@ -258,9 +330,12 @@ export default function ChecklistScreen({ navigation }) {
       */
 
       Alert.alert(
-        'Checklist Item Complete',
-        `${item.title}\n\n+${item.xp} XP added to your preparedness score.`,
-        [{ text: 'Continue' }]
+        // 'Checklist Item Complete',
+        // `${item.title}\n\n+${item.xp} XP added to your preparedness score.`,
+        // [{ text: 'Continue' }]
+        t('checklist.alerts.itemCompleteTitle'),
+        `${t(item.titleKey)}\n\n${t('checklist.xpAdded', {xp: item.xp})}`,
+        [{ text: t('checklist.actions.continue') }]
       );
     } catch (error) {
       console.error(
@@ -300,15 +375,20 @@ export default function ChecklistScreen({ navigation }) {
     );
 
     Alert.alert(
-      'Complete Remaining Items?',
-      `This will mark all ${remainingItems.length} remaining checklist items as completed and award +${remainingXP} XP.\n\nOnly use this after you have actually completed the listed preparedness checks.`,
+      // 'Complete Remaining Items?',
+      // `This will mark all ${remainingItems.length} remaining checklist items as completed and award +${remainingXP} XP.\n\nOnly use this after you have actually completed the listed preparedness checks.`,
+      t('checklist.alerts.completeRemainingTitle'),
+      t('checklist.alerts.completeRemainingMessage', {
+        count: remainingItems.length,
+        xp: remainingXP,
+      }),
       [
         {
-          text: 'Cancel',
+          text: t('checklist.actions.cancel'),
           style: 'cancel',
         },
         {
-          text: 'Complete',
+          text: t('checklist.actions.complete'),
           onPress: async () => {
             try {
               setProcessingId('all');
@@ -341,9 +421,15 @@ export default function ChecklistScreen({ navigation }) {
               );
 
               Alert.alert(
-                'Daily Checklist Complete!',
-                `Excellent work. You completed all remaining preparedness checks and earned +${remainingXP} XP.`,
-                [{ text: 'Done' }]
+                t('checklist.alerts.dailyCompleteTitle'),
+                t('checklist.alerts.dailyCompleteMessage', {
+                  xp: remainingXP,
+                }),
+                [{ text: t('checklist.actions.done') }]
+
+                //'Daily Checklist Complete!',
+                //`Excellent work. You completed all remaining preparedness checks and earned +${remainingXP} XP.`,
+                //[{ text: 'Done' }]
               );
             } catch (error) {
               console.error(
@@ -381,11 +467,11 @@ export default function ChecklistScreen({ navigation }) {
 
         <View style={styles.headerTitleContainer}>
           <Text style={styles.headerTitle}>
-            Daily Checklist
+            {t('checklist.title')}
           </Text>
 
           <Text style={styles.headerSubtitle}>
-            Preparedness Readiness
+            {t('checklist.subtitle')}
           </Text>
         </View>
 
@@ -417,11 +503,14 @@ export default function ChecklistScreen({ navigation }) {
 
             <View>
               <Text style={styles.summaryLabel}>
-                TODAY'S READINESS
+                {t('checklist.summary.todayReadiness')}
               </Text>
 
               <Text style={styles.summaryTitle}>
-                {completedCount}/{totalItems} Checks Complete
+                {t('checklist.summary.checksComplete', {
+                    completed: completedCount,
+                    total: totalItems,
+                  })}
               </Text>
             </View>
 
@@ -461,7 +550,7 @@ export default function ChecklistScreen({ navigation }) {
 
             <View>
               <Text style={styles.summaryMetricLabel}>
-                XP EARNED
+                {t('checklist.summary.xpEarned')}
               </Text>
 
               <Text style={styles.summaryMetricValue}>
@@ -473,7 +562,7 @@ export default function ChecklistScreen({ navigation }) {
 
             <View>
               <Text style={styles.summaryMetricLabel}>
-                AVAILABLE
+                {t('checklist.summary.available')}
               </Text>
 
               <Text style={styles.summaryMetricValue}>
@@ -501,11 +590,11 @@ export default function ChecklistScreen({ navigation }) {
 
             <View style={styles.completeTextContainer}>
               <Text style={styles.completeTitle}>
-                Daily Checklist Complete
+                {t('checklist.complete.title')}
               </Text>
 
               <Text style={styles.completeSubtitle}>
-                Your preparedness checks are up to date.
+                {t('checklist.complete.subtitle')}
               </Text>
             </View>
 
@@ -519,11 +608,11 @@ export default function ChecklistScreen({ navigation }) {
         <View style={styles.sectionHeaderRow}>
           <View>
             <Text style={styles.sectionTitle}>
-              Preparedness Checks
+              {t('checklist.section.title')}
             </Text>
 
             <Text style={styles.sectionSubtitle}>
-              Complete each check once per day
+              {t('checklist.section.subtitle')}
             </Text>
           </View>
 
@@ -534,7 +623,7 @@ export default function ChecklistScreen({ navigation }) {
               activeOpacity={0.8}
             >
               <Text style={styles.completeAllText}>
-                Complete All
+                {t('checklist.actions.completeAll')}
               </Text>
             </TouchableOpacity>
           )}
@@ -609,7 +698,7 @@ export default function ChecklistScreen({ navigation }) {
                         styles.itemTitleCompleted,
                     ]}
                   >
-                    {item.title}
+                    {t(item.titleKey)}
                   </Text>
 
                   <Text
@@ -619,7 +708,7 @@ export default function ChecklistScreen({ navigation }) {
                         styles.itemDescriptionCompleted,
                     ]}
                   >
-                    {item.description}
+                    {t(item.descriptionKey)}
                   </Text>
 
                 </View>
@@ -667,13 +756,11 @@ export default function ChecklistScreen({ navigation }) {
           <View style={styles.infoContent}>
 
             <Text style={styles.infoTitle}>
-              Daily readiness matters
+              {t('checklist.info.title')}
             </Text>
 
             <Text style={styles.infoText}>
-              Checklist rewards are issued once per item each
-              day. Your progress is saved automatically and a
-              fresh checklist becomes available on the next day.
+              {t('checklist.info.description')}
             </Text>
 
           </View>

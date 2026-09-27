@@ -732,6 +732,86 @@
     },
     "footer": "Pusat ini menyediakan maklumat kesediaan dan akses pantas kepada alat keselamatan. Sentiasa ikuti arahan kecemasan rasmi semasa insiden aktif."
   },
+  "checklist": {
+    "title": "Senarai Semak Harian",
+    "subtitle": "Kesediaan Menghadapi Kecemasan",
+
+    "summary": {
+      "todayReadiness": "KESEDIAAN HARI INI",
+      "checksComplete": "{{completed}}/{{total}} Pemeriksaan Selesai",
+      "xpEarned": "XP DIPEROLEH",
+      "available": "TERSEDIA"
+    },
+
+    "complete": {
+      "title": "Senarai Semak Harian Selesai",
+      "subtitle": "Pemeriksaan kesediaan anda telah dikemas kini."
+    },
+
+    "section": {
+      "title": "Pemeriksaan Kesediaan",
+      "subtitle": "Lengkapkan setiap pemeriksaan sekali sehari"
+    },
+
+    "items": {
+      "waterBuffer": {
+        "title": "Periksa Bekalan Air Kecemasan",
+        "description": "Pastikan isi rumah anda mempunyai bekalan air yang mencukupi untuk minuman dan kegunaan asas."
+      },
+      "goBag": {
+        "title": "Periksa Beg Kecemasan",
+        "description": "Pastikan beg kecemasan anda mengandungi bekalan penting dan sedia untuk digunakan."
+      },
+      "powerBank": {
+        "title": "Cas Bekalan Kuasa Kecemasan",
+        "description": "Pastikan power bank atau bateri sandaran anda telah dicas dan sedia digunakan semasa gangguan bekalan elektrik."
+      },
+      "flashlight": {
+        "title": "Periksa Lampu Suluh",
+        "description": "Pastikan lampu suluh anda berfungsi dan mempunyai kuasa bateri yang mencukupi."
+      },
+      "emergencyContacts": {
+        "title": "Semak Kenalan Kecemasan",
+        "description": "Pastikan nombor telefon ahli keluarga dan kenalan kecemasan penting adalah terkini."
+      },
+      "familyMeetup": {
+        "title": "Sahkan Tempat Berkumpul Keluarga",
+        "description": "Semak tempat berkumpul kecemasan isi rumah anda dan pastikan semua orang mengetahuinya."
+      },
+      "weatherAlerts": {
+        "title": "Semak Amaran Kecemasan",
+        "description": "Semak amaran semasa dan pastikan pemberitahuan kecemasan diaktifkan."
+      },
+      "firstAid": {
+        "title": "Periksa Kit Pertolongan Cemas",
+        "description": "Pastikan bekalan pertolongan cemas tersedia, boleh digunakan dan belum tamat tempoh."
+      }
+    },
+
+    "info": {
+      "title": "Kesediaan harian adalah penting",
+      "description": "Ganjaran senarai semak diberikan sekali untuk setiap item setiap hari. Kemajuan anda disimpan secara automatik dan senarai semak baharu tersedia pada hari berikutnya."
+    },
+
+    "xpAdded": "+{{xp}} XP ditambahkan kepada skor kesediaan anda.",
+
+    "actions": {
+      "completeAll": "Lengkapkan Semua",
+      "complete": "Lengkapkan",
+      "continue": "Teruskan",
+      "cancel": "Batal",
+      "done": "Selesai"
+    },
+
+    "alerts": {
+      "itemCompleteTitle": "Item Senarai Semak Selesai",
+      "completeRemainingTitle": "Lengkapkan Item Yang Tinggal?",
+      "completeRemainingMessage": "Ini akan menandakan semua {{count}} item senarai semak yang tinggal sebagai selesai dan memberikan +{{xp}} XP.\n\nGunakan pilihan ini hanya selepas anda benar-benar menyelesaikan semua pemeriksaan kesediaan yang disenaraikan.",
+      "dailyCompleteTitle": "Senarai Semak Harian Selesai!",
+      "dailyCompleteMessage": "Syabas! Anda telah menyelesaikan semua pemeriksaan kesediaan yang tinggal dan memperoleh +{{xp}} XP."
+    }
+  },
+
   "profile": {
     "defaultName": "OPERATOR_AKTIF",
     "level": "TAHAP {{level}}",

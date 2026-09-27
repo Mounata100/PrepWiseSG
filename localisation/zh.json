@@ -747,6 +747,86 @@
     },
     "footer": "本中心提供防备指南以及安全工具的快捷访问。在突发事件发生时，请务必遵从官方发布的紧急指令。"
   },
+  "checklist": {
+    "title": "每日检查清单",
+    "subtitle": "应急准备状态",
+
+    "summary": {
+      "todayReadiness": "今日准备状态",
+      "checksComplete": "已完成 {{completed}}/{{total}} 项检查",
+      "xpEarned": "已获得 XP",
+      "available": "可获得"
+    },
+
+    "complete": {
+      "title": "每日检查清单已完成",
+      "subtitle": "您的应急准备检查已更新。"
+    },
+
+    "section": {
+      "title": "应急准备检查",
+      "subtitle": "每天完成每项检查一次"
+    },
+
+    "items": {
+      "waterBuffer": {
+        "title": "检查应急储水",
+        "description": "确保家中有足够的饮用水和基本用途用水。"
+      },
+      "goBag": {
+        "title": "检查应急包",
+        "description": "检查应急包内是否有必要物资，并确保随时可以使用。"
+      },
+      "powerBank": {
+        "title": "充好应急电源",
+        "description": "确认充电宝或备用电池已经充满电，以便停电时使用。"
+      },
+      "flashlight": {
+        "title": "检查手电筒",
+        "description": "确认手电筒能够正常工作，并且电池电量充足。"
+      },
+      "emergencyContacts": {
+        "title": "检查紧急联系人",
+        "description": "确保重要的家人和紧急联系人电话号码保持最新。"
+      },
+      "familyMeetup": {
+        "title": "确认家庭集合地点",
+        "description": "查看家庭应急集合地点，并确保所有家庭成员都知道该地点。"
+      },
+      "weatherAlerts": {
+        "title": "检查紧急警报",
+        "description": "查看当前警报，并确保已启用紧急通知。"
+      },
+      "firstAid": {
+        "title": "检查急救包",
+        "description": "确认急救用品齐全、可以正常使用，并且没有过期。"
+      }
+    },
+
+    "info": {
+      "title": "每日保持准备状态很重要",
+      "description": "每个检查项目每天只能获得一次奖励。您的进度会自动保存，并在第二天提供新的检查清单。"
+    },
+
+    "xpAdded": "您的应急准备分数已增加 +{{xp}} XP。",
+
+    "actions": {
+      "completeAll": "全部完成",
+      "complete": "完成",
+      "continue": "继续",
+      "cancel": "取消",
+      "done": "完成"
+    },
+
+    "alerts": {
+      "itemCompleteTitle": "检查项目已完成",
+      "completeRemainingTitle": "完成剩余项目？",
+      "completeRemainingMessage": "这将把剩余的 {{count}} 个检查项目全部标记为已完成，并奖励 +{{xp}} XP。\n\n请仅在您实际完成所列的应急准备检查后使用此选项。",
+      "dailyCompleteTitle": "每日检查清单已完成！",
+      "dailyCompleteMessage": "做得很好！您已完成所有剩余的应急准备检查，并获得 +{{xp}} XP。"
+    }
+  },
+
   "profile": {
     "defaultName": "行动员_ACTIVE",
     "level": "等级 {{level}}",

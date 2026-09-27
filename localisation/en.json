@@ -644,7 +644,150 @@
       }
     }
   },
+  "games": {
+    "floodRunner": {
+      "title": "Flood Runner",
 
+      "level": "Level {{level}}",
+
+      "levels": {
+        "easy": "Easy",
+        "moderate": "Moderate",
+        "advanced": "Advanced"
+      },
+
+      "objective": "Objective",
+
+      "objectiveDescription": "Reach the safe shelter while avoiding flood debris.",
+
+      "howToPlay": "How to Play",
+
+      "instructions": {
+        "move": "Move left and right using tilt controls or the buttons.",
+        "avoid": "Avoid falling debris and keep your path clear.",
+        "flood": "Stay above the flood zone.",
+        "finish": "Survive until you reach {{score}} points.",
+        "rescue": "If you are hit, answer a safety question correctly to use your rescue life."
+      },
+
+      "tiltActive": "Tilt control active",
+      "touchActive": "Touch control active",
+
+      "tilt": "Tilt",
+      "touch": "Touch",
+
+      "left": "LEFT",
+      "right": "RIGHT",
+
+      "safeShelter": "SAFE SHELTER",
+      "highGround": "High ground",
+
+      "evacuationRoute": "EVACUATION ROUTE",
+      "floodZone": "FLOOD ZONE",
+
+      "ready": "Ready?",
+
+      "startDescription": "Move carefully, avoid debris and reach the safe shelter.",
+
+      "start": "Start",
+
+      "getReady": "Get ready!",
+
+      "score": "SCORE",
+
+      "retry": "Try Again",
+
+      "failed": "Run Ended",
+
+      "failedDescription": "The flood debris reached you. Learn from the situation and try again.",
+
+      "success": "You Reached Safety!",
+
+      "successDescription": "Excellent evacuation. You reached the safe shelter.",
+
+      "xp": "XP",
+      "coins": "Coins",
+
+      "claimReward": "Claim Reward",
+
+      "rescueTitle": "Rescue Chance",
+
+      "rescueDescription": "You were hit, but you have one chance to recover. Answer the safety question correctly.",
+
+      "rescueLifeNotice": "Correct answer = rescue life + bonus points",
+
+      "rescueLives": "Rescue Lives",
+
+      "rescueLife": "Rescue Life",
+
+      "rescueCorrect": "Correct! You have been rescued.",
+
+      "rescueIncorrect": "Incorrect answer. The evacuation has ended.",
+
+      "rescueBonus": "+{{points}} rescue points",
+
+      "continueGame": "Continue",
+
+      "tryAgain": "Try Again",
+
+      "adaptive": {
+        "safety": "SAFETY RISK",
+        "easier": "Adaptive: easing",
+        "balanced": "Adaptive: balanced",
+        "harder": "Adaptive: challenge"
+      },
+
+      "questions": {
+        "q1": {
+          "question": "What should you do if floodwater is rising around your route?",
+          "a": "Continue walking through it if the water looks shallow.",
+          "b": "Move to higher ground and follow official evacuation guidance.",
+          "c": "Wait in the lowest area until the water stops.",
+          "correct": "b"
+        },
+
+        "q2": {
+          "question": "Why should you avoid walking through moving floodwater?",
+          "a": "It can be deeper and stronger than it appears.",
+          "b": "Moving water is always safe if you walk slowly.",
+          "c": "It only becomes dangerous at night.",
+          "correct": "a"
+        },
+
+        "q3": {
+          "question": "What is a safer choice when an evacuation order is issued?",
+          "a": "Stay home and wait for the water to enter.",
+          "b": "Follow the recommended evacuation route to safer ground.",
+          "c": "Take the shortest route through floodwater.",
+          "correct": "b"
+        },
+
+        "q4": {
+          "question": "What should you do if you see a flooded road?",
+          "a": "Turn around and use a safer route.",
+          "b": "Drive through quickly before the water rises.",
+          "c": "Walk into the water to check its depth.",
+          "correct": "a"
+        },
+
+        "q5": {
+          "question": "Why is higher ground generally safer during flooding?",
+          "a": "Floodwater generally collects in lower areas.",
+          "b": "Higher ground makes floodwater move faster.",
+          "c": "It guarantees that no flooding can occur.",
+          "correct": "a"
+        },
+
+        "q6": {
+          "question": "What should you do when authorities provide flood safety instructions?",
+          "a": "Ignore them if the weather looks clear.",
+          "b": "Follow the official instructions and evacuation guidance.",
+          "c": "Wait until other people leave first.",
+          "correct": "b"
+        }
+      }
+    }
+  },
   "resources": {
     "hero": {
       "title": "Disaster Preparedness and Response Hub",
@@ -708,6 +851,168 @@
     },
     "footer": "This hub provides preparedness information and quick access to safety tools. Always follow official emergency instructions during an active incident."
   },
+  "checklist": {
+    "title": "Daily Checklist",
+    "subtitle": "Preparedness Readiness",
+
+    "summary": {
+      "todayReadiness": "TODAY'S READINESS",
+      "checksComplete": "{{completed}}/{{total}} Checks Complete",
+      "xpEarned": "XP EARNED",
+      "available": "AVAILABLE"
+    },
+
+    "complete": {
+      "title": "Daily Checklist Complete",
+      "subtitle": "Your preparedness checks are up to date."
+    },
+
+    "section": {
+      "title": "Preparedness Checks",
+      "subtitle": "Complete each check once per day"
+    },
+
+    "items": {
+      "waterBuffer": {
+        "title": "Check Emergency Water",
+        "description": "Make sure your household has an adequate supply of drinking and basic-use water."
+      },
+      "goBag": {
+        "title": "Inspect Your Go-Bag",
+        "description": "Check that your emergency bag contains essential supplies and is ready to deploy."
+      },
+      "powerBank": {
+        "title": "Charge Emergency Power",
+        "description": "Confirm your power bank or backup battery is charged and ready for a blackout."
+      },
+      "flashlight": {
+        "title": "Check Your Flashlight",
+        "description": "Verify that your flashlight works and has sufficient battery power."
+      },
+      "emergencyContacts": {
+        "title": "Review Emergency Contacts",
+        "description": "Make sure important family and emergency contact numbers are current."
+      },
+      "familyMeetup": {
+        "title": "Confirm Family Meeting Point",
+        "description": "Review your household emergency rendezvous point and make sure everyone knows it."
+      },
+      "weatherAlerts": {
+        "title": "Check Emergency Alerts",
+        "description": "Review current alerts and make sure emergency notifications are enabled."
+      },
+      "firstAid": {
+        "title": "Inspect First-Aid Kit",
+        "description": "Check that your first-aid supplies are present, usable, and not expired."
+      }
+    },
+
+    "info": {
+      "title": "Daily readiness matters",
+      "description": "Checklist rewards are issued once per item each day. Your progress is saved automatically and a fresh checklist becomes available on the next day."
+    },
+
+    "xpAdded": "+{{xp}} XP added to your preparedness score.",
+
+    "actions": {
+      "completeAll": "Complete All",
+      "complete": "Complete",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "done": "Done"
+    },
+
+    "alerts": {
+      "itemCompleteTitle": "Checklist Item Complete",
+      "completeRemainingTitle": "Complete Remaining Items?",
+      "completeRemainingMessage": "This will mark all {{count}} remaining checklist items as completed and award +{{xp}} XP.\n\nOnly use this after you have actually completed the listed preparedness checks.",
+      "dailyCompleteTitle": "Daily Checklist Complete!",
+      "dailyCompleteMessage": "Excellent work. You completed all remaining preparedness checks and earned +{{xp}} XP."
+    }
+  },
+  "goBagDrill": {
+    "title": "GO-BAG DRILL",
+    "subtitle": "Preparedness Packing Drill",
+    "levelDifficulty": "LEVEL {{level}} · {{difficulty}}",
+
+    "missionBrief": "Mission Brief",
+    "missionBriefText": "Build an emergency loadout by selecting equipment for the scenario. Your bag has limited capacity, so prioritise items that support the immediate response.",
+
+    "difficulty": "DIFFICULTY",
+    "time": "TIME",
+    "capacity": "CAPACITY",
+    "reward": "REWARD",
+    "secondsShort": "s",
+    "kg": "KG",
+    "xp": "XP",
+
+    "howToComplete": "How to complete the drill",
+    "rule1": "Review the emergency scenario.",
+    "rule2": "Tap equipment to place it into the go-bag.",
+    "rule3": "Keep the loadout within the weight limit.",
+    "rule4": "Submit the loadout before the timer expires.",
+
+    "beginPackingDrill": "Begin Packing Drill",
+
+    "packLoadout": "PACK LOADOUT",
+    "activeScenario": "ACTIVE SCENARIO",
+    "bagCapacity": "BAG CAPACITY",
+
+    "packInstruction": "Tap an equipment card to pack it. Tap again to remove it.",
+
+    "availableEquipment": "AVAILABLE EQUIPMENT",
+    "itemsPacked": "{{count}} items packed",
+    "packed": "PACKED",
+
+    "submitLoadout": "Submit Loadout",
+    "lockInResponse": "Lock in your preparedness response",
+
+    "loadoutComplete": "Loadout Complete",
+    "loadoutReview": "Loadout Review",
+    "reviewSubtitle": "Review the decisions you made for this emergency scenario.",
+
+    "drillScore": "DRILL SCORE",
+    "timeBonus": "TIME BONUS",
+
+    "yourPack": "YOUR PACK",
+    "itemsCount": "{{count}} ITEMS",
+    "noEquipmentPacked": "No equipment was packed.",
+
+    "essential": "ESSENTIAL",
+    "useful": "USEFUL",
+    "optional": "OPTIONAL",
+
+    "essentialCheck": "ESSENTIAL CHECK",
+    "essentialIncluded": "Essential equipment correctly included in your loadout.",
+    "essentialMissed": "This was an essential item for this scenario and was not packed.",
+
+    "whyItMatters": "WHY IT MATTERS",
+
+    "packingCouldBeMoreEfficient": "Packing could be more efficient",
+
+    "unnecessaryItemsWarning": "{{items}} was not a priority for this scenario. Limited bag capacity means unnecessary equipment can crowd out more useful supplies.",
+
+    "lockInResults": "Lock In Results",
+    "tryScenarioAgain": "Try This Scenario Again",
+
+    "goBagMastered": "Go-Bag Mastered",
+    "drillComplete": "Drill Complete",
+
+    "masteredSubtitle": "You identified the essential equipment and built an efficient response loadout.",
+
+    "completeSubtitle": "Your preparedness response has been recorded. Review the scenario and try again to improve your result.",
+
+    "loadoutScore": "LOADOUT SCORE",
+    "missionReward": "MISSION REWARD",
+
+    "badgeUnlocked": "BADGE UNLOCKED",
+    "goBagMaster": "Go-Bag Master",
+
+    "badgeDescription": "Completed the scenario without unnecessary equipment.",
+
+    "returnToMissions": "Return to Missions"
+  },
+  
   "profile": {
     "defaultName": "OPERATOR_ACTIVE",
     "level": "LEVEL {{level}}",
