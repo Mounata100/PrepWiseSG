@@ -811,6 +811,89 @@
       "dailyCompleteMessage": "Syabas! Anda telah menyelesaikan semua pemeriksaan kesediaan yang tinggal dan memperoleh +{{xp}} XP."
     }
   },
+  "goBagDrill": {
+    "title": "LATIHAN GO-BAG",
+    "subtitle": "Latihan Penyediaan Beg Kecemasan",
+    "levelDifficulty": "TAHAP {{level}} · {{difficulty}}",
+
+    "missionBrief": "Taklimat Misi",
+    "missionBriefText": "Bina muatan kecemasan dengan memilih peralatan yang sesuai untuk situasi tersebut. Beg anda mempunyai kapasiti terhad, jadi utamakan barangan yang menyokong tindak balas segera.",
+
+    "difficulty": "TAHAP KESUKARAN",
+    "time": "MASA",
+    "capacity": "KAPASITI",
+    "reward": "GANJARAN",
+    "secondsShort": "s",
+    "kg": "KG",
+    "xp": "XP",
+
+    "howToComplete": "Cara melengkapkan latihan",
+    "rule1": "Semak situasi kecemasan.",
+    "rule2": "Tekan peralatan untuk memasukkannya ke dalam Go-Bag.",
+    "rule3": "Pastikan muatan tidak melebihi had berat.",
+    "rule4": "Hantar muatan sebelum masa tamat.",
+
+    "beginPackingDrill": "Mulakan Latihan Pembungkusan",
+
+    "packLoadout": "MUATAN BEG",
+    "activeScenario": "SITUASI AKTIF",
+    "bagCapacity": "KAPASITI BEG",
+
+    "packInstruction": "Tekan kad peralatan untuk memasukkannya ke dalam beg. Tekan sekali lagi untuk mengeluarkannya.",
+
+    "availableEquipment": "PERALATAN TERSEDIA",
+    "itemsPacked": "{{count}} barangan dibungkus",
+    "packed": "DIBUNGKUS",
+
+    "submitLoadout": "Hantar Muatan",
+    "lockInResponse": "Sahkan tindak balas kesiapsiagaan anda",
+
+    "loadoutComplete": "Muatan Lengkap",
+    "loadoutReview": "Semakan Muatan",
+    "reviewSubtitle": "Semak keputusan yang anda buat untuk situasi kecemasan ini.",
+
+    "drillScore": "SKOR LATIHAN",
+    "timeBonus": "BONUS MASA",
+
+    "yourPack": "BEG ANDA",
+    "itemsCount": "{{count}} BARANGAN",
+    "noEquipmentPacked": "Tiada peralatan dibungkus.",
+
+    "essential": "PENTING",
+    "useful": "BERGUNA",
+    "optional": "PILIHAN",
+
+    "essentialCheck": "SEMAKAN BARANG PENTING",
+    "essentialIncluded": "Peralatan penting telah dimasukkan dengan betul ke dalam muatan anda.",
+    "essentialMissed": "Ini ialah barangan penting untuk situasi ini tetapi tidak dimasukkan ke dalam beg.",
+
+    "whyItMatters": "MENGAPA IA PENTING",
+
+    "packingCouldBeMoreEfficient": "Pembungkusan boleh dibuat dengan lebih cekap",
+
+    "unnecessaryItemsWarning": "{{items}} bukan keutamaan untuk situasi ini. Kapasiti beg yang terhad bermakna peralatan yang tidak diperlukan boleh mengambil ruang daripada bekalan yang lebih berguna.",
+
+    "lockInResults": "Sahkan Keputusan",
+    "tryScenarioAgain": "Cuba Situasi Ini Lagi",
+
+    "goBagMastered": "Go-Bag Dikuasai",
+    "drillComplete": "Latihan Selesai",
+
+    "masteredSubtitle": "Anda mengenal pasti peralatan penting dan membina muatan tindak balas yang cekap.",
+
+    "completeSubtitle": "Tindak balas kesiapsiagaan anda telah direkodkan. Semak situasi dan cuba lagi untuk meningkatkan keputusan anda.",
+
+    "loadoutScore": "SKOR MUATAN",
+    "missionReward": "GANJARAN MISI",
+
+    "badgeUnlocked": "LENCANA DIBUKA",
+    "goBagMaster": "Pakar Go-Bag",
+
+    "badgeDescription": "Melengkapkan situasi tanpa peralatan yang tidak diperlukan.",
+
+    "returnToMissions": "Kembali ke Misi"
+  },
+
 
   "profile": {
     "defaultName": "OPERATOR_AKTIF",

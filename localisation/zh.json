@@ -826,6 +826,89 @@
       "dailyCompleteMessage": "做得很好！您已完成所有剩余的应急准备检查，并获得 +{{xp}} XP。"
     }
   },
+  "goBagDrill": {
+    "title": "应急包训练",
+    "subtitle": "应急包准备训练",
+    "levelDifficulty": "等级 {{level}} · {{difficulty}}",
+
+    "missionBrief": "任务简报",
+    "missionBriefText": "根据当前情境选择合适的装备，准备应急物资。你的应急包容量有限，因此应优先选择能够支持即时应对行动的物品。",
+
+    "difficulty": "难度",
+    "time": "时间",
+    "capacity": "容量",
+    "reward": "奖励",
+    "secondsShort": "秒",
+    "kg": "公斤",
+    "xp": "XP",
+
+    "howToComplete": "如何完成训练",
+    "rule1": "查看当前应急情境。",
+    "rule2": "点击装备，将其放入应急包。",
+    "rule3": "确保物资总重量不超过重量限制。",
+    "rule4": "在计时结束前提交装备配置。",
+
+    "beginPackingDrill": "开始应急包训练",
+
+    "packLoadout": "应急包配置",
+    "activeScenario": "当前情境",
+    "bagCapacity": "应急包容量",
+
+    "packInstruction": "点击装备卡片将其放入应急包。再次点击即可移除。",
+
+    "availableEquipment": "可用装备",
+    "itemsPacked": "已装入 {{count}} 件物品",
+    "packed": "已装入",
+
+    "submitLoadout": "提交装备配置",
+    "lockInResponse": "确认你的应急准备方案",
+
+    "loadoutComplete": "装备配置完成",
+    "loadoutReview": "装备配置回顾",
+    "reviewSubtitle": "查看你在此次应急情境中所作出的决定。",
+
+    "drillScore": "训练得分",
+    "timeBonus": "时间奖励",
+
+    "yourPack": "你的应急包",
+    "itemsCount": "{{count}} 件物品",
+    "noEquipmentPacked": "没有装入任何装备。",
+
+    "essential": "必需",
+    "useful": "有用",
+    "optional": "可选",
+
+    "essentialCheck": "必需物品检查",
+    "essentialIncluded": "你已正确将必需装备放入应急包。",
+    "essentialMissed": "这是此次情境中的必需物品，但你没有将其放入应急包。",
+
+    "whyItMatters": "为什么重要",
+
+    "packingCouldBeMoreEfficient": "物资配置还可以更加高效",
+
+    "unnecessaryItemsWarning": "{{items}} 并不是此次情境的优先物品。由于应急包容量有限，不必要的装备可能会占用空间，从而挤掉更有用的物资。",
+
+    "lockInResults": "确认结果",
+    "tryScenarioAgain": "再次尝试此情境",
+
+    "goBagMastered": "应急包训练达成",
+    "drillComplete": "训练完成",
+
+    "masteredSubtitle": "你成功识别了必需装备，并建立了一套高效的应急响应配置。",
+
+    "completeSubtitle": "你的应急准备方案已经记录。查看情境并再次尝试，以进一步提升你的结果。",
+
+    "loadoutScore": "装备配置得分",
+    "missionReward": "任务奖励",
+
+    "badgeUnlocked": "徽章已解锁",
+    "goBagMaster": "应急包专家",
+
+    "badgeDescription": "在没有携带不必要装备的情况下完成了此次情境。",
+
+    "returnToMissions": "返回任务"
+  },
+
 
   "profile": {
     "defaultName": "行动员_ACTIVE",
