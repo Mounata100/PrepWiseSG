@@ -965,5 +965,53 @@
       "emojiPrivacy": "Tiada kebenaran sistem diperlukan. Pastikan identiti anda tidak dipautkan dengan maklumat lain.",
       "back": "Kembali"
     }
+  },
+  "settings": {
+    "title": "Tetapan",
+    "returnToProfile": "Kembali ke Profil",
+
+    "sections": {
+      "appConfiguration": "KONFIGURASI APLIKASI",
+      "personalParticulars": "MAKLUMAT PERIBADI",
+      "language": "BAHASA",
+      "accountSecurity": "KESELAMATAN AKAUN"
+    },
+
+    "appearance": {
+      "darkMode": "Mod Gelap",
+      "description": "Tukar penampilan aplikasi"
+    },
+
+    "particulars": {
+      "displayName": "Nama Paparan / Nama Panggilan Operator",
+      "placeholder": "Masukkan nama paparan...",
+      "update": "Kemas Kini Maklumat"
+    },
+
+    "language": {
+      "title": "Bahasa",
+      "description": "Pilih bahasa pilihan anda"
+    },
+
+    "security": {
+      "currentPassword": "Kata Laluan Semasa",
+      "newPassword": "Kata Laluan Baharu",
+      "confirmPassword": "Sahkan Kata Laluan Baharu",
+      "newPasswordPlaceholder": "Minimum 6 aksara",
+      "confirmPasswordPlaceholder": "Masukkan semula kata laluan baharu",
+      "updatePassword": "Tukar Kata Laluan"
+    },
+
+    "alerts": {
+      "error": "Ralat",
+      "success": "Berjaya",
+      "displayNameBlank": "Nama paparan tidak boleh kosong.",
+      "particularsUpdated": "Maklumat berjaya dikemas kini.",
+      "currentPasswordRequired": "Sila masukkan kata laluan semasa anda.",
+      "passwordTooShort": "Kata laluan baharu mestilah sekurang-kurangnya 6 aksara.",
+      "passwordMismatch": "Kata laluan baharu tidak sepadan.",
+      "passwordUpdated": "Kata laluan berjaya ditukar."
+    }
   }
+
 }

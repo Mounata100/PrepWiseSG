@@ -1,5 +1,4 @@
 const PM25_API = 'https://api-open.data.gov.sg/v2/real-time/api/pm25';
- //'https://api-open.data.gov.sg/v2/real-time/api/pm25';
 
 export async function fetchPM25Data() {
   try {

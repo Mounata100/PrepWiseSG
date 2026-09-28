@@ -980,5 +980,53 @@
       "emojiPrivacy": "无需任何系统权限。保持你的身份信息完全不关联。",
       "back": "返回"
     }
+  },
+  "settings": {
+    "title": "设置",
+    "returnToProfile": "返回个人资料",
+
+    "sections": {
+      "appConfiguration": "应用设置",
+      "personalParticulars": "个人资料",
+      "language": "语言",
+      "accountSecurity": "账户安全"
+    },
+
+    "appearance": {
+      "darkMode": "深色模式",
+      "description": "切换应用外观"
+    },
+
+    "particulars": {
+      "displayName": "显示名称 / 操作员呼号",
+      "placeholder": "输入显示名称...",
+      "update": "更新资料"
+    },
+
+    "language": {
+      "title": "语言",
+      "description": "选择您的首选语言"
+    },
+
+    "security": {
+      "currentPassword": "当前密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "newPasswordPlaceholder": "至少 6 个字符",
+      "confirmPasswordPlaceholder": "再次输入新密码",
+      "updatePassword": "更改密码"
+    },
+
+    "alerts": {
+      "error": "错误",
+      "success": "成功",
+      "displayNameBlank": "显示名称不能为空。",
+      "particularsUpdated": "资料已成功更新。",
+      "currentPasswordRequired": "请输入当前密码。",
+      "passwordTooShort": "新密码必须至少包含 6 个字符。",
+      "passwordMismatch": "两次输入的新密码不一致。",
+      "passwordUpdated": "密码已成功更改。"
+    }
   }
+
 }

@@ -2,7 +2,6 @@
 // SETTINGS SCREEN
 // Dark Mode Toggle + Account Modification Particulars
 // =========================================================
-
 import React, { useState } from 'react';
 import {
   View,

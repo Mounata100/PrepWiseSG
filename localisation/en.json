@@ -1083,5 +1083,53 @@
       "emojiPrivacy": "Zero system permissions required. Keep your spatial identities fully unlinked.",
       "back": "Back"
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "returnToProfile": "Return to Profile",
+
+    "sections": {
+      "appConfiguration": "APP CONFIGURATION",
+      "personalParticulars": "PERSONAL PARTICULARS",
+      "language": "LANGUAGE",
+      "accountSecurity": "ACCOUNT SECURITY"
+    },
+
+    "appearance": {
+      "darkMode": "Dark Mode",
+      "description": "Switch app appearance"
+    },
+
+    "particulars": {
+      "displayName": "Display Name / Operator Call-sign",
+      "placeholder": "Enter identity label...",
+      "update": "Update Particulars"
+    },
+
+    "language": {
+      "title": "Language",
+      "description": "Select your preferred language"
+    },
+
+    "security": {
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm New Password",
+      "newPasswordPlaceholder": "Min 6 characters",
+      "confirmPasswordPlaceholder": "Repeat new password",
+      "updatePassword": "Change Password"
+    },
+
+    "alerts": {
+      "error": "Error",
+      "success": "Success",
+      "displayNameBlank": "Display Name cannot be blank.",
+      "particularsUpdated": "Particulars modified successfully.",
+      "currentPasswordRequired": "Please enter your current password.",
+      "passwordTooShort": "New password must be at least 6 characters long.",
+      "passwordMismatch": "New passwords do not match.",
+      "passwordUpdated": "Password changed successfully."
+    }
   }
+
 }

@@ -1943,13 +1943,13 @@ export const UserProvider = ({ children }) => {
       } catch (error) {
         console.error(
           'Failed to update user:',
-          error
+          //error
         );
 
         return {
           success: false,
-          error:
-            'Failed to update user.',
+          //error:
+            //'Failed to update user.',
         };
       }
     },

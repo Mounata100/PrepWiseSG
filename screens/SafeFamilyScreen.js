@@ -1,14 +1,4 @@
-// FamilySafetyScreen.js
-//FireBase
-// rules_version = '2';
-
-// service cloud.firestore {
-//   match /databases/{database}/documents {
-//     match /{document=**} {
-//       allow read, write: if false;
-//     }
-//   }
-// }
+//FamilySafetyScreen.js
 import React, { useEffect, useState } from 'react';
 
 import {
