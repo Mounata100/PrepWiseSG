@@ -1,5 +1,6 @@
 // // screens/AuthScreen.js
 // /**
+// The AuthScreen works in this flow.
 //  *                  ┌─────────────────┐
 //                     │   AuthScreen    │
 //                     └────────┬────────┘
